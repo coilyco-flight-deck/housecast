@@ -18,23 +18,23 @@ check *ARGS:
 
 # Run the unit test suite.
 test *ARGS:
-    @uv run pytest "$@"
+    @uv run --all-extras pytest "$@"
 
 # Format Python sources.
 format *ARGS:
-    @uv run ruff format housecast evalkit "$@"
+    @uv run --all-extras ruff format housecast evalkit "$@"
 
 # Check Python formatting without rewriting.
 format-check *ARGS:
-    @uv run ruff format --check housecast evalkit "$@"
+    @uv run --all-extras ruff format --check housecast evalkit "$@"
 
 # Run the Python linter.
 lint *ARGS:
-    @uv run ruff check housecast evalkit "$@"
+    @uv run --all-extras ruff check housecast evalkit "$@"
 
 # Run the Python type checker.
 typecheck *ARGS:
-    @uv run mypy "$@"
+    @uv run --all-extras mypy "$@"
 
 # Run the repository validation hooks over all files.
 pre-commit *ARGS:
@@ -54,7 +54,7 @@ roster *ARGS:
 
 # Sync the engine and eval dependencies.
 sync *ARGS:
-    @uv sync --extra eval "$@"
+    @uv sync --all-extras "$@"
 
 # Print the case list the current roster implies.
 evalkit-matrix *ARGS:
@@ -74,19 +74,19 @@ evalkit-run *ARGS:
 
 # Open the Inspect log viewer.
 evalkit-view *ARGS:
-    @uv run inspect view --log-dir .evalkit/logs "$@"
+    @uv run --extra eval inspect view --log-dir .evalkit/logs "$@"
 
 # Project a committed run into a display payload, one way only.
 evalkit-export *ARGS:
-    @uv run aos-eval export "$@"
+    @uv run --extra eval aos-eval export "$@"
 
 # Read an Inspect eval log and build the dataset the annotator grades.
 evalkit-filter *ARGS:
-    @uv run python -m evalkit.filter "$@"
+    @uv run --extra eval python -m evalkit.filter "$@"
 
 # Cluster annotation critiques into a ranked failure taxonomy.
 evalkit-taxonomy *ARGS:
-    @uv run aos-eval taxonomy "$@"
+    @uv run --extra eval aos-eval taxonomy "$@"
 
 # Annotate the eval dataset by hand, one keystroke per challenge.
 evalkit-annotate *ARGS:

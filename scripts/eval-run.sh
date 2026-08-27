@@ -21,7 +21,7 @@ AGENTPROXY_API_KEY=${AGENTPROXY_API_KEY:-unused}
 export AGENTPROXY_BASE_URL AGENTPROXY_API_KEY
 
 model=${AGENT_PROXY_MODEL:-evaluation/deepseek-v4-pro}
-uv run inspect eval evalkit/task.py \
+uv run --extra eval inspect eval evalkit/task.py \
   --model "openai-api/agentproxy/$model" \
   --epochs "$epochs" \
   --no-score \
