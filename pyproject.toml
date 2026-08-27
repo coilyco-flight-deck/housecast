@@ -1,6 +1,6 @@
 [project]
 name = "housecast"
-version = "0.1.1"
+dynamic = ["version"]
 description = "Python composition engine for agent rosters."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -45,6 +45,12 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# The version is single-sourced from the package. Keeping it in both places
+# drifted twice inside one migration: the tag said 0.1.3 and the metadata said
+# 0.1.1, and nothing failed because a git dependency does not check.
+[tool.hatch.version]
+path = "housecast/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 # py.typed ships so a consumer under mypy strict gets the types rather than an
