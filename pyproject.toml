@@ -1,6 +1,6 @@
 [project]
 name = "housecast"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python composition engine for agent rosters."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -47,6 +47,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
+# py.typed ships so a consumer under mypy strict gets the types rather than an
+# import-untyped error. Both packages are strict-clean here.
 packages = ["housecast", "evalkit"]
 
 [tool.ruff]
