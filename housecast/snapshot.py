@@ -1,0 +1,73 @@
+"""Project a roster into the person.json shape evalkit already reads.
+
+The Go engine produced this through `agent-compose roster --out`, and evalkit
+consumed it without knowing which engine wrote it. Emitting the same shape here
+is what takes Go out of the eval path without touching evalkit at all. Only the
+fields evalkit reads are emitted; agent-compose#338 owns the wider question of
+whether the board should read the roster directly instead.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+from housecast.roster import Roster
+
+
+def person_snapshot(roster: Roster) -> dict[str, Any]:
+    roles: dict[str, Any] = {}
+    for name in roster.role_order:
+        role = roster.roles[name]
+        roles[name] = {
+            "display_name": role.display_name,
+            "purpose": role.purpose,
+            "skill": role.skill,
+            "skill_source": role.skill_source,
+            "stance": role.stance,
+            "supported_model_tiers": list(role.supported_model_tiers),
+            "boundaries": list(role.defers),
+            "scoped_boundaries": [{"name": s.name, "scope": s.scope} for s in role.scoped],
+            "adjacents": [{"role": a.role, "reason": a.reason} for a in role.adjacents],
+            "personalities": list(role.personalities),
+            "favorite_color": role.favorite_color,
+            "identity": {"name": role.identity_name, "pronouns": role.identity_pronouns},
+            "seats": [
+                {
+                    k: v
+                    for k, v in (
+                        ("key", s.key),
+                        ("harness", s.harness),
+                        ("name", role.identity_name),
+                        ("pronouns", role.identity_pronouns),
+                        ("tier", s.tier),
+                    )
+                    if v is not None
+                }
+                for s in role.seats
+            ],
+        }
+    return {
+        "person": roster.person,
+        "source": roster.source,
+        "role_order": list(roster.role_order),
+        "roles": roles,
+        "boundary_order": list(roster.boundary_order),
+        "boundaries": {
+            name: {"skill": b.skill, "owner": b.owner, "summary": b.summary}
+            for name, b in roster.boundaries.items()
+        },
+        "personalities": {
+            name: {
+                "skill": p.skill,
+                "color": p.color,
+                "motif": p.motif,
+                "emblem": {"names": list(p.emblem.names), "emoji": p.emblem.emoji},
+            }
+            for name, p in roster.personalities.items()
+        },
+    }
+
+
+def dumps(roster: Roster) -> str:
+    return json.dumps(person_snapshot(roster), indent=2, ensure_ascii=False) + "\n"

@@ -1,0 +1,7 @@
+# Evaluation records preserve raw model responses verbatim, so a spelling
+# correction inside a preserved answer would edit the evidence. Words that
+# only appear inside preserved answers are accepted rather than rewritten.
+[default.extend-words]
+mis = "mis"
+unparseable = "unparseable"
+RTO = "RTO"

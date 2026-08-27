@@ -8,9 +8,10 @@ immutable bundle. It also runs and boards the behavior evaluations against what
 it composed, which is what keeps the graded artifact and the shipped artifact
 identical.
 
-**Nothing ships yet.** This repository holds the catalog scaffold and no
-product code. [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory, and
-`agent-compose#337` is the slice that moves the engine in.
+The engine and the eval runner both live here now, moved out of agent-compose
+under `agent-compose#337`. [`docs/FEATURES.md`](docs/FEATURES.md) is the
+inventory. Nothing is published to PyPI yet: consumers install from Forgejo,
+and the distribution claim is `agent-compose#347`, which waits on Kai.
 
 ## housecast and acompose
 
@@ -51,20 +52,37 @@ distribution. `house-cast` is held defensively and never shipped.
 ```
 git clone https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git
 cd housecast
-just pre-commit-install
-just
+just sync
+just compose --role tpm --out /tmp/bundle
 ```
 
-`just` with no arguments lists every verb. `just test`, `just lint`,
-`just format-check`, and `just typecheck` are the offline gates, and
-`just pre-commit` runs the catalog validator suite over every tracked file.
+`just` with no arguments lists every verb. `just check` is the offline gate:
+lint, format check, types, and tests in one recipe.
+
+## Installing it elsewhere
+
+There is no PyPI release. Depend on it from Forgejo with uv:
+
+```toml
+[project]
+dependencies = ["housecast"]
+
+[tool.uv.sources]
+housecast = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git", tag = "housecast-v0.1.0" }
+```
+
+That is the same shape the estate already uses for `aos-eval`. Add the `eval`
+extra when the consumer needs the board runner rather than just the engine.
 
 ## Layout
 
-* `housecast/` - the package. A version and a docstring today.
-* `tests/` - pytest suites mirroring the package.
-* `docs/` - the inventory, and the design pages the compositor will bring.
-* `.forgejo/workflows/` - the CI gate, running the same recipes as above.
+* `housecast/` - the engine. Roster loading, validation, meld and boundary
+  resolution, the OKLab favorite-colour solve, and bundle emission.
+* `housecast/data/roster.yaml` - the roster the engine composes.
+* `evalkit/` - the board runner, which travels with the engine so the graded
+  artifact and the shipped artifact stay identical.
+* `challenges.yaml` and `evaluations/` - the board and its committed evidence.
+* `scripts/` - the eval workflow, with no Go anywhere in it.
 
 ## License
 
@@ -73,5 +91,5 @@ MIT. Kai Siren holds the copyright. See [`LICENSE`](LICENSE).
 ## See also
 
 * [`AGENTS.md`](AGENTS.md) - agent-facing operating context for this repository.
-* [`docs/FEATURES.md`](docs/FEATURES.md) - what ships today, which is nothing.
+* [`docs/FEATURES.md`](docs/FEATURES.md) - what ships today.
 * [`.ward/ward.yaml`](.ward/ward.yaml) - catalog metadata for the cross-repo graph.

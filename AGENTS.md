@@ -19,16 +19,21 @@ Read before changing anything here:
 - [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. It currently claims
   no shipped capability, and that is accurate rather than pending.
 
-No product code has landed. `agent-compose#337` is the slice that moves the
-compositor and `evalkit` in, and it is blocked on `agent-compose#333`. Do not
-pull that code in early: it would arrive without its acceptance criteria.
+The engine and the eval runner both live here, moved out of agent-compose
+under `agent-compose#337`. The Go engine still exists in agent-compose and
+still composes; `agent-compose#339` deletes it, and until then that repository
+holds the differential test proving the two agree byte for byte.
 
 ## Project shape
 
-- **`housecast/`** - the package. A version and a docstring today.
-- **`tests/`** - pytest suites mirroring the package.
-- **`docs/`** - the inventory today, and the design pages the compositor brings.
-- **`.forgejo/workflows/`** - the CI gate, running the justfile recipes.
+- **`housecast/`** - the engine: roster loading, validation, meld and boundary
+  resolution, the OKLab favorite-colour solve, bundle emission, and the roster
+  projection downstream tools read.
+- **`housecast/data/roster.yaml`** - the roster, with its field ancestry
+  documented in the file's own header.
+- **`evalkit/`** - the board runner. It travels with the engine deliberately.
+- **`challenges.yaml`**, **`evaluations/`** - the board and its evidence.
+- **`scripts/`** - the eval workflow. No Go runs anywhere in this repository.
 
 ## Repo boundaries
 
@@ -51,8 +56,10 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 ## Validation
 
-- `just format-check`, `just lint`, `just typecheck`, and `just test` are the
-  offline gates.
+- `just check` runs the offline gates in one recipe: lint, format check,
+  types, and tests. The individual verbs exist too.
+- The differential test against the Go engine lives in agent-compose, which is
+  the only place both engines exist. It pins this repository by tag.
 - `just pre-commit` runs the catalog suite over all tracked files. Never pass
   `--no-verify`.
 - A fresh clone has no hooks in `.git/hooks`. Run `just pre-commit-install`
@@ -89,8 +96,13 @@ This file's frontmatter declares `workflow: merge-remote-main`. Canonical
 history lives on Forgejo, and the GitHub mirror is separate setup on a separate
 gate.
 
-No release train exists yet. The PyPI publish workflow moves in with
-`agent-compose#337`, and no tag or distribution ships before it.
+No PyPI distribution exists. Consumers depend on this repository from Forgejo
+through `[tool.uv.sources]`, pinned by tag, which is the same shape the estate
+uses for `aos-eval`. Cutting a `housecast-v*` tag is how a consumer is given
+something to pin, and it publishes nothing outward.
+
+The PyPI publish workflow is still `agent-compose#337` and the name claim is
+`agent-compose#347`, which waits on Kai. Do not upload a placeholder.
 
 Keep [`docs/FEATURES.md`](docs/FEATURES.md) current when a shipped capability
 changes, in the same commit that changes it.
@@ -128,10 +140,10 @@ The fleet runs two lanes, and both authorize the same core actions:
 
 ## Checkout residency
 
-This repository is not resident. It has no checkout under `~/projects/<owner>/`,
-and that is intentional while no active development is under way. Work it from
-a task-scoped temporary clone, and remove that clone once the work lands.
-Revisit when `agent-compose#337` moves real code in.
+This repository is not resident. It has no checkout under `~/projects/<owner>/`.
+Work it from a task-scoped temporary clone and remove that clone once the work
+lands. `agent-compose#337` moved real code in, so residency is now worth
+revisiting whenever active development starts here rather than in agent-compose.
 
 A temporary root can be purged at any time, so commit and push before pausing,
 switching tasks, or ending a session. The remote is the only durable artifact.

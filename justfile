@@ -1,12 +1,10 @@
 # Per-repo task manifest. Run `just` (or `just --list`) to see every verb.
 #
-# Recipes take trailing arguments directly: `just test -k roster`.
-#
 # One line of comment per recipe on purpose: just reads only the LAST comment
 # line above a recipe, so a wrapped description silently truncates to its tail.
 #
-# `ward exec` is retired. `.ward/ward.yaml` survives carrying catalog metadata
-# only, because check_catalog_block pins that exact path upstream.
+# `.ward/ward.yaml` survives carrying catalog metadata only, because the catalog
+# hooks upstream in agentic-os pin that exact path.
 
 set positional-arguments
 
@@ -14,21 +12,25 @@ set positional-arguments
 default:
     @just --list --unsorted
 
+# Run the offline gates: lint, format check, types, tests.
+check *ARGS:
+    @sh scripts/check.sh "$@"
+
 # Run the unit test suite.
 test *ARGS:
     @uv run pytest "$@"
 
 # Format Python sources.
 format *ARGS:
-    @uv run ruff format . "$@"
+    @uv run ruff format housecast evalkit "$@"
 
 # Check Python formatting without rewriting.
 format-check *ARGS:
-    @uv run ruff format --check . "$@"
+    @uv run ruff format --check housecast evalkit "$@"
 
 # Run the Python linter.
 lint *ARGS:
-    @uv run ruff check . "$@"
+    @uv run ruff check housecast evalkit "$@"
 
 # Run the Python type checker.
 typecheck *ARGS:
@@ -41,3 +43,51 @@ pre-commit *ARGS:
 # Install the pre-commit and pre-push hooks into a fresh clone.
 pre-commit-install *ARGS:
     @pre-commit install --hook-type pre-commit --hook-type pre-push "$@"
+
+# Compose one role bundle. `just compose --role tpm --out DIR`.
+compose *ARGS:
+    @uv run python -m housecast compose "$@"
+
+# Project the roster as person.json, which evalkit reads.
+roster *ARGS:
+    @uv run python -m housecast roster "$@"
+
+# Sync the engine and eval dependencies.
+sync *ARGS:
+    @uv sync --extra eval "$@"
+
+# Print the case list the current roster implies.
+evalkit-matrix *ARGS:
+    @sh scripts/eval-matrix.sh "$@"
+
+# Compose one compiled bundle per role as the eval system prompts.
+evalkit-prompts *ARGS:
+    @sh scripts/eval-prompts.sh "$@"
+
+# One live request through Agent Proxy, before a full board run.
+evalkit-smoke *ARGS:
+    @sh scripts/eval-smoke.sh "$@"
+
+# Run the board through Inspect against Agent Proxy.
+evalkit-run *ARGS:
+    @sh scripts/eval-run.sh "$@"
+
+# Open the Inspect log viewer.
+evalkit-view *ARGS:
+    @uv run inspect view --log-dir .evalkit/logs "$@"
+
+# Project a committed run into a display payload, one way only.
+evalkit-export *ARGS:
+    @uv run aos-eval export "$@"
+
+# Read an Inspect eval log and build the dataset the annotator grades.
+evalkit-filter *ARGS:
+    @uv run python -m evalkit.filter "$@"
+
+# Cluster annotation critiques into a ranked failure taxonomy.
+evalkit-taxonomy *ARGS:
+    @uv run aos-eval taxonomy "$@"
+
+# Annotate the eval dataset by hand, one keystroke per challenge.
+evalkit-annotate *ARGS:
+    @sh scripts/eval-annotate.sh "$@"

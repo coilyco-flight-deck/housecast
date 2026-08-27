@@ -9,3 +9,6 @@ venv/
 .mypy_cache/
 dist/
 build/
+
+# Eval run cache: composed prompts, Inspect logs, datasets, annotations.
+.evalkit/
