@@ -101,6 +101,12 @@ through `[tool.uv.sources]`, pinned by tag, which is the same shape the estate
 uses for `aos-eval`. Cutting a `housecast-v*` tag is how a consumer is given
 something to pin, and it publishes nothing outward.
 
+**Pin `housecast-v0.1.4` or later.** The four tags below it were cut during the
+migration and each is broken in some way: `v0.1.0` was force-moved, `v0.1.1`
+predates the grading-anchor check, `v0.1.2` fails mypy strict, and `v0.1.3`
+reports the wrong version. They are kept rather than deleted because the history
+is honest, and named here so nobody pins one by reaching for the lowest number.
+
 The PyPI publish workflow is still `agent-compose#337` and the name claim is
 `agent-compose#347`, which waits on Kai. Do not upload a placeholder.
 
