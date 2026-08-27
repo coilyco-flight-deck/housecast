@@ -8,5 +8,5 @@
 security: {}
 
 catalog:
-  description: "Python composition engine for agent rosters. Reads roles, personalities, and boundaries authored as YAML, resolves each role's personality meld and boundary allocation, and emits an immutable bundle it also grades. Upstream of acompose, which renders that bundle into harness surfaces. No capability ships yet."
+  description: "Python composition engine for agent roles, personalities, and boundaries. Reads roster data authored as YAML, resolves each role's personality meld and boundary allocation, and emits an immutable bundle it also grades. Upstream of acompose, which renders that bundle into harness surfaces. No capability ships yet."
   dependsOn: []
