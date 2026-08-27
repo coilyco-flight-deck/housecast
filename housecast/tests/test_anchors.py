@@ -24,7 +24,8 @@ ANCHORS = pathlib.Path(__file__).resolve().parents[2] / "evaluations" / "persona
 
 @pytest.fixture(scope="module")
 def anchors() -> dict[str, Any]:
-    return yaml.safe_load(ANCHORS.read_text())
+    loaded: dict[str, Any] = yaml.safe_load(ANCHORS.read_text())
+    return loaded
 
 
 @pytest.fixture(scope="module")
