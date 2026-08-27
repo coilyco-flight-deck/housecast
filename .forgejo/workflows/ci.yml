@@ -1,0 +1,75 @@
+# Forgejo-canonical CI gate. Every step invokes a justfile recipe rather than a
+# hand-written command, so the gate and a developer running `just` locally can
+# never disagree about what the check actually is.
+#
+# The job runs in the moving :release aos dev-base image, which already ships
+# uv, managed Python 3.12 and 3.13, just, pre-commit, and trufflehog. That lets
+# CI skip every setup action and call the repo's declared verbs directly.
+#
+# uv resolves the dev dependency group through PyPI whenever its cache is cold,
+# and that egress flakes on this runner, so the job caches ~/.cache/uv and
+# raises uv's 30s HTTP timeout. The pre-commit cache is here for the same
+# reason: hook environments dominate a cold `just pre-commit`.
+#
+# This gate assumes the instance has an Actions runner labelled `docker`
+# attached to this repository. Where it does not yet, the workflow is still the
+# correct artifact and starts gating as soon as one is attached.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_HTTP_TIMEOUT: "180"
+
+jobs:
+  gate:
+    runs-on: docker
+    timeout-minutes: 20
+    container:
+      image: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: Cache pre-commit envs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-${{ runner.os }}-
+
+      - name: Format check (just format-check)
+        run: just format-check
+
+      - name: Lint (just lint)
+        run: just lint
+
+      - name: Types (just typecheck)
+        run: just typecheck
+
+      - name: Tests (just test)
+        run: just test
+
+      - name: Repository validators (just pre-commit)
+        run: just pre-commit

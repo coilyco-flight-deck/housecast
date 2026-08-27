@@ -1,0 +1,12 @@
+# Catalog metadata for the cross-repo knowledge graph.
+#
+# Dev verbs used to live here as a `commands:` block. They are recipes in the
+# justfile now. This file survives only because check_catalog_block pins this
+# exact path and catalog-trifecta wants README, AGENTS, and FEATURES to link
+# it, both upstream in agentic-os.
+
+security: {}
+
+catalog:
+  description: "Python composition engine for agent rosters. Reads roles, personalities, and boundaries authored as YAML, resolves each role's personality meld and boundary allocation, and emits an immutable bundle it also grades. Upstream of acompose, which renders that bundle into harness surfaces. No capability ships yet."
+  dependsOn: []
