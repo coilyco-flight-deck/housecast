@@ -6,7 +6,7 @@ ward:
 
 ## Scope
 
-housecast is the **Python composition engine for agent context**. It reads
+housecast is the **roster framework for agent context**. It reads
 roster data authored as YAML, validates it, resolves each role's personality
 meld and boundary allocation, derives the identity primitives, and emits an
 immutable bundle. It also runs and boards the behavior evaluations against what
@@ -32,7 +32,7 @@ pull that code in early: it would arrive without its acceptance criteria.
 
 ## Repo boundaries
 
-- housecast owns the roster language, the composition engine, the identity
+- housecast owns the roster language, the engine, the identity
   primitives it derives, and the evaluation harness that grades its own output.
 - `acompose` is **downstream**. It renders the bundle housecast emits into
   harness surfaces and launches them. It is never a peer, and housecast is

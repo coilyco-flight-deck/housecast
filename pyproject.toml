@@ -1,7 +1,7 @@
 [project]
 name = "housecast"
 version = "0.0.0"
-description = "Python composition engine for agent rosters."
+description = "A YAML driven roster framework for agent context"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
