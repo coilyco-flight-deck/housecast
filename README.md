@@ -1,6 +1,6 @@
 # housecast
 
-The Python composition engine for agent context. It reads roster data authored
+The roster framework for agent context. It reads roster data authored
 as YAML (roles, personalities, boundaries, and the invariant), validates it,
 resolves each role's personality meld and boundary allocation, derives the
 identity primitives including each role's favorite color, and emits an

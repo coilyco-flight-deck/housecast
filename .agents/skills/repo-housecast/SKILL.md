@@ -1,6 +1,6 @@
 ---
 name: repo-housecast
-description: Python composition engine for agent roles, personalities, and boundaries. Triggers - housecast, ai-agents, llm, automation, evaluation
+description: A YAML driven roster framework for agent context. Triggers - housecast, ai-agents, llm, automation, evaluation
 ---
 
 # repo-housecast
