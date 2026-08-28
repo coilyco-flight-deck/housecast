@@ -104,7 +104,7 @@ def test_an_overlong_role_body_is_rejected(loaded: Roster) -> None:
     role = loaded.roles["director"]
     frontmatter, body = validate.split_frontmatter(role.body, role.skill)
     role.body = f"---\n{frontmatter}\n---\n" + body + ("\n\nword" * 500)
-    with pytest.raises(validate.RosterError, match="maximum is 400"):
+    with pytest.raises(validate.RosterError, match="maximum is 1200"):
         validate.check_copy_contract(loaded)
 
 
