@@ -34,8 +34,11 @@ Carried forward, with reasons, tracked in agent-compose#373:
 * Overlay, cascade, skill selectors, and knowledge-provider catalogues stay in
   Go. No bundle in the shipped roster selects from them, so parity does not
   cover them and porting blind would be guesswork.
-* The copy-contract digest is not emitted. Its validation is ported, and no
-  shipped role produces a CopyContract, so no bundle carries the entry.
+* The copy contract is not ported at all, model or digest. Go's CopyContract is
+  a scope plus forbid/prefer rules, hashed over a canonical marshal.
+  check_copy_contract here validates role body word counts, which is a name
+  collision rather than the same check. No shipped role declares one and
+  roster.yaml has no field for it. agent-compose#373
 """
 
 from __future__ import annotations
