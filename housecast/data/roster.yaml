@@ -1014,7 +1014,7 @@ roles:
         scope: "in-game text, item descriptions, tooltips, and mod documentation, never a patch announcement, store description, or post about the game"
     personalities: ["immersed", "imaginative"]
     identity:
-      name: "Gale"
+      name: "Sprite"
       pronouns: "they"
     seats:
       - key: claude
