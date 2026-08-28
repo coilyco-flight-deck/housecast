@@ -23,7 +23,7 @@ CHANNEL = "sirens-deep"
 def carrying(tmp_path_factory: pytest.TempPathFactory) -> Roster:
     """The shipped roster with methods and a channel injected onto one role."""
     doc = yaml.safe_load(roster.DATA.read_bytes())
-    role = doc["roles"]["eval"]
+    role = doc["roles"]["science"]
     role["methods"] = list(METHODS)
     role["seats"][0]["channel"] = CHANNEL
     path = tmp_path_factory.mktemp("roster") / "roster.yaml"
@@ -32,16 +32,16 @@ def carrying(tmp_path_factory: pytest.TempPathFactory) -> Roster:
 
 
 def test_role_methods_survive_the_loader(carrying: Roster) -> None:
-    assert carrying.roles["eval"].methods == METHODS
+    assert carrying.roles["science"].methods == METHODS
 
 
 def test_seat_channel_survives_the_loader(carrying: Roster) -> None:
-    assert carrying.roles["eval"].seats[0].channel == CHANNEL
+    assert carrying.roles["science"].seats[0].channel == CHANNEL
 
 
 def test_the_identity_card_renders_role_methods(carrying: Roster) -> None:
     """Go emits this line between the role skill and the boundaries."""
-    card = render.identity_card(carrying, "eval")
+    card = render.identity_card(carrying, "science")
     assert "**Role methods // `adversarial-verification` // `state-machine-verification`**" in card
     skill_at = card.index("**Role skill //")
     methods_at = card.index("**Role methods //")
@@ -54,6 +54,6 @@ def test_the_identity_card_renders_role_methods(carrying: Roster) -> None:
 # test above passes on a renderer that emits it unconditionally.
 def test_the_shipped_roster_renders_no_methods_line() -> None:
     loaded = roster.load()
-    assert loaded.roles["eval"].methods == []
-    assert loaded.roles["eval"].seats[0].channel is None
-    assert "**Role methods //" not in render.identity_card(loaded, "eval")
+    assert loaded.roles["science"].methods == []
+    assert loaded.roles["science"].seats[0].channel is None
+    assert "**Role methods //" not in render.identity_card(loaded, "science")

@@ -46,13 +46,13 @@ def test_owner_may_not_scope_the_boundary_it_owns(loaded: Roster) -> None:
 
 
 def test_missing_personality_binding_is_rejected(loaded: Roster) -> None:
-    loaded.roles["tpm"].personalities.append("unbound")
+    loaded.roles["director"].personalities.append("unbound")
     with pytest.raises(validate.RosterError, match="has no catalog binding"):
         validate.check_personality_bindings(loaded)
 
 
 def test_a_role_with_no_personalities_is_rejected(loaded: Roster) -> None:
-    loaded.roles["tpm"].personalities.clear()
+    loaded.roles["director"].personalities.clear()
     with pytest.raises(validate.RosterError, match="activates no personalities"):
         validate.check_personality_bindings(loaded)
 
@@ -64,7 +64,7 @@ def test_mismatched_definition_set_is_rejected(loaded: Roster) -> None:
 
 
 def test_a_role_deferring_an_unknown_boundary_is_rejected(loaded: Roster) -> None:
-    loaded.roles["tpm"].defers.append("no-such-boundary")
+    loaded.roles["director"].defers.append("no-such-boundary")
     with pytest.raises(validate.RosterError, match="defers unknown boundary"):
         validate.check_definition_set(loaded)
 
@@ -101,7 +101,7 @@ def test_out_of_band_colors_are_actually_out_of_band() -> None:
 
 
 def test_an_overlong_role_body_is_rejected(loaded: Roster) -> None:
-    role = loaded.roles["tpm"]
+    role = loaded.roles["director"]
     frontmatter, body = validate.split_frontmatter(role.body, role.skill)
     role.body = f"---\n{frontmatter}\n---\n" + body + ("\n\nword" * 500)
     with pytest.raises(validate.RosterError, match="maximum is 400"):
@@ -109,7 +109,7 @@ def test_an_overlong_role_body_is_rejected(loaded: Roster) -> None:
 
 
 def test_a_role_body_under_three_paragraphs_is_rejected(loaded: Roster) -> None:
-    role = loaded.roles["tpm"]
+    role = loaded.roles["director"]
     frontmatter, _ = validate.split_frontmatter(role.body, role.skill)
     role.body = f"---\n{frontmatter}\n---\n\n# Portfolio Director\n\n" + ("word " * 200)
     with pytest.raises(validate.RosterError, match="at least three paragraphs"):
@@ -117,8 +117,8 @@ def test_a_role_body_under_three_paragraphs_is_rejected(loaded: Roster) -> None:
 
 
 def test_a_skill_whose_frontmatter_names_another_skill_is_rejected(loaded: Roster) -> None:
-    role = loaded.roles["tpm"]
-    role.body = role.body.replace("name: role-tpm", "name: role-somebody-else", 1)
+    role = loaded.roles["director"]
+    role.body = role.body.replace("name: role-director", "name: role-somebody-else", 1)
     with pytest.raises(validate.RosterError, match="does not declare name"):
         validate.check_skill_frontmatter(loaded)
 
@@ -144,6 +144,6 @@ def test_paragraph_count_ignores_blank_runs() -> None:
 def test_unsupported_model_tier_is_refused(loaded: Roster) -> None:
     from housecast import compose
 
-    assert "oss" not in loaded.roles["tpm"].supported_model_tiers
+    assert "oss" not in loaded.roles["director"].supported_model_tiers
     with pytest.raises(ValueError, match="does not support model tier"):
-        compose.compose(loaded, "tpm", "oss", pathlib.Path("/tmp/zq49-unreachable"))
+        compose.compose(loaded, "director", "oss", pathlib.Path("/tmp/zq49-unreachable"))

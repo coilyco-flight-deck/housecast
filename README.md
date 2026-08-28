@@ -53,7 +53,7 @@ distribution. `house-cast` is held defensively and never shipped.
 git clone https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git
 cd housecast
 just sync
-just compose --role tpm --out /tmp/bundle
+just compose --role director --out /tmp/bundle
 ```
 
 `just` with no arguments lists every verb. `just check` is the offline gate:
