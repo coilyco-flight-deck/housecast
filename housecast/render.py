@@ -53,6 +53,8 @@ def identity_card(roster: Roster, role_name: str) -> str:
 
     out = [f"# {role.display_name}\n\n{role.purpose}\n\n"]
     out.append(f"**Role skill // `{role.skill}`**\n")
+    if role.methods:
+        out.append("**Role methods // `" + "` // `".join(role.methods) + "`**\n")
     if boundary_skills:
         out.append("**Boundaries // `" + "` // `".join(boundary_skills) + "`**\n")
     out.append(f"**Favorite color // `{role.favorite_color}`**\n")

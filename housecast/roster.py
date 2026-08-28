@@ -51,6 +51,7 @@ class Seat:
     key: str
     harness: str
     tier: str | None = None
+    channel: str | None = None
 
 
 @dataclass(frozen=True)
@@ -84,6 +85,7 @@ class Role:
     seats: list[Seat]
     adjacents: list[Adjacent]
     body: str
+    methods: list[str] = field(default_factory=list)
     favorite_color: str = ""
 
     def active_boundaries(self, boundaries: dict[str, Boundary]) -> list[str]:
@@ -170,9 +172,12 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             personalities=list(spec["personalities"]),
             identity_name=spec["identity"]["name"],
             identity_pronouns=spec["identity"]["pronouns"],
-            seats=[Seat(s["key"], s["harness"], s.get("tier")) for s in spec["seats"]],
+            seats=[
+                Seat(s["key"], s["harness"], s.get("tier"), s.get("channel")) for s in spec["seats"]
+            ],
             adjacents=[Adjacent(a["role"], a["reason"]) for a in spec.get("adjacents") or []],
             body=spec["body"],
+            methods=list(spec.get("methods") or []),
         )
     roster = Roster(
         person=doc["person"],

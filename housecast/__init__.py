@@ -21,6 +21,10 @@ Discharged from the #332 tracer's cheat list:
   byte-identical.
 * The model-tier matrix is enforced. An unsupported tier is refused with the
   Go engine's wording.
+* Role methods and seat channels survive the loader, and the identity card
+  emits the Role methods line between the role skill and the boundaries, as Go
+  does. No shipped role carries either, so a fixture injects them and a
+  negative control asserts the shipped roster still renders no methods line.
 
 Carried forward, with reasons, tracked in agent-compose#373:
 
@@ -30,9 +34,6 @@ Carried forward, with reasons, tracked in agent-compose#373:
 * Overlay, cascade, skill selectors, and knowledge-provider catalogues stay in
   Go. No bundle in the shipped roster selects from them, so parity does not
   cover them and porting blind would be guesswork.
-* Role methods and seat channels are dropped by the loader. No shipped role or
-  seat carries either, so nothing would render differently today, and a roster
-  that added one would lose it silently. That is the sharpest of these.
 * The copy-contract digest is not emitted. Its validation is ported, and no
   shipped role produces a CopyContract, so no bundle carries the entry.
 """
@@ -41,4 +42,4 @@ from __future__ import annotations
 
 __all__ = ["__version__"]
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
