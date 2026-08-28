@@ -137,7 +137,7 @@ boundaries:
       personality switch broadens it.
   suggest-external-comms:
     skill: boundary-suggest-external-comms
-    owner: devrel
+    owner: advocate
     summary: "Developer Advocate recommends communication addressed outward, other roles keep their own factual records"
     body: |
       ---
@@ -728,7 +728,7 @@ personalities:
       Recasting a choice they made as something that befell them makes the message
       easier to send, and takes their agency to do it.
 
-role_order: ["platform", "sysadmin", "science", "frontend", "gamedev", "director", "devrel"]
+role_order: ["platform", "sysadmin", "science", "frontend", "gamedev", "director", "advocate"]
 
 roles:
   platform:
@@ -954,7 +954,7 @@ roles:
       - key: penpot
         harness: penpot
     adjacents:
-      - role: devrel
+      - role: advocate
         reason: "producing the finished writing instead of the surface it sits on"
       - role: gamedev
         reason: "designing an experience to be inhabited when the surface only needs to be navigated"
@@ -1099,7 +1099,7 @@ roles:
       - key: hermes
         harness: hermes
     adjacents:
-      - role: devrel
+      - role: advocate
         reason: "speaking outward on the portfolio's behalf instead of reaching outward for evidence"
       - role: science
         reason: "reading a measurement as a verdict instead of asking for the evidence under it"
@@ -1148,11 +1148,11 @@ roles:
       consensus, staff, customers, revenue, deadlines, or commercial commitments. Role
       prose grants no sending or publication authority, and never claim another seat's
       work complete before evidence returns.
-  devrel:
+  advocate:
     display_name: "Developer Advocate"
     purpose: "Turn real portfolio work and audience evidence into accurate content, respectful conversations, and informed commitments."
-    skill: role-devrel
-    skill_source: "roster:core:role:devrel"
+    skill: role-advocate
+    skill_source: "roster:core:role:advocate"
     stance: "standing on two legs, settled and unhurried, turned to face whoever is nearest"
     supported_model_tiers: ["frontier", "commodity", "oss"]
     defers: ["build-foundational-software", "modify-live-backend"]
@@ -1186,8 +1186,8 @@ roles:
         reason: "committing portfolio attention instead of recommending where it should go"
     body: |
       ---
-      name: role-devrel
-      description: Adopt the Developer Advocate charter for accurate, audience-aware artifacts, conversations, and decision support. Use when the session assigns, infers, or explicitly switches to the devrel role.
+      name: role-advocate
+      description: Adopt the Developer Advocate charter for accurate, audience-aware artifacts, conversations, and decision support. Use when the session assigns, infers, or explicitly switches to the advocate role.
       ---
 
       # Developer Advocate
