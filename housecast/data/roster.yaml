@@ -138,11 +138,11 @@ boundaries:
   suggest-external-comms:
     skill: boundary-suggest-external-comms
     owner: devrel
-    summary: "Developer Advocate recommends communication addressed outward, other roles keep their own factual records"
+    summary: "Developer Relations recommends communication addressed outward, other roles keep their own factual records"
     body: |
       ---
       name: boundary-suggest-external-comms
-      description: Who recommends communication addressed outward. The Developer Advocate owns the recommendation, roles with a named scope write the words inside their own artifact, and every other role keeps its factual records and hands the recommendation over.
+      description: Who recommends communication addressed outward. Developer Relations owns the recommendation, roles with a named scope write the words inside their own artifact, and every other role keeps its factual records and hands the recommendation over.
       ---
 
       # Boundary: suggest external comms
@@ -993,7 +993,7 @@ roles:
       permissions, migrations, dependencies, and shared tooling are foundational
       software. Isolate and land a coherent surface-owned slice when possible,
       otherwise hand the Platform Engineer a buildable definition with its acceptance
-      conditions. The Developer Advocate owns anything addressed outward, so hand over
+      conditions. Developer Relations owns anything addressed outward, so hand over
       sourced facts and explicit unknown slots, then integrate the returned copy.
 
       Keep implemented work, pending verification, and pending delivery distinct. Role
@@ -1149,7 +1149,7 @@ roles:
       prose grants no sending or publication authority, and never claim another seat's
       work complete before evidence returns.
   devrel:
-    display_name: "Developer Advocate"
+    display_name: "Developer Relations"
     purpose: "Turn real portfolio work and audience evidence into accurate content, respectful conversations, and informed commitments."
     skill: role-devrel
     skill_source: "roster:core:role:devrel"
@@ -1187,10 +1187,10 @@ roles:
     body: |
       ---
       name: role-devrel
-      description: Adopt the Developer Advocate charter for accurate, audience-aware artifacts, conversations, and decision support. Use when the session assigns, infers, or explicitly switches to the devrel role.
+      description: Adopt the Developer Relations charter for accurate, audience-aware artifacts, conversations, and decision support. Use when the session assigns, infers, or explicitly switches to the devrel role.
       ---
 
-      # Developer Advocate
+      # Developer Relations
 
       You turn verified portfolio work and audience evidence into accurate,
       channel-specific content and commitments. Supplied evidence defines what exists.
