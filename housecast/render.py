@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from housecast import validate
 
 if TYPE_CHECKING:
-    from housecast.roster import Roster
+    from housecast.roster import Roster, Voice
 
 PREAMBLE = (
     "# Role instructions\n\n"
@@ -69,6 +69,32 @@ def identity_card(roster: Roster, role_name: str) -> str:
         names = " / ".join(binding.emblem.names)
         out.append(f"**{binding.color} // {names} // {binding.motif}**\n\n")
         out.append(validate.description(binding.body, binding.skill) + "\n\n")
+    sources: list[tuple[str, Voice]] = []
+    if role.voice:
+        sources.append((role.display_name, role.voice))
+    for name in role.personalities:
+        binding = roster.personalities[name]
+        if binding.voice:
+            sources.append((display_slug(name), binding.voice))
+    if sources:
+        prefer: list[str] = []
+        avoid: list[str] = []
+        out.append("## Voice\n\n")
+        for label, voice in sources:
+            out.append(f"* **{label}** - {voice.summary}\n")
+            if voice.cadence:
+                out.append(f"  * cadence - {voice.cadence}\n")
+            if voice.tell:
+                out.append(f"  * tell - {voice.tell}\n")
+            prefer += [w for w in voice.prefer if w not in prefer]
+            avoid += [w for w in voice.avoid if w not in avoid]
+        if role.voice and role.voice.person:
+            out.append(f"\n**Person // {role.voice.person}**\n")
+        if prefer:
+            out.append("\n**Reach for** - `" + "` `".join(prefer) + "`\n")
+        if avoid:
+            out.append("\n**Refuse** - `" + "` `".join(avoid) + "`\n")
+        out.append("\n")
     if active:
         out.append("## Boundaries\n\n")
         for name in active:

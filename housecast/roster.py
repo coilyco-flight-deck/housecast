@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pathlib
 from dataclasses import dataclass, field
+from typing import Any
 
 import yaml
 
@@ -28,6 +29,18 @@ class Emblem:
 
 
 @dataclass(frozen=True)
+class Voice:
+    """Register. Role authors the baseline, personalities modulate it."""
+
+    summary: str
+    cadence: str = ""
+    person: str = ""
+    tell: str = ""
+    prefer: list[str] = field(default_factory=list)
+    avoid: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
 class Personality:
     name: str
     skill: str
@@ -35,6 +48,7 @@ class Personality:
     motif: str
     emblem: Emblem
     body: str
+    voice: Voice | None = None
 
 
 @dataclass(frozen=True)
@@ -87,6 +101,7 @@ class Role:
     body: str
     methods: list[str] = field(default_factory=list)
     favorite_color: str = ""
+    voice: Voice | None = None
 
     def active_boundaries(self, boundaries: dict[str, Boundary]) -> list[str]:
         """Deferred, then scoped, then the single boundary this role owns."""
@@ -131,6 +146,19 @@ class Roster:
             self.roles[name].favorite_color = value
 
 
+def _voice(spec: dict[str, Any] | None) -> Voice | None:
+    if not spec:
+        return None
+    return Voice(
+        summary=str(spec["summary"]),
+        cadence=str(spec.get("cadence", "")),
+        person=str(spec.get("person", "")),
+        tell=str(spec.get("tell", "")),
+        prefer=[str(x) for x in spec.get("prefer", []) or []],
+        avoid=[str(x) for x in spec.get("avoid", []) or []],
+    )
+
+
 def load(path: pathlib.Path | str = DATA) -> Roster:
     path = pathlib.Path(path)
     raw = path.read_bytes()
@@ -154,6 +182,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             motif=spec["motif"],
             emblem=Emblem(spec["emblem"]["names"], spec["emblem"]["emoji"]),
             body=spec["body"],
+            voice=_voice(spec.get("voice")),
         )
         for name, spec in doc["personalities"].items()
     }
@@ -166,6 +195,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             skill=spec["skill"],
             skill_source=spec["skill_source"],
             stance=spec["stance"],
+            voice=_voice(spec.get("voice")),
             supported_model_tiers=list(spec["supported_model_tiers"]),
             defers=list(spec["defers"]),
             scoped=[Scoped(s["name"], s["scope"]) for s in spec.get("scoped") or []],
