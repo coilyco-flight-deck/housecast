@@ -92,8 +92,8 @@ excludes = [".pre-commit-config.yaml", "evaluations/**"]
 [tool.agentic-os.source-doc-refs]
 excludes = ["evaluations/**"]
 
-# Large, not small. The scaffold picked small when this repository held no code.
-# It now carries the engine, the eval runner, and the board.
+# Small. Pages stay short enough to read in one pass, and a subject that
+# outgrows one page earns its own rather than a longer one.
 [tool.agentic-os.documentation-layout]
-band = "large"
+band = "small"
 excludes = ["evaluations/**"]
