@@ -33,3 +33,4 @@ It keeps working until the page has carried one real board end to end.
 
 * [`grading.md`](grading.md) - what the grading half is.
 * [`grading-evidence.md`](grading-evidence.md) - why `serve` binds loopback.
+* [`presenting.md`](presenting.md) - the room-facing deck and its server.

@@ -37,3 +37,4 @@ a committed dataset exists to prevent. Point a new tool at
 ## See also
 
 * [`grading.md`](grading.md) - what the grading half is.
+* [`presenting.md`](presenting.md) - the room-facing deck and its server.

@@ -20,6 +20,8 @@ from housecast.grade import annotate as annotate_mod
 from housecast.grade import attributes as attributes_mod
 from housecast.grade import board as board_mod
 from housecast.grade import dataset as dataset_mod
+from housecast.grade import deck as deck_mod
+from housecast.grade import present as present_mod
 from housecast.grade import serve as serve_mod
 from housecast.grade import taxonomy as taxonomy_mod
 from housecast.grade.export import ExportRefusedError, export_run_dir
@@ -72,7 +74,13 @@ COMMANDS
               must contain. check compares those to what a dataset authored,
               and names every missing case, half-authored pair, and boundary
               case no declaration derived.
+  deck        Build the room-facing artifact: authored rounds joined to graded
+              cases. Withholds every slug, includes the reveal on purpose, and
+              scans what it built because a room is a public surface.
   pairs       Print pair results for a graded dataset.
+  present     Serve a built deck to a room. Public by default, because nothing
+              private is in it. Anonymous voting, held in memory and discarded
+              on exit. The presenter's control is the one gated thing.
   serve       Hold one run open for grading in a browser. Same rules as annotate,
               same per-decision write, and the evidence span is selected rather
               than retyped. Loopback only unless --expose says otherwise, because
@@ -87,6 +95,7 @@ COMMANDS
               --include-private asks for them.
 
 FILE SHAPES
+  rounds.yaml       {deck, rounds: [{id, case, commitments: [...]}]}
   dataset.yaml      {dataset: [{id, entity, test_type, prompt, target, output, ...}]}
   annotations.yaml  {annotations: [{id, label, critique, evidence}]}
   attributes.yaml   {schema, attributes: [{id, rule, inside, outside, origin, seed}]}
@@ -376,6 +385,69 @@ def serve_command(
         f"--annotations {session.annotations_path}"
     )
     serve_mod.serve(session, host, port, static, expose)
+
+
+@main.command()
+@click.argument("rounds_path", type=click.Path(exists=True, path_type=Path), metavar="ROUNDS")
+@click.option(
+    "--run",
+    "run_dir",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    required=True,
+    help="the graded run the cases come from",
+)
+@click.option("--out", type=click.Path(path_type=Path), required=True)
+@click.pass_context
+def deck(context: click.Context, rounds_path: Path, run_dir: Path, out: Path) -> None:
+    """Build the room-facing artifact from authored rounds and a graded run."""
+    intro(context)
+    try:
+        built = deck_mod.build_from_dirs(rounds_path, run_dir)
+    except ExportRefusedError as refusal:
+        click.echo(f"housecast grade deck: {refusal}", err=True)
+        raise SystemExit(1) from refusal
+
+    write_out(json.dumps(built, indent=2, sort_keys=False), out)
+    outro(f"housecast grade present {out}")
+
+
+@main.command()
+@click.argument("deck_path", type=click.Path(exists=True, path_type=Path), metavar="DECK")
+@click.option(
+    "--static",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="a built presentation page to mount at /",
+)
+@click.option("--host", default="0.0.0.0", show_default=True)
+@click.option("--port", default=present_mod.DEFAULT_PORT, show_default=True)
+@click.option("--control-token", help="fixed presenter token, otherwise one is minted per run")
+@click.pass_context
+def present(
+    context: click.Context,
+    deck_path: Path,
+    static: Path | None,
+    host: str,
+    port: int,
+    control_token: str | None,
+) -> None:
+    """Serve a built deck to a room, and take anonymous votes on it."""
+    intro(context)
+    try:
+        loaded = deck_mod.load(deck_path)
+    except ExportRefusedError as refusal:
+        click.echo(f"housecast grade present: {refusal}", err=True)
+        raise SystemExit(1) from refusal
+
+    show = present_mod.Presentation(name=loaded["deck"], rounds=loaded["rounds"])
+    if control_token:
+        show.control_token = control_token
+
+    click.echo(f"{len(show.rounds)} rounds in {show.name}")
+    click.echo(f"the room joins at http://{host}:{port}")
+    # Printed rather than displayed, because the projector is in the room.
+    click.echo(f"presenter control token: {show.control_token}", err=True)
+    outro("advance with POST /api/control/advance and the token in X-Control-Token")
+    present_mod.present(show, host, port, static)
 
 
 @main.command()

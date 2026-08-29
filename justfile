@@ -95,3 +95,11 @@ evalkit-annotate *ARGS:
 # Grade one committed run in a browser. `just grade-serve evaluations/pilot/RUN`.
 grade-serve *ARGS:
     @uv run --extra eval housecast grade serve "$@"
+
+# Build the room-facing deck. `just grade-deck ROUNDS --run RUN_DIR --out DECK`.
+grade-deck *ARGS:
+    @uv run --extra eval housecast grade deck "$@"
+
+# Serve a built deck to a room, with anonymous voting. `just grade-present DECK`.
+grade-present *ARGS:
+    @uv run --extra eval housecast grade present "$@"
