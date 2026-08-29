@@ -1,6 +1,8 @@
 # The grading page, colour and type
 
 How [`grading-page.md`](grading-page.md) treats evidence, verdicts, and scale.
+The values themselves are coilysiren.me's own, in
+[`grading-page-palette.md`](grading-page-palette.md).
 
 ## Evidence and critique share one purple
 

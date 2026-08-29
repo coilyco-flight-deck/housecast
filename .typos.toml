@@ -1,7 +1,10 @@
 # Evaluation records preserve raw model responses verbatim, so a spelling
 # correction inside a preserved answer would edit the evidence. Words that
 # only appear inside preserved answers are accepted rather than rewritten.
+# LICENSE-FONTS is upstream text and its axis tags are not misspellings.
 [default.extend-words]
+wdth = "wdth"
+wght = "wght"
 mis = "mis"
 unparseable = "unparseable"
 RTO = "RTO"

@@ -16,9 +16,8 @@ from housecast.roster import Roster
 ACTS_PER_ATTRIBUTE = 3
 SIDES = ("own", "scoped", "defer")
 
-# Surfaces that exist on one estate and nowhere else. The roster ships to
-# strangers, and a named tool that is absent reads to a seat as an instruction
-# already satisfied, which is agentic-os#1381.
+# Surfaces that exist on one estate and nowhere else, since a named tool that
+# is absent reads to a seat as an instruction already satisfied (agentic-os#1381).
 ESTATE_PREFIXES = ("aosguard", "mcp__", "ward ", "acompose", "housecast")
 
 
