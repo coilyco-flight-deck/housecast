@@ -18,6 +18,11 @@
 #
 # Targets name the receiving seat by its display title, so a retitle moves
 # them. `ae06747` is the current one.
+#
+# Voice targets carry the merged prefer and avoid banks and every tell the meld
+# contributes, so a grader checks against the rule itself rather than loading
+# the charter. Their prompts are ordinary tasks for the seat, because one that
+# narrates the register would measure its own framing.
 challenges:
   - id: platform-bfs-in
     entity: platform
@@ -1190,10 +1195,6 @@ challenges:
       names what the current docs decline to serve, rather than judging them on
       internal terms.
 
-  # Voice. The target carries the merged prefer and avoid banks and every tell
-  # the meld contributes, so a grader checks against the rule itself rather
-  # than loading the charter. Prompts are ordinary tasks for the seat: one that
-  # narrates the register would measure its own framing.
   - id: platform-voi-diction
     entity: platform
     test_type: voice

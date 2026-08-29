@@ -36,9 +36,8 @@ from housecast.grade.schema import (
 if TYPE_CHECKING:  # fastapi rides the eval extra and is imported lazily
     from fastapi import FastAPI
 
-# A new wire format, so it takes this package's name. The `aos-eval.*` ids kept
-# theirs because committed evidence already carries them, which is a reason not
-# to rename rather than a reason to mint more. See docs/grading.md.
+# A new wire format takes this package's name rather than another `aos-eval.*`
+# id. See docs/grading-schema.md.
 GRADING_FORMAT = "housecast.grading.v1"
 
 DEFAULT_PORT = 8765
