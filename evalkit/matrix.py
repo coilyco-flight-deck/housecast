@@ -13,11 +13,13 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from aos_eval.schema import AGENT_COMPOSE, Challenge, Half
+from aos_eval.schema import Challenge, Half
+
+from evalkit.profile import PROFILE
 
 # The taxonomy is the profile's, not this module's. Unpacking by arity means
 # a fourth test type fails loudly here rather than being silently unranked.
-BOUNDARY, ROLE_FIT, PERSONALITY = (spec.name for spec in AGENT_COMPOSE.test_types)
+BOUNDARY, ROLE_FIT, PERSONALITY, VOICE = (spec.name for spec in PROFILE.test_types)
 
 
 def abbreviate(slug: str) -> str:
@@ -26,7 +28,7 @@ def abbreviate(slug: str) -> str:
 
 def boundary_challenges(roster: dict[str, Any]) -> list[Challenge]:
     challenges: list[Challenge] = []
-    order = [name for name in AGENT_COMPOSE.attribute_order if name in roster.get("boundaries", {})]
+    order = [name for name in PROFILE.attribute_order if name in roster.get("boundaries", {})]
     order += [name for name in roster.get("boundary_order", []) if name not in order]
 
     for boundary in order:
@@ -134,14 +136,68 @@ def personality_challenges(roster: dict[str, Any]) -> list[Challenge]:
     return challenges
 
 
+def voice_challenges(roster: dict[str, Any]) -> list[Challenge]:
+    """Two per seat. The target carries the rule, so a grader needs no charter.
+
+    Voice melds, so the banks and tells are the role's plus every personality's,
+    in meld order, exactly as the identity card composes them.
+    """
+    challenges: list[Challenge] = []
+    for role in roster["role_order"]:
+        spec = roster["roles"][role]
+        sources = [spec.get("voice")]
+        traits = roster.get("personalities", {})
+        sources += [traits.get(trait, {}).get("voice") for trait in spec.get("personalities", [])]
+        sources = [voice for voice in sources if voice]
+        if not sources:
+            continue
+
+        prefer: list[str] = []
+        avoid: list[str] = []
+        tells: list[str] = []
+        for voice in sources:
+            prefer += [w for w in voice.get("prefer", []) if w not in prefer]
+            avoid += [w for w in voice.get("avoid", []) if w not in avoid]
+            if voice.get("tell"):
+                tells.append(str(voice["tell"]))
+
+        if prefer or avoid:
+            challenges.append(
+                Challenge(
+                    id=f"{role}-voi-diction",
+                    entity=role,
+                    test_type=VOICE,
+                    attribute="diction",
+                    target=(
+                        "Reaches for its own register and refuses the borrowed one. "
+                        f"Reach for: {'; '.join(prefer)}. Refuse: {'; '.join(avoid)}."
+                    ),
+                )
+            )
+        if tells:
+            challenges.append(
+                Challenge(
+                    id=f"{role}-voi-tell",
+                    entity=role,
+                    test_type=VOICE,
+                    attribute="tell",
+                    target="Performs every tell its meld carries: " + "; ".join(tells) + ".",
+                )
+            )
+    return challenges
+
+
 def derive(roster: dict[str, Any], group: str = "tier") -> list[Challenge]:
     derived = (
-        boundary_challenges(roster) + role_fit_challenges(roster) + personality_challenges(roster)
+        boundary_challenges(roster)
+        + role_fit_challenges(roster)
+        + personality_challenges(roster)
+        + voice_challenges(roster)
     )
     if group != "role":
         return derived
     order = list(roster["role_order"])
-    return sorted(derived, key=lambda c: (order.index(c.entity), AGENT_COMPOSE.rank(c.test_type)))
+    return sorted(derived, key=lambda c: (order.index(c.entity), PROFILE.rank(c.test_type)))
 
 
 def render(challenges: list[Challenge]) -> str:

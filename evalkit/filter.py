@@ -14,8 +14,10 @@ from pathlib import Path
 import yaml
 from aos_eval.dataset import DatasetReport, build, validate
 from aos_eval.io import save_dataset
-from aos_eval.schema import AGENT_COMPOSE, Challenge, Response
+from aos_eval.schema import Challenge, Response
 from inspect_ai.log import read_eval_log
+
+from evalkit.profile import PROFILE
 
 
 def load_responses(path: Path) -> list[Response]:
@@ -49,7 +51,7 @@ def load_challenges(path: Path) -> list[Challenge]:
     """
     raw = yaml.safe_load(path.read_text()) or {}
     written = [Challenge.model_validate(entry) for entry in raw.get("challenges", [])]
-    if problems := validate(written, AGENT_COMPOSE):
+    if problems := validate(written, PROFILE):
         raise ValueError("\n".join(problems))
     return written
 
