@@ -24,7 +24,6 @@ failing on an import error when the extra is absent.
 
 `test_no_runner_reaches_the_dependency_set` pins the half that matters: no runner
 reaches the **core** dependency set, whatever the extra carries.
-
 ## The profile is the deployment's
 
 `Profile` exists so a deployment declares its own test types without this schema
@@ -36,4 +35,6 @@ Adding a test type is a profile edit, never a schema edit.
 
 * [`grading-surfaces.md`](grading-surfaces.md) - the terminal and browser loops.
 * [`grading-evidence.md`](grading-evidence.md) - the public and private halves.
+* [`grading-schema.md`](grading-schema.md) - schema ids as a wire format.
+* [`grading-page.md`](grading-page.md) - the page `--static` mounts.
 * [`presenting.md`](presenting.md) - the room-facing deck and its server.

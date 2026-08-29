@@ -5,28 +5,28 @@ and internal plumbing never earn an entry here.
 
 ## Shipped
 
-* **The composition engine.** Reads a roster as YAML, validates it, resolves each
-  role's meld and boundary allocation, derives the identity primitives including
-  each role's favorite color, and emits an immutable bundle in either delivery
-  mode. See [`composition.md`](composition.md) and [`identity.md`](identity.md).
+* **The composition engine.** Reads a roster as YAML, resolves each role's meld
+  and boundary allocation, derives the identity primitives, and emits an
+  immutable bundle. See [`composition.md`](composition.md), [`identity.md`](identity.md).
 * **The roster language.** `housecast/data/roster.yaml` carries roles,
   personalities, boundaries, and the invariant. See
-  [`roster-language.md`](roster-language.md) and
-  [`role-boundaries.md`](role-boundaries.md).
+  [`roster-language.md`](roster-language.md), [`role-boundaries.md`](role-boundaries.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape
   downstream tools read, which is what removed Go from the eval path.
-* **evalkit, the board runner.** Derives the challenge board from the roster,
-  runs it through Inspect against Agent Proxy, and hands datasets to the
-  annotator. See [`evaluation.md`](evaluation.md).
-* **The grading half.** `housecast grade` under the `eval` extra: schema, pairing,
-  annotation, failure taxonomy, one-way export. See [`grading.md`](grading.md).
+* **evalkit, the board runner.** Derives the board from the roster and runs it
+  through Inspect against Agent Proxy. See [`evaluation.md`](evaluation.md).
+* **The grading half.** `housecast grade` under the `eval` extra: schema,
+  pairing, annotation, taxonomy, one-way export. See [`grading.md`](grading.md).
 * **A browser grading surface.** `housecast grade serve` holds one run open for a
   grader on loopback under the rules the terminal loop enforces, and refuses to
   bind past loopback. See [`grading-surfaces.md`](grading-surfaces.md).
+* **The grading page.** Renders a run as one card per boundary pair, both halves
+  side by side, evidence highlighted. One file, no build step. See
+  [`grading-page.md`](grading-page.md).
 * **The room-facing half.** `housecast grade deck` builds a scanned, slug-free
   deck and `housecast grade present` serves it with anonymous voting, a separate
   process so the divide between a private critique and a room is which command
-  runs. See [`presenting.md`](presenting.md) and [`deck.md`](deck.md).
+  runs. See [`presenting.md`](presenting.md), [`deck.md`](deck.md).
 
 ## Not shipped
 
