@@ -22,6 +22,7 @@ from housecast.grade import board as board_mod
 from housecast.grade import dataset as dataset_mod
 from housecast.grade import deck as deck_mod
 from housecast.grade import present as present_mod
+from housecast.grade import seal as seal_mod
 from housecast.grade import serve as serve_mod
 from housecast.grade import taxonomy as taxonomy_mod
 from housecast.grade.export import ExportRefusedError, export_run_dir
@@ -81,6 +82,9 @@ COMMANDS
   present     Serve a built deck to a room. Public by default, because nothing
               private is in it. Anonymous voting, held in memory and discarded
               on exit. The presenter's control is the one gated thing.
+  seal        Write an export into a copy of the grading page, so it renders
+              from a file path with no server. Always a copy, and it rides
+              export's own refusal rather than adding a second gate.
   serve       Hold one run open for grading in a browser. Same rules as annotate,
               same per-decision write, and the evidence span is selected rather
               than retyped. Loopback only unless --expose says otherwise, because
@@ -385,6 +389,33 @@ def serve_command(
         f"--annotations {session.annotations_path}"
     )
     serve_mod.serve(session, host, port, static, expose)
+
+
+@main.command(name="seal")
+@click.argument("run_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--out", type=click.Path(path_type=Path), required=True, help="the sealed .html")
+@click.option(
+    "--include-private",
+    is_flag=True,
+    help="seal the grader's critique and evidence too, which a public artifact must not carry",
+)
+@click.pass_context
+def seal_command(context: click.Context, run_dir: Path, out: Path, include_private: bool) -> None:
+    """Write a run's export into a copy of the grading page."""
+    intro(context)
+    try:
+        run = export_run_dir(run_dir, include_private)
+        written = seal_mod.seal_to(out, run.to_dict())
+    except ExportRefusedError as refusal:
+        click.echo(f"housecast grade seal: {refusal}", err=True)
+        raise SystemExit(1) from refusal
+
+    counts = run.counts()
+    click.echo(f"wrote {written} with {counts['cases']} cases and {counts['pairs']} pairs")
+    if include_private:
+        # The one artifact in this repository that must not reach a projector.
+        click.echo("this artifact carries the grader's critique. Do not present it.", err=True)
+    outro("open it from a file path, fresh profile, radio off, on the machine for the room")
 
 
 @main.command()
