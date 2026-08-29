@@ -78,7 +78,7 @@ evalkit-view *ARGS:
 
 # Project a committed run into a display payload, one way only.
 evalkit-export *ARGS:
-    @uv run --extra eval aos-eval export "$@"
+    @uv run --extra eval housecast grade export "$@"
 
 # Read an Inspect eval log and build the dataset the annotator grades.
 evalkit-filter *ARGS:
@@ -86,8 +86,12 @@ evalkit-filter *ARGS:
 
 # Cluster annotation critiques into a ranked failure taxonomy.
 evalkit-taxonomy *ARGS:
-    @uv run --extra eval aos-eval taxonomy "$@"
+    @uv run --extra eval housecast grade taxonomy "$@"
 
 # Annotate the eval dataset by hand, one keystroke per challenge.
 evalkit-annotate *ARGS:
     @sh scripts/eval-annotate.sh "$@"
+
+# Grade one committed run in a browser. `just grade-serve evaluations/pilot/RUN`.
+grade-serve *ARGS:
+    @uv run --extra eval housecast grade serve "$@"

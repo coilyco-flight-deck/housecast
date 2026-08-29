@@ -35,6 +35,16 @@ annotation, failure taxonomy, and the one-way display export. It ships as
 from `agentic-os/aos-eval`, which is deleted once sirens-echo moves. See
 [`grading.md`](grading.md).
 
+* **A browser grading surface.** `housecast grade serve` holds one committed run
+  open for a grader on loopback and writes every decision back to
+  `annotations.yaml`, enforcing the same label, critique, and verbatim-span
+  rules the terminal loop does. It hands the page `housecast.grading.v1`,
+  carrying the profile's own keystrokes so one-key grading survives the move.
+  The evidence span is selected rather than retyped. It refuses to bind past
+  loopback without `--expose`, because that payload carries the grader's private
+  critique, and a built display artifact embeds the public export instead and
+  can neither read one nor write a label.
+
 ## See also
 
 * [`../README.md`](../README.md) - what housecast is and how it pairs with acompose.

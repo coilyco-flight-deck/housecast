@@ -660,14 +660,17 @@ dependencies = [
 [package.optional-dependencies]
 eval = [
     { name = "click" },
+    { name = "fastapi" },
     { name = "inspect-ai" },
     { name = "openai" },
     { name = "pydantic" },
     { name = "rich" },
+    { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "httpx" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "ruff" },
@@ -677,16 +680,19 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "click", marker = "extra == 'eval'", specifier = ">=8.1" },
+    { name = "fastapi", marker = "extra == 'eval'", specifier = ">=0.115" },
     { name = "inspect-ai", marker = "extra == 'eval'", specifier = ">=0.3.255" },
     { name = "openai", marker = "extra == 'eval'", specifier = ">=2.53.0" },
     { name = "pydantic", marker = "extra == 'eval'", specifier = ">=2.9" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", marker = "extra == 'eval'", specifier = ">=13" },
+    { name = "uvicorn", marker = "extra == 'eval'", specifier = ">=0.30" },
 ]
 provides-extras = ["eval"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "mypy", specifier = ">=1.11" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "ruff", specifier = ">=0.6" },

@@ -20,6 +20,7 @@ from housecast.grade import annotate as annotate_mod
 from housecast.grade import attributes as attributes_mod
 from housecast.grade import board as board_mod
 from housecast.grade import dataset as dataset_mod
+from housecast.grade import serve as serve_mod
 from housecast.grade import taxonomy as taxonomy_mod
 from housecast.grade.export import ExportRefusedError, export_run_dir
 from housecast.grade.io import (
@@ -72,6 +73,10 @@ COMMANDS
               and names every missing case, half-authored pair, and boundary
               case no declaration derived.
   pairs       Print pair results for a graded dataset.
+  serve       Hold one run open for grading in a browser. Same rules as annotate,
+              same per-decision write, and the evidence span is selected rather
+              than retyped. Loopback only unless --expose says otherwise, because
+              the payload carries the critique and evidence annotate would hide.
   taxonomy    Axial coding. Groups deductions by structural axis and shared
               critique terms into a ranked failure taxonomy.
   validate    Check a dataset against a profile's required fields.
@@ -317,6 +322,60 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
     for problem in problems:
         click.echo(problem, err=True)
     raise SystemExit(1)
+
+
+@main.command(name="serve")
+@click.argument("run_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
+@click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
+@click.option(
+    "--static",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="a built grading page to mount at /",
+)
+@click.option("--host", default="127.0.0.1", show_default=True)
+@click.option("--port", default=serve_mod.DEFAULT_PORT, show_default=True)
+@click.option(
+    "--expose",
+    is_flag=True,
+    help="accept binding past loopback, where the grader's own critique becomes reachable",
+)
+@click.pass_context
+def serve_command(
+    context: click.Context,
+    run_dir: Path,
+    profile_path: Path | None,
+    roster: Path | None,
+    static: Path | None,
+    host: str,
+    port: int,
+    expose: bool,
+) -> None:
+    """Hold one run open for grading in a browser."""
+    intro(context)
+    # Checked before the run is loaded, so a refused bind costs nothing and the
+    # reason reaches the operator before any private text is in memory.
+    try:
+        serve_mod.check_bind(host, expose)
+        session = serve_mod.GradingSession.open(
+            run_dir,
+            load_profile(profile_path),
+            json.loads(roster.read_text()) if roster else None,
+        )
+    except (serve_mod.BindRefusedError, FileNotFoundError) as refused:
+        click.echo(f"housecast grade serve: {refused}", err=True)
+        raise SystemExit(1) from refused
+
+    counts = session.counts()
+    click.echo(
+        f"{counts['cases']} cases in {run_dir.name}, {counts['annotated']} already annotated"
+    )
+    click.echo(f"grading at http://{host}:{port}, writing {session.annotations_path}")
+    outro(
+        f"housecast grade taxonomy --dataset {run_dir / 'dataset.yaml'} "
+        f"--annotations {session.annotations_path}"
+    )
+    serve_mod.serve(session, host, port, static, expose)
 
 
 @main.command()

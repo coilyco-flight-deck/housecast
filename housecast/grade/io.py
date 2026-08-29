@@ -49,8 +49,16 @@ def load_annotations(path: Path) -> dict[str, Annotation]:
 
 
 def save_annotations(path: Path, annotations: dict[str, Annotation]) -> None:
+    """Rewritten whole after every single decision, by both grading surfaces.
+
+    Atomic because of that frequency: a torn write here costs a whole grading
+    session rather than one label, and the file is small enough that the
+    temp-and-replace is free.
+    """
     payload = {"annotations": [annotations[key].to_dict() for key in sorted(annotations)]}
-    path.write_text(dump_yaml(payload))
+    scratch = path.with_name(f".{path.name}.partial")
+    scratch.write_text(dump_yaml(payload))
+    scratch.replace(path)
 
 
 def load_profile(path: Path | None) -> Profile:
