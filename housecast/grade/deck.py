@@ -22,9 +22,8 @@ from housecast.grade.schema import Annotation, DatasetEntry
 
 DECK_FORMAT = "housecast.deck.v1"
 
-# Every slug the audience never sees. Withheld by construction here rather than
-# suppressed in the page, because a retired slug on a recorded stream is a
-# visible inconsistency and a CSS rule is not a guarantee. See inbox#472.
+# Every slug the audience never sees, withheld here rather than suppressed in a
+# page. See docs/deck.md.
 WITHHELD = ("entity", "test_type", "attribute", "pair_id", "half", "seed", "required_tool")
 
 

@@ -121,9 +121,8 @@ class Presentation:
         if self.reached("case"):
             payload["prompt"] = current.prompt
             payload["response"] = current.response
-        # A count while the vote is open, never a direction. A running split
-        # anchors every later voter to the early ones, so the reading stops
-        # being of the room and starts being of whoever went first.
+        # A count while open, never a direction: a running split anchors later
+        # voters to the early ones. See docs/presenting.md.
         if self.state == "open":
             payload["votes_cast"] = len(self.votes.get(self.round_index, {}))
         if self.reached("split"):
