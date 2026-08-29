@@ -82,9 +82,8 @@ def rewrite(text: str, source: dict[str, dict[str, dict]]) -> str:
             body = source[section][entity]["body"].rstrip("\n")
             out.extend(("      " + b).rstrip() for b in body.split("\n"))
             index += 1
-            # Skip the vendored body: every line indented past the field level,
-            # plus the blank lines inside it. Blank lines trailing the block are
-            # the file's own separator style and survive.
+            # Skip the vendored body, indented past the field level. Blank
+            # lines trailing the block are the file's separator style and stay.
             trailing = 0
             while index < len(lines) and (lines[index].startswith("      ") or not lines[index].strip()):
                 trailing = trailing + 1 if not lines[index].strip() else 0

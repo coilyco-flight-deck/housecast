@@ -21,42 +21,60 @@
 -->
 
 <style>
+/* Roboto, the site's own face. The files sit beside this page so `serve` and
+   `present` resolve them relatively. See grading-page-palette.md. */
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("roboto-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("roboto-latin-700-normal.woff2") format("woff2");
+}
+
 /* ---------------------------------------------------------------- tokens */
+/* Values are coilysiren.me's own, read off _vars.scss. See grading-page-treatment.md. */
 :root {
   color-scheme: dark;
 
-  --ground:      #0a0710;
-  --surface:     #140f1e;
-  --surface-2:   #1b1430;
-  --surface-3:   #241a3d;
-  --line:        #2b2142;
-  --line-2:      #423162;
+  --ground:      #211c33;
+  --surface:     #29243f;
+  --surface-2:   #322c4a;
+  --surface-3:   #3e375d;
+  --line:        #3e375d;
+  --line-2:      #574f7d;
 
-  --ink:         #f4efff;
-  --ink-2:       #c2b7dc;
-  --ink-3:       #8b7fa6;
+  --ink:         #eeeeee;
+  --ink-2:       #c6c4da;
+  --ink-3:       #9e9fc2;
 
   /* purple carries structure and the evidence span. It is never a verdict. */
-  --accent:      #c88bff;
-  --accent-deep: #8b4ae0;
-  --accent-wash: rgba(200, 139, 255, .16);
-  --accent-edge: rgba(200, 139, 255, .42);
-  --accent-mark: rgba(200, 139, 255, .30);
+  --accent:      #a6a7cc;
+  --accent-deep: #574f7d;
+  --accent-wash: rgba(166, 167, 204, .16);
+  --accent-edge: rgba(166, 167, 204, .42);
+  --accent-mark: rgba(166, 167, 204, .30);
 
   /* Verdicts never rely on hue alone: each carries a glyph and a word. */
-  --affirm:      #4fdcbb;
-  --affirm-wash: rgba(79, 220, 187, .13);
-  --deduct:      #ff7f9c;
-  --deduct-wash: rgba(255, 127, 156, .13);
-  --hold:        #ffc25e;
-  --hold-wash:   rgba(255, 194, 94, .13);
-  --idle:        #9e93b8;
-  --idle-edge:   #6b6083;
-  --idle-wash:   rgba(107, 96, 131, .10);
+  --affirm:      #8bae9b;
+  --affirm-wash: rgba(139, 174, 155, .13);
+  --deduct:      #dc8f72;
+  --deduct-wash: rgba(220, 143, 114, .13);
+  --hold:        #f0bd68;
+  --hold-wash:   rgba(240, 189, 104, .13);
+  --idle:        #9192bb;
+  --idle-edge:   #574f7d;
+  --idle-wash:   rgba(145, 146, 187, .10);
 
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+  --sans: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: SFMono-Regular, ui-monospace, "SF Mono", Menlo, Consolas,
           "Liberation Mono", monospace;
 
   /* One scale. --zoom is the projector solve and the only thing that moves. */
@@ -67,39 +85,40 @@
   --t-3: 1rem;
   --t-4: 1.0625rem;
   --t-5: 1.3125rem;
+  /* The site opens at a display weight, so the board names itself in one. */
+  --t-6: 2.25rem;
 
-  --r:   10px;
-  --r-s: 6px;
+  /* The site has no rounded corner anywhere, so neither does this. */
+  --r:   0px;
+  --r-s: 0px;
   --gap: 1rem;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --ground:      #f7f4fb;
+  --ground:      #fbfaf7;
   --surface:     #ffffff;
-  /* Neutral rather than lavender: the captured response must not read as
-     highlighted, or it competes with the evidence span sitting inside it. */
-  --surface-2:   #f1eff3;
-  --surface-3:   #e7dcf6;
-  --line:        #ddd2ec;
-  --line-2:      #b7a5d6;
-  --ink:         #1a1226;
-  --ink-2:       #4a3d63;
-  --ink-3:       #6f6289;
-  --accent:      #7b2fd0;
-  --accent-deep: #5a1ba8;
-  --accent-wash: rgba(123, 47, 208, .14);
-  --accent-edge: rgba(123, 47, 208, .40);
-  --accent-mark: rgba(123, 47, 208, .22);
-  --affirm:      #096354;
-  --affirm-wash: rgba(12, 125, 104, .12);
-  --deduct:      #c02a52;
-  --deduct-wash: rgba(192, 42, 82, .11);
-  --hold:        #8a5a00;
-  --hold-wash:   rgba(138, 90, 0, .12);
+  --surface-2:   #f1f0f4;
+  --surface-3:   #e9e7f0;
+  --line:        #ddd9e6;
+  --line-2:      #b3adc8;
+  --ink:         #211c33;
+  --ink-2:       #29243f;
+  --ink-3:       #574f7d;
+  --accent:      #574f7d;
+  --accent-deep: #3e375d;
+  --accent-wash: rgba(87, 79, 125, .14);
+  --accent-edge: rgba(87, 79, 125, .40);
+  --accent-mark: rgba(87, 79, 125, .22);
+  --affirm:      #3f6b55;
+  --affirm-wash: rgba(63, 107, 85, .13);
+  --deduct:      #a2492f;
+  --deduct-wash: rgba(162, 73, 47, .13);
+  --hold:        #7a5000;
+  --hold-wash:   rgba(122, 80, 0, .13);
   --idle:        #6c6183;
   --idle-edge:   #a99dc0;
-  --idle-wash:   rgba(123, 112, 145, .07);
+  --idle-wash:   rgba(108, 97, 131, .07);
 }
 
 /* ----------------------------------------------------------------- base */
@@ -107,7 +126,8 @@
 html { font-size: calc(16px * var(--zoom)); }
 body {
   margin: 0;
-  background: var(--ground);
+  background: var(--ground) url("background-shapes.svg") repeat;
+  background-size: 960px;
   color: var(--ink);
   font-family: var(--sans);
   font-size: var(--t-3);
@@ -198,11 +218,16 @@ button { font: inherit; color: inherit; }
 
 /* ----------------------------------------------------------------- rail */
 .run-name {
-  font-size: var(--t-5);
-  font-weight: 650;
-  letter-spacing: -.015em;
-  line-height: 1.15;
+  font-size: var(--t-6);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.05;
   overflow-wrap: anywhere;
+}
+/* The rail is a fixed column, so the display size steps down rather than
+   wrapping the board's name to four lines. See grading-page-treatment.md. */
+@media (max-width: 60rem) {
+  .run-name { font-size: var(--t-5); }
 }
 
 .source {
@@ -215,7 +240,7 @@ button { font: inherit; color: inherit; }
   font-family: var(--mono);
   font-size: var(--t-0);
   padding: .1875rem .4375rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line-2);
   color: var(--ink-3);
   white-space: nowrap;
@@ -228,14 +253,14 @@ button { font: inherit; color: inherit; }
   display: flex; justify-content: space-between; align-items: baseline;
   font-size: var(--t-1); color: var(--ink-2);
 }
-.progress-nums b { font-size: var(--t-4); color: var(--ink); font-weight: 650; }
+.progress-nums b { font-size: var(--t-4); color: var(--ink); font-weight: 700; }
 .bar {
-  margin-top: .375rem; height: .375rem; border-radius: 999px;
+  margin-top: .375rem; height: .375rem; border-radius: 0;
   background: var(--surface-3); overflow: hidden;
 }
 .bar > i {
   display: block; height: 100%; width: 0;
-  background: var(--accent); border-radius: 999px;
+  background: var(--accent); border-radius: 0;
   transition: width .25s ease;
 }
 
@@ -253,7 +278,7 @@ button { font: inherit; color: inherit; }
 .cells { display: flex; flex-wrap: wrap; gap: 3px; }
 .cell {
   width: .875rem; height: .875rem; padding: 0;
-  border-radius: 3px; cursor: pointer;
+  border-radius: 0; cursor: pointer;
   border: 1px dashed var(--idle-edge);
   background: var(--idle-wash);
 }
@@ -264,7 +289,7 @@ button { font: inherit; color: inherit; }
 
 .legend { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .3125rem; }
 .legend div { display: flex; align-items: center; gap: .4375rem; font-size: var(--t-1); color: var(--ink-2); }
-.swatch { width: .75rem; height: .75rem; border-radius: 3px; border: 1px solid var(--line-2); flex: none; }
+.swatch { width: .75rem; height: .75rem; border-radius: 0; border: 1px solid var(--line-2); flex: none; }
 .swatch.affirm { background: var(--affirm); border-color: var(--affirm); }
 .swatch.deduct { background: var(--deduct); border-color: var(--deduct); }
 .swatch.hold   { background: var(--hold);   border-color: var(--hold); }
@@ -284,7 +309,7 @@ button { font: inherit; color: inherit; }
 .keys kbd {
   font-family: var(--mono); font-size: .95em;
   background: var(--surface-3); border: 1px solid var(--line-2);
-  border-bottom-width: 2px; border-radius: 4px; padding: 0 .3125rem;
+  border-bottom-width: 2px; border-radius: 0; padding: 0 .3125rem;
   color: var(--ink-2);
 }
 
@@ -305,13 +330,13 @@ button { font: inherit; color: inherit; }
   border-radius: var(--r) var(--r) 0 0;
 }
 .ent {
-  font-family: var(--mono); font-size: var(--t-2); font-weight: 600;
+  font-family: var(--mono); font-size: var(--t-2); font-weight: 700;
   color: var(--accent);
 }
 .attr { font-family: var(--mono); font-size: var(--t-1); color: var(--ink-2); overflow-wrap: anywhere; }
 .tt {
   font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
-  border: 1px solid var(--line-2); border-radius: 999px; padding: .0625rem .375rem;
+  border: 1px solid var(--line-2); border-radius: 0; padding: .0625rem .375rem;
 }
 .unit-h .spacer { flex: 1 1 auto; }
 
@@ -341,7 +366,7 @@ button { font: inherit; color: inherit; }
 
 .verdict {
   margin-left: auto; display: inline-flex; align-items: center; gap: .3125rem;
-  font-size: var(--t-1); font-weight: 600; white-space: nowrap;
+  font-size: var(--t-1); font-weight: 700; white-space: nowrap;
   padding: .125rem .4375rem; border-radius: var(--r-s);
   border: 1px solid currentColor;
 }
@@ -414,7 +439,7 @@ mark.ev {
   color: var(--ink-3); letter-spacing: .02em; white-space: nowrap;
   padding-right: .625rem; border-right: 1px solid var(--line-2);
 }
-.pair-read { font-weight: 650; white-space: nowrap; }
+.pair-read { font-weight: 700; white-space: nowrap; }
 
 /* Narrow: the verdict strip drops under the slugs rather than forcing the
    page sideways. The body never scrolls horizontally. */
@@ -428,7 +453,7 @@ mark.ev {
 }
 .pair-read[data-tone="affirm"] { color: var(--affirm); }
 .pair-read[data-tone="deduct"] { color: var(--deduct); }
-.pair-read[data-tone="idle"]   { color: var(--idle); font-weight: 500; }
+.pair-read[data-tone="idle"]   { color: var(--idle); font-weight: 400; }
 
 /* ---------------------------------------------------------- empty state */
 .empty {
@@ -437,7 +462,7 @@ mark.ev {
   padding: 1.75rem;
   background: var(--surface);
 }
-.empty h2 { font-size: var(--t-5); font-weight: 650; margin-bottom: .5rem; }
+.empty h2 { font-size: var(--t-5); font-weight: 700; margin-bottom: .5rem; }
 .empty p { color: var(--ink-2); font-size: var(--t-2); margin-bottom: .75rem; max-width: 46rem; }
 .empty pre {
   font-family: var(--mono); font-size: var(--t-1);
