@@ -176,6 +176,18 @@ growing a branch per consumer. `evalkit/profile.py` is agent-compose's, carrying
 `boundary`, `role-fit`, `personality`, and `voice`. sirens-echo declares its own.
 Adding a test type is a profile edit, never a schema edit.
 
+## The page that renders it
+
+`housecast/grade/page/index.html` is the surface `--static` mounts. It renders a
+committed run as a card per boundary pair, with both halves side by side and the
+evidence span highlighted inside the response.
+
+It is one file with no build step, which is the safety property rather than a
+preference: there is no bundler that could bake the grader-private payload into
+a distributed artifact. See [`grading-page.md`](grading-page.md),
+[`grading-page-treatment.md`](grading-page-treatment.md), and
+[`grading-page-delivery.md`](grading-page-delivery.md).
+
 ## See also
 
 * [`FEATURES.md`](FEATURES.md) - the shipped capability inventory.

@@ -54,6 +54,12 @@ from `agentic-os/aos-eval`, which is deleted once sirens-echo moves. See
   from `serve` on purpose: nothing is authenticated for a viewer, so the divide
   between a private critique and an audience is which command is running rather
   than a flag inside one.
+* **The grading page.** `housecast/grade/page/index.html` renders one committed
+  run as a card per boundary pair, both halves side by side, with the evidence
+  span highlighted in the response. One file and no build step, so a
+  grader-private payload cannot be baked into a distributed artifact. Mount it
+  with `serve --static housecast/grade/page`. See
+  [`grading-page.md`](grading-page.md).
 
 ## See also
 

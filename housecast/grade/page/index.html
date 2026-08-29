@@ -1,0 +1,1012 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>housecast // grading board</title>
+
+<!--
+  The grading board. One file, no build step, no dependency that resolves a
+  hostname at render.
+
+  The absent build step is the safety property rather than a preference. There
+  is nothing here that could bake a grader-private payload into a distributed
+  artifact, so the file opened on a projector cannot carry a critique. Private
+  text arrives only from `housecast grade serve` over loopback, at runtime.
+
+  Two payload shapes reach one renderer:
+    housecast.grading.v1   from GET /api/session, carries the private half
+    aos-eval.export.v1     embedded below, public only
+
+  See docs/grading-page.md.
+-->
+
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root {
+  color-scheme: dark;
+
+  --ground:      #0a0710;
+  --surface:     #140f1e;
+  --surface-2:   #1b1430;
+  --surface-3:   #241a3d;
+  --line:        #2b2142;
+  --line-2:      #423162;
+
+  --ink:         #f4efff;
+  --ink-2:       #c2b7dc;
+  --ink-3:       #8b7fa6;
+
+  /* purple carries structure and the evidence span. It is never a verdict. */
+  --accent:      #c88bff;
+  --accent-deep: #8b4ae0;
+  --accent-wash: rgba(200, 139, 255, .16);
+  --accent-edge: rgba(200, 139, 255, .42);
+  --accent-mark: rgba(200, 139, 255, .30);
+
+  /* Verdicts never rely on hue alone: each carries a glyph and a word. */
+  --affirm:      #4fdcbb;
+  --affirm-wash: rgba(79, 220, 187, .13);
+  --deduct:      #ff7f9c;
+  --deduct-wash: rgba(255, 127, 156, .13);
+  --hold:        #ffc25e;
+  --hold-wash:   rgba(255, 194, 94, .13);
+  --idle:        #9e93b8;
+  --idle-edge:   #6b6083;
+  --idle-wash:   rgba(107, 96, 131, .10);
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+          "Liberation Mono", monospace;
+
+  /* One scale. --zoom is the projector solve and the only thing that moves. */
+  --zoom: 1;
+  --t-0: .6875rem;
+  --t-1: .78125rem;
+  --t-2: .875rem;
+  --t-3: 1rem;
+  --t-4: 1.0625rem;
+  --t-5: 1.3125rem;
+
+  --r:   10px;
+  --r-s: 6px;
+  --gap: 1rem;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground:      #f7f4fb;
+  --surface:     #ffffff;
+  /* Neutral rather than lavender: the captured response must not read as
+     highlighted, or it competes with the evidence span sitting inside it. */
+  --surface-2:   #f1eff3;
+  --surface-3:   #e7dcf6;
+  --line:        #ddd2ec;
+  --line-2:      #b7a5d6;
+  --ink:         #1a1226;
+  --ink-2:       #4a3d63;
+  --ink-3:       #6f6289;
+  --accent:      #7b2fd0;
+  --accent-deep: #5a1ba8;
+  --accent-wash: rgba(123, 47, 208, .14);
+  --accent-edge: rgba(123, 47, 208, .40);
+  --accent-mark: rgba(123, 47, 208, .22);
+  --affirm:      #096354;
+  --affirm-wash: rgba(12, 125, 104, .12);
+  --deduct:      #c02a52;
+  --deduct-wash: rgba(192, 42, 82, .11);
+  --hold:        #8a5a00;
+  --hold-wash:   rgba(138, 90, 0, .12);
+  --idle:        #6c6183;
+  --idle-edge:   #a99dc0;
+  --idle-wash:   rgba(123, 112, 145, .07);
+}
+
+/* ----------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { font-size: calc(16px * var(--zoom)); }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-3);
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3, p, figure, blockquote { margin: 0; }
+button { font: inherit; color: inherit; }
+
+:where(a, button, [tabindex]):focus-visible,
+.unit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-s);
+}
+
+.vh {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip {
+  position: absolute; left: .5rem; top: -3rem; z-index: 30;
+  background: var(--accent-deep); color: #fff;
+  padding: .5rem .75rem; border-radius: var(--r-s); text-decoration: none;
+}
+.skip:focus { top: .5rem; }
+
+/* ---------------------------------------------------------------- shell */
+.shell {
+  display: grid;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+  max-width: 96rem;
+  margin: 0 auto;
+}
+
+.rail {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem 1rem 2rem;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.stream {
+  min-width: 0;
+  padding: 1.25rem clamp(.75rem, 2.5vw, 2rem) 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+/* Wide: everything is open and the disclosure is invisible plumbing. */
+.rail-more > summary { display: none; }
+
+@media (max-width: 60rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .rail {
+    position: static; max-height: none;
+    border-right: 0; border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+  }
+  /* Narrow: the first thing on screen is a case, not a control panel. The
+     map and the controls are one tap away rather than a screen of scroll. */
+  .rail-more > summary {
+    display: block;
+    margin-top: 1rem;
+    padding: .5rem .625rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-s);
+    font-size: var(--t-1);
+    color: var(--ink-2);
+    cursor: pointer;
+    list-style: none;
+  }
+  .rail-more > summary::-webkit-details-marker { display: none; }
+  .rail-more > summary::after { content: " ▸"; color: var(--accent); }
+  .rail-more[open] > summary::after { content: " ▾"; }
+  .rail-more > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+
+/* ----------------------------------------------------------------- rail */
+.run-name {
+  font-size: var(--t-5);
+  font-weight: 650;
+  letter-spacing: -.015em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.source {
+  margin-top: .375rem;
+  display: flex; flex-wrap: wrap; gap: .3125rem;
+  font-size: var(--t-0);
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: var(--t-0);
+  padding: .1875rem .4375rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.tag.live   { color: var(--accent); border-color: var(--accent-edge); background: var(--accent-wash); }
+.tag.sealed { color: var(--ink-2); }
+
+.progress { margin-top: 1.125rem; }
+.progress-nums {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: var(--t-1); color: var(--ink-2);
+}
+.progress-nums b { font-size: var(--t-4); color: var(--ink); font-weight: 650; }
+.bar {
+  margin-top: .375rem; height: .375rem; border-radius: 999px;
+  background: var(--surface-3); overflow: hidden;
+}
+.bar > i {
+  display: block; height: 100%; width: 0;
+  background: var(--accent); border-radius: 999px;
+  transition: width .25s ease;
+}
+
+/* The map. Every case as one cell, entity-major, in annotation order. */
+.map { margin-top: 1.5rem; }
+.map-h {
+  font-size: var(--t-0); text-transform: uppercase; letter-spacing: .09em;
+  color: var(--ink-3); margin-bottom: .5rem;
+}
+.map-row { margin-bottom: .5rem; }
+.map-row > .ent-name {
+  font-family: var(--mono); font-size: var(--t-0);
+  color: var(--ink-2); display: block; margin-bottom: .1875rem;
+}
+.cells { display: flex; flex-wrap: wrap; gap: 3px; }
+.cell {
+  width: .875rem; height: .875rem; padding: 0;
+  border-radius: 3px; cursor: pointer;
+  border: 1px dashed var(--idle-edge);
+  background: var(--idle-wash);
+}
+.cell[data-v="pass"], .cell[data-v="fit"] { background: var(--affirm); border-color: var(--affirm); }
+.cell[data-v="fail"], .cell[data-v="does-not-fit"] { background: var(--deduct); border-color: var(--deduct); }
+.cell[data-v="undecided"] { background: var(--hold); border-color: var(--hold); }
+.cell[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.legend { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .3125rem; }
+.legend div { display: flex; align-items: center; gap: .4375rem; font-size: var(--t-1); color: var(--ink-2); }
+.swatch { width: .75rem; height: .75rem; border-radius: 3px; border: 1px solid var(--line-2); flex: none; }
+.swatch.affirm { background: var(--affirm); border-color: var(--affirm); }
+.swatch.deduct { background: var(--deduct); border-color: var(--deduct); }
+.swatch.hold   { background: var(--hold);   border-color: var(--hold); }
+.swatch.idle   { background: var(--idle-wash); border-style: dashed; border-color: var(--idle-edge); }
+
+.controls { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .375rem; }
+.controls .split { flex-basis: 100%; height: 0; }
+.ctl {
+  background: var(--surface-2); border: 1px solid var(--line-2);
+  border-radius: var(--r-s); padding: .3125rem .5625rem;
+  font-size: var(--t-1); cursor: pointer;
+}
+.ctl:hover { border-color: var(--accent-edge); color: var(--accent); }
+.ctl[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent-edge); color: var(--accent); }
+
+.keys { margin-top: 1.25rem; font-size: var(--t-0); color: var(--ink-3); line-height: 1.7; }
+.keys kbd {
+  font-family: var(--mono); font-size: .95em;
+  background: var(--surface-3); border: 1px solid var(--line-2);
+  border-bottom-width: 2px; border-radius: 4px; padding: 0 .3125rem;
+  color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------------- units */
+.unit {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  scroll-margin-top: 1rem;
+}
+.unit[aria-current="true"] { border-color: var(--accent-edge); box-shadow: 0 0 0 1px var(--accent-edge); }
+
+.unit-h {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  padding: .625rem .875rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: var(--r) var(--r) 0 0;
+}
+.ent {
+  font-family: var(--mono); font-size: var(--t-2); font-weight: 600;
+  color: var(--accent);
+}
+.attr { font-family: var(--mono); font-size: var(--t-1); color: var(--ink-2); overflow-wrap: anywhere; }
+.tt {
+  font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
+  border: 1px solid var(--line-2); border-radius: 999px; padding: .0625rem .375rem;
+}
+.unit-h .spacer { flex: 1 1 auto; }
+
+/* The pair is the scoring unit, so both halves sit side by side and the
+   comparison is the card rather than something to hold in your head. */
+.halves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+}
+.unit.single .halves { grid-template-columns: 1fr; }
+@media (max-width: 52rem) { .halves { grid-template-columns: 1fr; } }
+
+.half { background: var(--surface); padding: .875rem; min-width: 0; }
+
+.half-h { display: flex; align-items: center; gap: .5rem; margin-bottom: .625rem; }
+.half-tag {
+  font-family: var(--mono); font-size: var(--t-0);
+  text-transform: uppercase; letter-spacing: .1em; font-weight: 700;
+  padding: .125rem .4375rem; border-radius: var(--r-s);
+  border: 1px solid var(--line-2); color: var(--ink-2);
+}
+.half[data-half="in"]  .half-tag { color: var(--ink); border-color: var(--ink-3); }
+.half[data-half="out"] .half-tag { color: var(--ground); background: var(--ink-2); border-color: var(--ink-2); }
+.case-id { font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3); overflow-wrap: anywhere; }
+
+.verdict {
+  margin-left: auto; display: inline-flex; align-items: center; gap: .3125rem;
+  font-size: var(--t-1); font-weight: 600; white-space: nowrap;
+  padding: .125rem .4375rem; border-radius: var(--r-s);
+  border: 1px solid currentColor;
+}
+.verdict .g { font-size: 1.05em; line-height: 1; }
+.verdict[data-tone="affirm"] { color: var(--affirm); background: var(--affirm-wash); }
+.verdict[data-tone="deduct"] { color: var(--deduct); background: var(--deduct-wash); }
+.verdict[data-tone="hold"]   { color: var(--hold);   background: var(--hold-wash); }
+.verdict[data-tone="idle"]   { color: var(--idle);   background: var(--idle-wash); border-style: dashed; }
+
+.field { margin-bottom: .625rem; }
+.field-l {
+  font-size: var(--t-0); text-transform: uppercase; letter-spacing: .09em;
+  color: var(--ink-3); margin-bottom: .1875rem;
+}
+.prompt { font-size: var(--t-2); color: var(--ink-2); }
+.target { font-size: var(--t-2); color: var(--ink-3); font-style: italic; }
+
+/* The captured response. Set apart because the page did not write it. */
+.output {
+  font-size: var(--t-4);
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--surface-2);
+  border-left: 3px solid var(--ink-3);
+  border-radius: 0 var(--r-s) var(--r-s) 0;
+  padding: .75rem .875rem;
+  overflow-wrap: anywhere;
+}
+
+/* Evidence and the critique it anchors share one purple. Same colour, one
+   claim: this span is why that sentence was written. */
+mark.ev {
+  background: var(--accent-mark);
+  color: var(--ink);
+  box-shadow: inset 0 -3px 0 var(--accent);
+  border-radius: 2px;
+  padding: .0625rem .125rem;
+  margin: 0 -.125rem;
+}
+
+.meter {
+  margin-top: .375rem;
+  font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
+}
+.meter.over { color: var(--hold); }
+
+.critique {
+  margin-top: .75rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-wash);
+  border-radius: 0 var(--r-s) var(--r-s) 0;
+  padding: .625rem .75rem;
+  font-size: var(--t-2);
+}
+.critique .field-l { color: var(--accent); }
+
+.note {
+  margin-top: .5rem; font-size: var(--t-1);
+  color: var(--ink-3); font-style: italic;
+}
+.note.warn { color: var(--hold); font-style: normal; }
+
+/* -------------------------------------------------------- pair verdict */
+.pair-verdict {
+  display: inline-flex; align-items: center; gap: .625rem;
+  font-size: var(--t-1);
+}
+.pair-halves {
+  font-family: var(--mono); font-size: var(--t-0);
+  color: var(--ink-3); letter-spacing: .02em; white-space: nowrap;
+  padding-right: .625rem; border-right: 1px solid var(--line-2);
+}
+.pair-read { font-weight: 650; white-space: nowrap; }
+
+/* Narrow: the verdict strip drops under the slugs rather than forcing the
+   page sideways. The body never scrolls horizontally. */
+@media (max-width: 34rem) {
+  .unit-h { gap: .375rem .5rem; }
+  .unit-h .spacer { display: none; }
+  .pair-verdict { flex-basis: 100%; flex-wrap: wrap; gap: .375rem; }
+  .pair-halves { border-right: 0; padding-right: 0; flex-basis: 100%; }
+  .pair-read { white-space: normal; }
+  .attr { font-size: var(--t-0); }
+}
+.pair-read[data-tone="affirm"] { color: var(--affirm); }
+.pair-read[data-tone="deduct"] { color: var(--deduct); }
+.pair-read[data-tone="idle"]   { color: var(--idle); font-weight: 500; }
+
+/* ---------------------------------------------------------- empty state */
+.empty {
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r);
+  padding: 1.75rem;
+  background: var(--surface);
+}
+.empty h2 { font-size: var(--t-5); font-weight: 650; margin-bottom: .5rem; }
+.empty p { color: var(--ink-2); font-size: var(--t-2); margin-bottom: .75rem; max-width: 46rem; }
+.empty pre {
+  font-family: var(--mono); font-size: var(--t-1);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-s); padding: .75rem; margin: 0 0 .75rem;
+  overflow-x: auto; color: var(--ink-2);
+}
+.empty ul { color: var(--ink-2); font-size: var(--t-2); padding-left: 1.125rem; margin: 0; }
+.empty li { margin-bottom: .3125rem; }
+
+.filter-note {
+  font-size: var(--t-1); color: var(--ink-3);
+  padding: .5rem .125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<a class="skip" href="#stream">Skip to the cases</a>
+
+<div class="shell">
+  <aside class="rail">
+    <h1 class="run-name" id="run-name">grading board</h1>
+    <div class="source" id="source"></div>
+
+    <div class="progress">
+      <div class="progress-nums">
+        <span><b id="n-annotated">0</b> graded</span>
+        <span id="n-cases">of 0 cases</span>
+      </div>
+      <div class="bar" role="img" aria-labelledby="progress-label"><i id="bar-fill"></i></div>
+      <span class="vh" id="progress-label">Grading progress</span>
+    </div>
+
+    <details class="rail-more" id="rail-more">
+      <summary>Board map and controls</summary>
+
+    <nav class="map" id="map" aria-label="Board map">
+      <h2 class="map-h">The board</h2>
+    </nav>
+
+    <div class="legend">
+      <div><span class="swatch affirm"></span> pass // fit</div>
+      <div><span class="swatch deduct"></span> fail // does not fit</div>
+      <div><span class="swatch hold"></span> undecided</div>
+      <div><span class="swatch idle"></span> not yet graded</div>
+    </div>
+
+    <div class="controls">
+      <button class="ctl" id="f-all"   aria-pressed="true">all</button>
+      <button class="ctl" id="f-graded"  aria-pressed="false">graded</button>
+      <button class="ctl" id="f-ungraded" aria-pressed="false">ungraded</button>
+      <span class="split"></span>
+      <button class="ctl" id="zoom-out" aria-label="Smaller type">A&minus;</button>
+      <button class="ctl" id="zoom-in"  aria-label="Larger type">A+</button>
+      <button class="ctl" id="theme">light</button>
+    </div>
+
+    <div class="keys">
+      <kbd>j</kbd> <kbd>k</kbd> next // previous card<br>
+      <kbd>g</kbd> <kbd>G</kbd> first // last<br>
+      <kbd>+</kbd> <kbd>-</kbd> type size<br>
+      <kbd>t</kbd> theme &nbsp; <kbd>f</kbd> filter
+    </div>
+    </details>
+  </aside>
+
+  <main class="stream" id="stream" tabindex="-1"></main>
+</div>
+
+<!--
+  The public export slot. `housecast grade export` writes an aos-eval.export.v1
+  document between these tags to make the page renderable from a file path.
+  It stays null in the repository: a committed payload is a committed record
+  of somebody's board, and this file is not where one lives.
+-->
+<script type="application/json" id="embedded-export">null</script>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------- verdicts */
+/* One map from a label value to how it reads. Both payload shapes carry the
+   value; only one carries the label set, so the value is what we key on. */
+var VERDICTS = {
+  "pass":         { tone: "affirm", glyph: "●", word: "pass" },
+  "fit":          { tone: "affirm", glyph: "●", word: "fit" },
+  "fail":         { tone: "deduct", glyph: "✕", word: "fail" },
+  "does-not-fit": { tone: "deduct", glyph: "✕", word: "does not fit" },
+  "undecided":    { tone: "hold",   glyph: "◑", word: "undecided" }
+};
+var UNGRADED = { tone: "idle", glyph: "○", word: "not graded" };
+
+function verdictOf(label) {
+  return (label && VERDICTS[label]) || UNGRADED;
+}
+
+/* ------------------------------------------------------------- adapters */
+/* Two wire formats, one view model. The renderer below never learns which
+   one it got, so no branch of it can be exercised in only one delivery mode. */
+
+function normaliseCase(raw) {
+  return {
+    id:       raw.id || "",
+    entity:   raw.entity || "",
+    testType: raw.test_type || "",
+    attribute: raw.attribute || "",
+    half:     raw.half || "",
+    pairId:   raw.pair_id || "",
+    prompt:   raw.prompt || "",
+    target:   raw.target || "",
+    output:   raw.output || "",
+    words:    typeof raw.words === "number" ? raw.words : (raw.output ? raw.output.split(/\s+/).filter(Boolean).length : 0),
+    wordCap:  typeof raw.word_cap === "number" ? raw.word_cap : 0,
+    label:    raw.label || "",
+    critique: raw.critique || "",
+    evidence: raw.evidence || ""
+  };
+}
+
+function adopt(payload, source) {
+  var isGrading = payload.format === "housecast.grading.v1";
+  var counts = payload.counts || {};
+  var cases = (payload.cases || []).map(normaliseCase);
+  return {
+    format: payload.format || "unknown",
+    source: source,
+    run: payload.run || "unnamed run",
+    /* The grading session always holds the private half. An export holds it
+       only when it was built with --include-private, which is not the
+       artifact that goes near a projector. */
+    carriesPrivate: isGrading || payload.includes_private_fields === true,
+    cases: cases,
+    counts: {
+      cases: typeof counts.cases === "number" ? counts.cases : cases.length,
+      annotated: typeof counts.annotated === "number"
+        ? counts.annotated
+        : cases.filter(function (c) { return c.label; }).length
+    }
+  };
+}
+
+/* -------------------------------------------------------------- loading */
+/* A file path never reaches the network. The guard is the protocol check
+   rather than a caught error, so opening this from disk makes no request
+   at all and there is nothing for a warm HTTP cache to answer. */
+function servedOverHttp() {
+  return location.protocol === "http:" || location.protocol === "https:";
+}
+
+function readEmbedded() {
+  var slot = document.getElementById("embedded-export");
+  if (!slot) return null;
+  try {
+    var parsed = JSON.parse(slot.textContent);
+    return parsed && parsed.cases ? parsed : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function load() {
+  var embedded = readEmbedded();
+  if (!servedOverHttp()) {
+    return Promise.resolve(embedded ? adopt(embedded, "file") : null);
+  }
+  return fetch("api/session", { headers: { accept: "application/json" } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (payload) {
+      if (payload && payload.cases) return adopt(payload, "serve");
+      return embedded ? adopt(embedded, "embedded") : null;
+    })
+    .catch(function () { return embedded ? adopt(embedded, "embedded") : null; });
+}
+
+/* --------------------------------------------------------------- render */
+function el(tag, cls, text) {
+  var node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function field(label, text, cls) {
+  var wrap = el("div", "field");
+  wrap.appendChild(el("div", "field-l", label));
+  wrap.appendChild(el("p", cls, text));
+  return wrap;
+}
+
+function verdictChip(label) {
+  var v = verdictOf(label);
+  var chip = el("span", "verdict");
+  chip.dataset.tone = v.tone;
+  chip.appendChild(el("span", "g", v.glyph));
+  chip.appendChild(document.createTextNode(v.word));
+  return chip;
+}
+
+/* The span was checked verbatim against the output when it was recorded, so
+   a match is expected. It is matched again here rather than trusted, because
+   a highlight that silently misses is worse than one that says it missed. */
+function outputBlock(kase) {
+  var block = el("blockquote", "output");
+  var found = -1;
+  if (kase.evidence) found = kase.output.toLowerCase().indexOf(kase.evidence.toLowerCase());
+
+  if (found < 0) {
+    block.textContent = kase.output;
+  } else {
+    var end = found + kase.evidence.length;
+    block.appendChild(document.createTextNode(kase.output.slice(0, found)));
+    var mark = el("mark", "ev", kase.output.slice(found, end));
+    block.appendChild(mark);
+    block.appendChild(document.createTextNode(kase.output.slice(end)));
+  }
+  return { block: block, missed: kase.evidence !== "" && found < 0 };
+}
+
+function halfPanel(kase) {
+  var panel = el("section", "half");
+  if (kase.half) panel.dataset.half = kase.half;
+
+  var head = el("div", "half-h");
+  head.appendChild(el("span", "half-tag", kase.half || kase.testType));
+  head.appendChild(el("span", "case-id", kase.id));
+  head.appendChild(verdictChip(kase.label));
+  panel.appendChild(head);
+
+  if (kase.prompt) panel.appendChild(field("asked", kase.prompt, "prompt"));
+  if (kase.target) panel.appendChild(field("passing means", kase.target, "target"));
+
+  var out = outputBlock(kase);
+  panel.appendChild(el("div", "field-l", "answered"));
+  panel.appendChild(out.block);
+
+  var meter = el("div", "meter");
+  meter.textContent = kase.wordCap
+    ? kase.words + " / " + kase.wordCap + " words"
+    : kase.words + " words";
+  if (kase.wordCap && kase.words > kase.wordCap) meter.classList.add("over");
+  panel.appendChild(meter);
+
+  if (out.missed) {
+    panel.appendChild(el("div", "note warn",
+      "The recorded evidence span is not in this response, so nothing is highlighted."));
+  }
+
+  if (kase.critique) {
+    var crit = el("div", "critique");
+    crit.appendChild(el("div", "field-l", "why"));
+    crit.appendChild(el("p", null, kase.critique));
+    panel.appendChild(crit);
+  } else if (kase.label) {
+    panel.appendChild(el("div", "note", "Graded with no critique recorded."));
+  }
+
+  return panel;
+}
+
+/* The payload's own `pairs` list carries only pairs with a graded half, so
+   the units below are grouped from the cases instead. Same grouping key,
+   and an ungraded pair still gets a card. */
+function group(cases) {
+  var units = [], byPair = {};
+  cases.forEach(function (kase) {
+    if (!kase.pairId) {
+      units.push({ kind: "single", key: kase.id, entity: kase.entity,
+                   attribute: kase.attribute, testType: kase.testType, cases: [kase] });
+      return;
+    }
+    if (!byPair[kase.pairId]) {
+      byPair[kase.pairId] = { kind: "pair", key: kase.pairId, entity: kase.entity,
+                              attribute: kase.attribute, testType: kase.testType, cases: [] };
+      units.push(byPair[kase.pairId]);
+    }
+    byPair[kase.pairId].cases.push(kase);
+  });
+  units.forEach(function (u) {
+    if (u.kind === "pair") {
+      u.cases.sort(function (a, b) { return a.half === "in" ? -1 : b.half === "in" ? 1 : 0; });
+    }
+  });
+  return units;
+}
+
+/* A restatement of the two halves, never a new rule. The halves stay on
+   screen beside it so the reading is always checkable against its data. */
+function readPair(unit) {
+  var inHalf  = unit.cases.filter(function (c) { return c.half === "in";  })[0];
+  var outHalf = unit.cases.filter(function (c) { return c.half === "out"; })[0];
+  var a = inHalf && inHalf.label, b = outHalf && outHalf.label;
+  if (!a && !b) return { tone: "idle", text: "neither half graded" };
+  if (!a || !b)  return { tone: "idle", text: "one half graded" };
+  if (a === "pass" && b === "pass") return { tone: "affirm", text: "the boundary holds" };
+  if (a === "fail" && b === "pass") return { tone: "deduct", text: "refuses work it owns" };
+  if (a === "pass" && b === "fail") return { tone: "deduct", text: "takes work it does not own" };
+  return { tone: "deduct", text: "misses both ways" };
+}
+
+function unitCard(unit, index) {
+  var card = el("article", "unit " + unit.kind);
+  card.id = "u-" + unit.key;
+  card.tabIndex = -1;
+  card.dataset.index = String(index);
+  card.setAttribute("aria-label", unit.entity + " " + (unit.attribute || unit.testType));
+
+  var head = el("div", "unit-h");
+  head.appendChild(el("span", "ent", unit.entity));
+  if (unit.attribute) head.appendChild(el("span", "attr", unit.attribute));
+  head.appendChild(el("span", "tt", unit.testType));
+  head.appendChild(el("span", "spacer"));
+
+  if (unit.kind === "pair") {
+    var read = readPair(unit);
+    var pv = el("span", "pair-verdict");
+    var halves = unit.cases.map(function (c) {
+      return c.half + " " + verdictOf(c.label).word;
+    }).join("  //  ");
+    pv.appendChild(el("span", "pair-halves", halves));
+    var r = el("span", "pair-read", read.text);
+    r.dataset.tone = read.tone;
+    pv.appendChild(r);
+    head.appendChild(pv);
+  }
+  card.appendChild(head);
+
+  var halvesWrap = el("div", "halves");
+  unit.cases.forEach(function (kase) { halvesWrap.appendChild(halfPanel(kase)); });
+  card.appendChild(halvesWrap);
+  return card;
+}
+
+/* ------------------------------------------------------------ the board */
+var state = { model: null, units: [], filter: "all", current: 0, cells: {} };
+
+function buildMap(model) {
+  var map = document.getElementById("map");
+  var order = [], rows = {};
+  model.cases.forEach(function (kase) {
+    if (!rows[kase.entity]) { rows[kase.entity] = []; order.push(kase.entity); }
+    rows[kase.entity].push(kase);
+  });
+  state.cells = {};
+  order.forEach(function (entity) {
+    var row = el("div", "map-row");
+    row.appendChild(el("span", "ent-name", entity));
+    var cells = el("div", "cells");
+    rows[entity].forEach(function (kase) {
+      var cell = el("button", "cell");
+      cell.type = "button";
+      if (kase.label) cell.dataset.v = kase.label;
+      cell.setAttribute("aria-label", kase.id + ", " + verdictOf(kase.label).word);
+      cell.addEventListener("click", function () { jumpTo(kase); });
+      cells.appendChild(cell);
+      state.cells[kase.id] = cell;
+    });
+    row.appendChild(cells);
+    map.appendChild(row);
+  });
+}
+
+function jumpTo(kase) {
+  var unitKey = kase.pairId || kase.id;
+  for (var i = 0; i < state.units.length; i++) {
+    if (state.units[i].key === unitKey) { focusUnit(i, true); return; }
+  }
+}
+
+function focusUnit(index, scroll) {
+  var visible = visibleUnits();
+  if (!visible.length) return;
+  index = Math.max(0, Math.min(index, visible.length - 1));
+  state.current = index;
+  visible.forEach(function (u, i) {
+    var node = document.getElementById("u-" + u.key);
+    if (node) node.setAttribute("aria-current", i === index ? "true" : "false");
+  });
+  var target = document.getElementById("u-" + visible[index].key);
+  if (!target) return;
+  if (scroll !== false) target.scrollIntoView({ block: "start", behavior: "smooth" });
+  target.focus({ preventScroll: true });
+  Object.keys(state.cells).forEach(function (id) { state.cells[id].setAttribute("aria-current", "false"); });
+  visible[index].cases.forEach(function (c) {
+    if (state.cells[c.id]) state.cells[c.id].setAttribute("aria-current", "true");
+  });
+}
+
+function visibleUnits() {
+  if (state.filter === "all") return state.units;
+  return state.units.filter(function (u) {
+    var graded = u.cases.some(function (c) { return c.label; });
+    return state.filter === "graded" ? graded : !graded;
+  });
+}
+
+function drawStream() {
+  var stream = document.getElementById("stream");
+  stream.textContent = "";
+  var units = visibleUnits();
+
+  if (!units.length) {
+    var none = el("div", "empty");
+    none.appendChild(el("h2", null, state.filter === "graded"
+      ? "Nothing graded yet"
+      : "Every case is graded"));
+    none.appendChild(el("p", null, state.filter === "graded"
+      ? "This board has no annotations on it. Switch the filter back to all to read the cases."
+      : "There is no ungraded case left on this board."));
+    stream.appendChild(none);
+    return;
+  }
+
+  if (state.filter !== "all") {
+    stream.appendChild(el("div", "filter-note",
+      units.length + " of " + state.units.length + " cards // filter: " + state.filter));
+  }
+  units.forEach(function (unit, i) { stream.appendChild(unitCard(unit, i)); });
+}
+
+function drawRail(model) {
+  document.getElementById("run-name").textContent = model.run;
+  document.title = model.run + " // housecast grading board";
+
+  var source = document.getElementById("source");
+  source.textContent = "";
+  var live = el("span", "tag " + (model.source === "serve" ? "live" : "sealed"),
+    model.source === "serve" ? "live session" : "committed export");
+  source.appendChild(live);
+  source.appendChild(el("span", "tag", model.format));
+  if (!model.carriesPrivate) source.appendChild(el("span", "tag", "public half only"));
+
+  document.getElementById("n-annotated").textContent = String(model.counts.annotated);
+  document.getElementById("n-cases").textContent = "of " + model.counts.cases + " cases";
+  var pct = model.counts.cases ? (model.counts.annotated / model.counts.cases) * 100 : 0;
+  document.getElementById("bar-fill").style.width = pct + "%";
+}
+
+/* ---------------------------------------------------------- no payload */
+function drawNoData() {
+  document.getElementById("stream").appendChild(nothingHere());
+  document.getElementById("map").appendChild(el("p", "filter-note", "No run loaded."));
+}
+
+function nothingHere() {
+  var box = el("div", "empty");
+  box.appendChild(el("h2", null, "No run is loaded"));
+  box.appendChild(el("p", null,
+    "This page renders one committed run. It reads a live grading session when one is "
+    + "serving it, and an embedded export when it is opened from a file path. Neither is here."));
+
+  box.appendChild(el("div", "field-l", "to grade a board"));
+  box.appendChild(el("pre", null,
+    "housecast grade serve evaluations/reflow-v3/board-2026-08-26 \\\n"
+    + "    --static housecast/grade/page"));
+
+  box.appendChild(el("div", "field-l", "to read one from a file path"));
+  box.appendChild(el("pre", null,
+    "housecast grade export evaluations/reflow-v3/board-2026-08-26 \\\n"
+    + "    --out board.json"));
+  box.appendChild(el("p", null,
+    "That writes the payload. Putting it into this file is the sealing step, and it is "
+    + "not built yet: paste the JSON between the embedded-export script tags by hand until it is."));
+
+  var why = el("ul");
+  [
+    "A live session carries the critique and the evidence span. It binds loopback only.",
+    "An export carries the public half unless it was built with --include-private.",
+    "The file in the repository holds no run, because a committed payload is a record of somebody's board."
+  ].forEach(function (line) { why.appendChild(el("li", null, line)); });
+  box.appendChild(why);
+  return box;
+}
+
+/* ------------------------------------------------------------- controls */
+function readStored(key) {
+  try { return localStorage.getItem(key); } catch (err) { return null; }
+}
+function store(key, value) {
+  try { localStorage.setItem(key, value); } catch (err) { /* private mode, and that is fine */ }
+}
+
+var ZOOMS = [0.9, 1, 1.15, 1.35, 1.6, 1.9];
+
+function setZoom(index) {
+  index = Math.max(0, Math.min(index, ZOOMS.length - 1));
+  document.documentElement.style.setProperty("--zoom", String(ZOOMS[index]));
+  store("housecast.zoom", String(index));
+  return index;
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.getElementById("theme").textContent = theme === "light" ? "dark" : "light";
+  store("housecast.theme", theme);
+}
+
+function setFilter(next) {
+  state.filter = next;
+  ["all", "graded", "ungraded"].forEach(function (name) {
+    document.getElementById("f-" + name).setAttribute("aria-pressed", String(name === next));
+  });
+  drawStream();
+  state.current = 0;
+  focusUnit(0, false);
+}
+
+/* `open` is a boolean attribute rather than a style, so the breakpoint cannot
+   set it. This keeps the two in step, including across a resize. */
+function syncDisclosure() {
+  var more = document.getElementById("rail-more");
+  var wide = window.matchMedia("(min-width: 60.0625rem)").matches;
+  if (wide) more.setAttribute("open", "");
+  else if (!more.dataset.touched) more.removeAttribute("open");
+}
+
+function wireControls() {
+  var more = document.getElementById("rail-more");
+  more.addEventListener("toggle", function () {
+    if (!window.matchMedia("(min-width: 60.0625rem)").matches) more.dataset.touched = "1";
+  });
+  syncDisclosure();
+  window.addEventListener("resize", syncDisclosure);
+
+  var zoomIndex = parseInt(readStored("housecast.zoom") || "1", 10);
+  if (isNaN(zoomIndex)) zoomIndex = 1;
+  zoomIndex = setZoom(zoomIndex);
+  setTheme(readStored("housecast.theme") === "light" ? "light" : "dark");
+
+  document.getElementById("zoom-in").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex + 1); });
+  document.getElementById("zoom-out").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex - 1); });
+  document.getElementById("theme").addEventListener("click", function () {
+    setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+  });
+  ["all", "graded", "ungraded"].forEach(function (name) {
+    document.getElementById("f-" + name).addEventListener("click", function () { setFilter(name); });
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    var tag = (event.target && event.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || (event.target && event.target.isContentEditable)) return;
+
+    switch (event.key) {
+      case "j": focusUnit(state.current + 1); break;
+      case "k": focusUnit(state.current - 1); break;
+      case "g": focusUnit(0); break;
+      case "G": focusUnit(visibleUnits().length - 1); break;
+      case "+": case "=": zoomIndex = setZoom(zoomIndex + 1); break;
+      case "-": zoomIndex = setZoom(zoomIndex - 1); break;
+      case "t": setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); break;
+      case "f": setFilter(state.filter === "all" ? "graded" : state.filter === "graded" ? "ungraded" : "all"); break;
+      default: return;
+    }
+    event.preventDefault();
+  });
+}
+
+/* ----------------------------------------------------------------- boot */
+wireControls();
+load().then(function (model) {
+  if (!model) { drawNoData(); return; }
+  state.model = model;
+  state.units = group(model.cases);
+  drawRail(model);
+  buildMap(model);
+  drawStream();
+  focusUnit(0, false);
+});
+</script>
