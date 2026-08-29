@@ -5,7 +5,7 @@ description = "Python composition engine for agent rosters."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "Kai Siren" }]
+authors = [{ name = "Kai Ase Siren" }]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

@@ -86,7 +86,7 @@ extra when the consumer needs the board runner rather than just the engine.
 
 ## License
 
-MIT. Kai Siren holds the copyright. See [`LICENSE`](LICENSE).
+MIT. Kai Ase Siren holds the copyright. See [`LICENSE`](LICENSE).
 
 ## See also
 
