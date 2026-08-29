@@ -16,8 +16,9 @@ Read before changing anything here:
 
 - [`README.md`](README.md) explains what housecast is, the `acompose` pairing,
   and the naming record.
-- [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. It currently claims
-  no shipped capability, and that is accurate rather than pending.
+- [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory, and every entry
+  points at its own walkthrough under `docs/`. Those walkthroughs are stubs:
+  each one carries a settled structure and a `Still to write` list.
 
 The engine and the eval runner both live here, moved out of agent-compose
 under `agent-compose#337`. The Go engine still exists in agent-compose and

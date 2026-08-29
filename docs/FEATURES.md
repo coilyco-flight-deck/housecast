@@ -8,16 +8,18 @@ refactors, and internal plumbing never earn an entry here.
 * **The composition engine.** Reads a roster as YAML, validates it, resolves
   each role's personality meld and boundary allocation, derives the identity
   primitives including each role's favorite color, and emits an immutable
-  bundle in either the native-skills or the compiled delivery mode.
+  bundle in either the native-skills or the compiled delivery mode. See
+  [`composition.md`](composition.md) and [`identity.md`](identity.md).
 * **The roster language.** `housecast/data/roster.yaml` carries roles,
   personalities, boundaries, and the invariant, with its field ancestry
-  documented in the file.
+  documented in the file. See [`roster-language.md`](roster-language.md) and
+  [`role-boundaries.md`](role-boundaries.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape
   downstream tools read, which is what removed Go from the eval path.
 * **evalkit, the board runner.** Derives the challenge board from the roster,
   runs it through Inspect against Agent Proxy, and hands datasets to the
   `aos-eval` annotator. It travels with the engine so the graded artifact and
-  the shipped artifact stay identical.
+  the shipped artifact stay identical. See [`evaluation.md`](evaluation.md).
 
 ## Not shipped
 
