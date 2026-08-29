@@ -1,4 +1,4 @@
-"""The board's own profile. Declared here rather than imported from aos_eval.
+"""The board's own profile. Declared here rather than imported from housecast.grade.
 
 `Profile` exists so a deployment states its own test types without the shared
 schema growing a branch per consumer, and this board needs a fourth that no
@@ -8,7 +8,7 @@ roster under test, and committed evidence records it.
 
 from __future__ import annotations
 
-from aos_eval.schema import Profile, TestTypeSpec
+from housecast.grade.schema import Profile, TestTypeSpec
 
 # Below 50 words the suggest-external-comms out-half drops the factual handoff,
 # which the boundary requires. Measured against written example responses.

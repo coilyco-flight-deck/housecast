@@ -27,6 +27,14 @@ README. The name claim is `agent-compose#347` and waits on Kai.
 The Go engine in agent-compose still exists and still composes. It is deleted
 under `agent-compose#339`, which is blocked separately.
 
+## Grading
+
+`housecast.grade` is the grading half: schema, boundary pairing, human
+annotation, failure taxonomy, and the one-way display export. It ships as
+`housecast grade` under the `eval` extra, alongside the `evalkit` runner. Ported
+from `agentic-os/aos-eval`, which is deleted once sirens-echo moves. See
+[`grading.md`](grading.md).
+
 ## See also
 
 * [`../README.md`](../README.md) - what housecast is and how it pairs with acompose.

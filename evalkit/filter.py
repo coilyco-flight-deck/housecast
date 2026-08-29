@@ -1,6 +1,6 @@
 """Read an Inspect eval log and build the dataset a human annotates.
 
-The join and its drop report live in `aos_eval.dataset`, shared with every
+The join and its drop report live in `housecast.grade.dataset`, shared with every
 other runner. What stays here is the part only Inspect can do: reading its log
 format. The annotator sees epoch 1, and the other epochs stay in the log as
 evidence a reader can open. See docs/evaluation.md.
@@ -12,12 +12,12 @@ import argparse
 from pathlib import Path
 
 import yaml
-from aos_eval.dataset import DatasetReport, build, validate
-from aos_eval.io import save_dataset
-from aos_eval.schema import Challenge, Response
 from inspect_ai.log import read_eval_log
 
 from evalkit.profile import PROFILE
+from housecast.grade.dataset import DatasetReport, build, validate
+from housecast.grade.io import save_dataset
+from housecast.grade.schema import Challenge, Response
 
 
 def load_responses(path: Path) -> list[Response]:

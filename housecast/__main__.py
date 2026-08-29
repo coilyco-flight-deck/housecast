@@ -1,7 +1,8 @@
 """The housecast CLI: compose a bundle, or project the roster.
 
-    python -m housecast compose --role tpm --out DIR
+    python -m housecast compose --role director --out DIR
     python -m housecast roster --out DIR
+    python -m housecast grade annotate --dataset D --out O
 
 `roster` writes the person.json shape evalkit reads, which is what took the Go
 engine out of the eval path. See housecast/snapshot.py.
@@ -16,6 +17,17 @@ import sys
 from housecast import compose as compose_module
 from housecast import roster as roster_module
 from housecast import snapshot as snapshot_module
+
+
+def _grade(argv: list[str]) -> int:
+    """Forward to the click group. It keeps its own parser, so argparse stops here."""
+    try:
+        from housecast.grade.cli import main as grade_main
+    except ImportError as missing:  # the grading half rides the eval extra
+        raise SystemExit(
+            f"housecast grade needs the eval extra: pip install 'housecast[eval]' ({missing})"
+        ) from missing
+    return grade_main(args=argv, standalone_mode=False) or 0
 
 
 def _compose(args: argparse.Namespace) -> int:
@@ -39,6 +51,11 @@ def _roster(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # `grade` owns its own parser, so it is split off before argparse sees it.
+    raw = sys.argv[1:] if argv is None else argv
+    if raw and raw[0] == "grade":
+        return _grade(raw[1:])
+
     parser = argparse.ArgumentParser(prog="housecast")
     parser.add_argument("--roster", default=str(roster_module.DATA))
     sub = parser.add_subparsers(dest="command", required=True)
@@ -55,6 +72,8 @@ def main(argv: list[str] | None = None) -> int:
     roster_parser = sub.add_parser("roster", help="project the roster as person.json")
     roster_parser.add_argument("--out", required=True)
     roster_parser.set_defaults(handler=_roster)
+
+    sub.add_parser("grade", help="grade a board dataset (needs the eval extra)")
 
     args = parser.parse_args(argv)
     handler: object = args.handler

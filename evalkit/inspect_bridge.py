@@ -1,6 +1,6 @@
 """Translate the shared schema to and from Inspect's Sample.
 
-This is the seam the shared layer deliberately does not cross. `aos_eval`
+This is the seam the shared layer deliberately does not cross. `housecast.grade`
 carries no runner and no model client, so the mapping onto Inspect's carrier
 lives here, in the repo whose runner is Inspect.
 """
@@ -9,8 +9,9 @@ from __future__ import annotations
 
 from enum import StrEnum
 
-from aos_eval.schema import Challenge
 from inspect_ai.dataset import Sample as InspectSample
+
+from housecast.grade.schema import Challenge
 
 # Inspect's Sample carries only input, target, id, and metadata, so every
 # domain field rides in metadata.

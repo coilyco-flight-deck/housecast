@@ -226,17 +226,6 @@ wheels = [
 ]
 
 [[package]]
-name = "aos-eval"
-version = "0.1.1"
-source = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/agentic-os.git?subdirectory=aos-eval&tag=aos-eval-v0.6.0#c9d6596d9a4246800499a8a7d79ba7fabd5c06cb" }
-dependencies = [
-    { name = "click" },
-    { name = "pydantic" },
-    { name = "pyyaml" },
-    { name = "rich" },
-]
-
-[[package]]
 name = "ast-serialize"
 version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -670,9 +659,11 @@ dependencies = [
 
 [package.optional-dependencies]
 eval = [
-    { name = "aos-eval" },
+    { name = "click" },
     { name = "inspect-ai" },
     { name = "openai" },
+    { name = "pydantic" },
+    { name = "rich" },
 ]
 
 [package.dev-dependencies]
@@ -685,10 +676,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aos-eval", marker = "extra == 'eval'", git = "https://forgejo.coilysiren.me/coilyco-flight-deck/agentic-os.git?subdirectory=aos-eval&tag=aos-eval-v0.6.0" },
+    { name = "click", marker = "extra == 'eval'", specifier = ">=8.1" },
     { name = "inspect-ai", marker = "extra == 'eval'", specifier = ">=0.3.255" },
     { name = "openai", marker = "extra == 'eval'", specifier = ">=2.53.0" },
+    { name = "pydantic", marker = "extra == 'eval'", specifier = ">=2.9" },
     { name = "pyyaml", specifier = ">=6.0" },
+    { name = "rich", marker = "extra == 'eval'", specifier = ">=13" },
 ]
 provides-extras = ["eval"]
 

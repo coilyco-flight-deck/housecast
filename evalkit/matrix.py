@@ -13,9 +13,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from aos_eval.schema import Challenge, Half
 
 from evalkit.profile import PROFILE
+from housecast.grade.schema import Challenge, Half
 
 # The taxonomy is the profile's, not this module's. Unpacking by arity means
 # a fourth test type fails loudly here rather than being silently unranked.
