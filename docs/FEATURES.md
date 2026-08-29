@@ -31,7 +31,7 @@ and internal plumbing never earn an entry here.
 
 No PyPI distribution. Consumers install from Forgejo with uv, described in the
 README. The name claim is `agent-compose#347` and waits on Kai. The Go engine in
-agent-compose still exists and still composes; it is deleted under
+agent-compose still exists and still composes. It is deleted under
 `agent-compose#339`, which is blocked separately.
 
 ## See also
