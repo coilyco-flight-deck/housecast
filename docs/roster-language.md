@@ -21,6 +21,12 @@ alive until the Go engine goes.
 * **`Personality`** - a trait definition carrying its own `Emblem` and `Voice`.
 * **`Boundary`** - see [`role-boundaries.md`](role-boundaries.md).
 * **`Scoped`**, **`Adjacent`** - the two qualifiers on an allocation.
+* **`Act`** - one thing an attribute requires a seat to run, carried by roles,
+  personalities, and boundaries. `tool` is separate from `text` so a coverage
+  or portability check reads the tool without parsing English, and the tool has
+  to appear in the text so the two cannot drift apart. A boundary act binds one
+  of `own`, `scoped`, or `defer`, and each side owes its own three: a deferred
+  boundary is a different action rather than the owner's withheld.
 
 ## What it refuses
 

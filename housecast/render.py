@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from housecast import validate
 
 if TYPE_CHECKING:
-    from housecast.roster import Roster, Voice
+    from housecast.roster import Act, Roster, Voice
 
 PREAMBLE = (
     "# Role instructions\n\n"
@@ -95,16 +95,39 @@ def identity_card(roster: Roster, role_name: str) -> str:
         if avoid:
             out.append("\n**Refuse** - `" + "` `".join(avoid) + "`\n")
         out.append("\n")
+    act_sources: list[tuple[str, list[Act]]] = []
+    if role.acts:
+        act_sources.append((role.display_name, role.acts))
+    for name in role.personalities:
+        binding = roster.personalities[name]
+        if binding.acts:
+            act_sources.append((display_slug(name), binding.acts))
+    if act_sources:
+        out.append("## Run\n\n")
+        out.append(
+            "These are the minimum, not the illustration. An attribute you cannot name an act"
+            " for is one that did not fire.\n\n"
+        )
+        for label, acts in act_sources:
+            out.append(f"* **{label}**\n")
+            for act in acts:
+                out.append(f"  * {act.text}\n")
+        out.append("\n")
     if active:
         out.append("## Boundaries\n\n")
         for name in active:
             boundary = roster.boundaries[name]
-            side = "you own this" if boundary.owner == role_name else "you defer this"
+            own = boundary.owner == role_name
+            side = "you own this" if own else "you defer this"
+            side_key = "own" if own else "defer"
             scope_text = ""
             if name in scoped:
                 side = "you hold this within a scope"
+                side_key = "scoped"
                 scope_text = ". Your scope: " + scoped[name]
             out.append(f"* `{boundary.skill}` - {side}. {boundary.summary}{scope_text}\n")
+            for act in boundary.acts_for_side(side_key):
+                out.append(f"  * {act.text}\n")
         out.append("\n")
 
     named = [role.skill, *boundary_skills]

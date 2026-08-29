@@ -41,6 +41,20 @@ class Voice:
 
 
 @dataclass(frozen=True)
+class Act:
+    """One thing an attribute requires a seat to actually run.
+
+    `tool` is carried separately from `text` so the coverage check is exact
+    rather than a grep over prose. `side` is set on boundary acts only, because
+    owning, scoping, and deferring are three different acts.
+    """
+
+    tool: str
+    text: str
+    side: str = ""
+
+
+@dataclass(frozen=True)
 class Personality:
     name: str
     skill: str
@@ -49,6 +63,7 @@ class Personality:
     emblem: Emblem
     body: str
     voice: Voice | None = None
+    acts: list[Act] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -58,6 +73,11 @@ class Boundary:
     owner: str
     summary: str
     body: str
+    acts: list[Act] = field(default_factory=list)
+
+    def acts_for_side(self, side: str) -> list[Act]:
+        """A deferred boundary is a different act, never the owner's withheld."""
+        return [act for act in self.acts if act.side == side]
 
 
 @dataclass(frozen=True)
@@ -102,6 +122,7 @@ class Role:
     methods: list[str] = field(default_factory=list)
     favorite_color: str = ""
     voice: Voice | None = None
+    acts: list[Act] = field(default_factory=list)
 
     def active_boundaries(self, boundaries: dict[str, Boundary]) -> list[str]:
         """Deferred, then scoped, then the single boundary this role owns."""
@@ -159,6 +180,13 @@ def _voice(spec: dict[str, Any] | None) -> Voice | None:
     )
 
 
+def _acts(spec: list[dict[str, Any]] | None) -> list[Act]:
+    return [
+        Act(tool=str(a["tool"]), text=str(a["text"]), side=str(a.get("side", "")))
+        for a in spec or []
+    ]
+
+
 def load(path: pathlib.Path | str = DATA) -> Roster:
     path = pathlib.Path(path)
     raw = path.read_bytes()
@@ -171,6 +199,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             owner=spec["owner"],
             summary=spec["summary"],
             body=spec["body"],
+            acts=_acts(spec.get("acts")),
         )
         for name, spec in doc["boundaries"].items()
     }
@@ -183,6 +212,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             emblem=Emblem(spec["emblem"]["names"], spec["emblem"]["emoji"]),
             body=spec["body"],
             voice=_voice(spec.get("voice")),
+            acts=_acts(spec.get("acts")),
         )
         for name, spec in doc["personalities"].items()
     }
@@ -208,6 +238,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             adjacents=[Adjacent(a["role"], a["reason"]) for a in spec.get("adjacents") or []],
             body=spec["body"],
             methods=list(spec.get("methods") or []),
+            acts=_acts(spec.get("acts")),
         )
     roster = Roster(
         person=doc["person"],

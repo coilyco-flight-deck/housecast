@@ -9,8 +9,12 @@ and internal plumbing never earn an entry here.
   and boundary allocation, derives the identity primitives, and emits an
   immutable bundle. See [`composition.md`](composition.md), [`identity.md`](identity.md).
 * **The roster language.** `housecast/data/roster.yaml` carries roles,
-  personalities, boundaries, and the invariant. See
+  personalities, boundaries, acts, and the invariant. See
   [`roster-language.md`](roster-language.md), [`role-boundaries.md`](role-boundaries.md).
+* **Attribute acts.** Every role, personality, and boundary side names three
+  things a seat can actually run, rendered onto the identity card as `## Run`.
+  A boundary's acts follow the side the seat holds rather than the owner's.
+  See [`roster-language.md`](roster-language.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape
   downstream tools read, which is what removed Go from the eval path.
 * **evalkit, the board runner.** Derives the board from the roster and runs it
