@@ -88,7 +88,7 @@
   --t-4: 1.08rem;
   --t-5: 1.35rem;
   /* Every page on the site opens at a display weight. So does this one. */
-  --t-6: clamp(1.5rem, 2.4vw, 2.1rem);
+  --t-6: clamp(2.25rem, 5vw, 3.2rem);
 
   /* The site's own two radii, .35rem on a plate and .2rem on a well. */
   --r:   .35rem;
@@ -160,6 +160,23 @@ button { font: inherit; color: inherit; }
 .skip:focus { top: .5rem; }
 
 /* ---------------------------------------------------------------- shell */
+/* The site opens every page on crumbs, then a display title, then its columns.
+   See docs/grading-page-palette.md. */
+.board-head {
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: 2.5rem clamp(1rem, 3vw, 2rem) 2rem;
+  border-bottom: 1px solid var(--line);
+}
+.crumbs ol {
+  display: flex; gap: .5rem; flex-wrap: wrap;
+  margin: 0 0 .9rem; padding: 0; list-style: none;
+  font-family: var(--mono); font-size: var(--t-1); color: var(--ink-3);
+}
+.crumbs li + li::before { content: "/"; margin-right: .5rem; color: var(--line-2); }
+.crumbs a { color: var(--mint); font-weight: 700; text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; text-underline-offset: .2em; }
+
 .shell {
   display: grid;
   grid-template-columns: 17.5rem minmax(0, 1fr);
@@ -230,11 +247,11 @@ button { font: inherit; color: inherit; }
 /* The rail is a fixed column, so the display size steps down rather than
    wrapping the board's name to four lines. See grading-page-treatment.md. */
 @media (max-width: 60rem) {
-  .run-name { font-size: var(--t-5); }
+  .run-name { font-size: clamp(1.75rem, 7vw, 2.25rem); }
 }
 
 .source {
-  margin-top: .375rem;
+  margin-top: .9rem;
   display: flex; flex-wrap: wrap; gap: .3125rem;
   font-size: var(--t-0);
 }
@@ -256,7 +273,7 @@ button { font: inherit; color: inherit; }
   display: flex; justify-content: space-between; align-items: baseline;
   font-size: var(--t-1); color: var(--ink-2);
 }
-.progress-nums b { font-size: var(--t-4); color: var(--ink); font-weight: 700; }
+.progress-nums b { font-size: var(--t-5); color: var(--bright); font-weight: 700; }
 .bar {
   margin-top: .375rem; height: .375rem; border-radius: 999px;
   background: var(--surface-3); overflow: hidden;
@@ -291,7 +308,7 @@ button { font: inherit; color: inherit; }
 .cell[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .legend { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .3125rem; }
-.legend div { display: flex; align-items: center; gap: .4375rem; font-family: var(--mono); font-size: var(--t-0); letter-spacing: .06em; color: var(--ink-3); }
+.legend div { display: flex; align-items: center; gap: .4375rem; font-size: var(--t-1); color: var(--ink-3); }
 .swatch { width: .75rem; height: .75rem; border-radius: 2px; border: 1px solid var(--line-2); flex: none; }
 .swatch.affirm { background: var(--affirm); border-color: var(--affirm); }
 .swatch.deduct { background: var(--deduct); border-color: var(--deduct); }
@@ -302,9 +319,8 @@ button { font: inherit; color: inherit; }
 .controls .split { flex-basis: 100%; height: 0; }
 .ctl {
   background: transparent; border: 1px solid var(--line-2);
-  border-radius: var(--r-s); padding: .32rem .6rem;
-  font-family: var(--mono); font-size: var(--t-0);
-  text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
+  border-radius: var(--r-s); padding: .34rem .65rem;
+  font-family: var(--mono); font-size: var(--t-1); font-weight: 700;
   color: var(--ink-3); cursor: pointer;
 }
 .ctl:hover { border-color: var(--accent-edge); color: var(--accent); }
@@ -320,7 +336,7 @@ button { font: inherit; color: inherit; }
 
 /* ---------------------------------------------------------------- units */
 .unit {
-  padding: 1.6rem 0 1.75rem 1.1rem;
+  padding: 2.5rem 0 2.75rem 1.25rem;
   border-top: 1px solid var(--line);
   border-left: 2px solid transparent;
   scroll-margin-top: 1rem;
@@ -331,13 +347,13 @@ button { font: inherit; color: inherit; }
 
 .unit-h {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem;
-  margin-bottom: .9rem;
+  margin-bottom: 1.6rem;
 }
 .ent {
   font-family: var(--mono); font-size: var(--t-2); font-weight: 700;
-  color: var(--accent);
+  color: var(--bright);
 }
-.attr { font-family: var(--mono); font-size: var(--t-1); color: var(--ink-2); overflow-wrap: anywhere; }
+.attr { font-size: var(--t-3); color: var(--ink); overflow-wrap: anywhere; }
 .tt {
   font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
   text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
@@ -358,7 +374,7 @@ button { font: inherit; color: inherit; }
 
 .half { min-width: 0; }
 
-.half-h { display: flex; align-items: center; gap: .5rem; margin-bottom: .625rem; }
+.half-h { display: flex; align-items: center; gap: .5rem; margin-bottom: 1.15rem; }
 .half-tag {
   font-family: var(--mono); font-size: var(--t-0);
   text-transform: uppercase; letter-spacing: .16em; font-weight: 700;
@@ -370,8 +386,7 @@ button { font: inherit; color: inherit; }
 
 .verdict {
   margin-left: auto; display: inline-flex; align-items: center; gap: .35rem;
-  font-family: var(--mono); font-size: var(--t-0); font-weight: 700;
-  text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
+  font-size: var(--t-1); font-weight: 700; white-space: nowrap;
 }
 .verdict .g { font-size: 1.05em; line-height: 1; }
 .verdict[data-tone="affirm"] { color: var(--affirm); }
@@ -379,20 +394,20 @@ button { font: inherit; color: inherit; }
 .verdict[data-tone="hold"]   { color: var(--hold); }
 .verdict[data-tone="idle"]   { color: var(--idle); }
 
-.field { margin-bottom: .625rem; }
+.field { margin-bottom: 1.6rem; }
 .field-l {
   font-family: var(--mono); font-size: var(--t-0);
   text-transform: uppercase; letter-spacing: .16em; font-weight: 700;
-  color: var(--ink-3); margin-bottom: .3rem;
+  color: var(--ink-3); margin-bottom: .5rem;
 }
-.prompt { font-size: var(--t-2); color: var(--ink-2); }
-.target { font-size: var(--t-2); color: var(--ink-3); font-style: italic; }
+.prompt { font-size: var(--t-3); line-height: 1.6; color: var(--ink); }
+.target { font-size: var(--t-3); line-height: 1.6; color: var(--ink-3); font-style: italic; }
 
 /* The captured response. Set apart because the page did not write it. */
 .output {
   font-size: var(--t-4);
   line-height: 1.7;
-  color: var(--ink);
+  color: var(--bright);
   background: var(--surface-2);
   border-left: 2px solid var(--mint);
   border-radius: var(--r-s);
@@ -412,8 +427,8 @@ mark.ev {
 }
 
 .meter {
-  margin-top: .375rem;
-  font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
+  margin-top: .5rem;
+  font-size: var(--t-1); color: var(--ink-3);
 }
 .meter.over { color: var(--hold); }
 
@@ -489,10 +504,19 @@ mark.ev {
 
 <a class="skip" href="#stream">Skip to the cases</a>
 
+<header class="board-head">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="#stream">board</a></li>
+      <li>grading</li>
+    </ol>
+  </nav>
+  <h1 class="run-name" id="run-name">grading board</h1>
+  <div class="source" id="source"></div>
+</header>
+
 <div class="shell">
   <aside class="rail">
-    <h1 class="run-name" id="run-name">grading board</h1>
-    <div class="source" id="source"></div>
 
     <div class="progress">
       <div class="progress-nums">
@@ -652,9 +676,11 @@ function el(tag, cls, text) {
   return node;
 }
 
+// A null label leaves the block unlabelled, which is how the prompt and the
+// pass criterion read now. See docs/grading-page-palette.md.
 function field(label, text, cls) {
   var wrap = el("div", "field");
-  wrap.appendChild(el("div", "field-l", label));
+  if (label) wrap.appendChild(el("div", "field-l", label));
   wrap.appendChild(el("p", cls, text));
   return wrap;
 }
@@ -698,8 +724,8 @@ function halfPanel(kase) {
   head.appendChild(verdictChip(kase.label));
   panel.appendChild(head);
 
-  if (kase.prompt) panel.appendChild(field("asked", kase.prompt, "prompt"));
-  if (kase.target) panel.appendChild(field("passing means", kase.target, "target"));
+  if (kase.prompt) panel.appendChild(field(null, kase.prompt, "prompt"));
+  if (kase.target) panel.appendChild(field(null, kase.target, "target"));
 
   var out = outputBlock(kase);
   panel.appendChild(el("div", "field-l", "answered"));
