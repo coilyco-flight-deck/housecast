@@ -107,6 +107,8 @@
   --ink:         #211c33;
   --ink-2:       #29243f;
   --ink-3:       #574f7d;
+  --bright:      #29243f;
+  --mint:        #1c6b5b;
   --accent:      #574f7d;
   --accent-deep: #3e375d;
   --accent-wash: rgba(87, 79, 125, .14);
@@ -172,7 +174,7 @@ button { font: inherit; color: inherit; }
   border-bottom: 1px solid rgba(145, 146, 187, .35);
   backdrop-filter: blur(14px);
 }
-.nav-brand { display: flex; flex-direction: column; color: var(--bright); text-decoration: none; line-height: 1.1; flex: 0 0 auto; }
+.nav-brand { display: flex; flex-direction: column; color: #fff; text-decoration: none; line-height: 1.1; flex: 0 0 auto; }
 .nav-brand span { font-size: 1.05rem; font-weight: 700; }
 .nav-brand small {
   margin-top: .25rem; color: #95adbe;
@@ -189,7 +191,7 @@ button { font: inherit; color: inherit; }
   width: 100%; box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   margin-top: auto; padding: clamp(2rem, 5vw, 3.5rem) 1rem;
-  color: var(--bright); background: #211c33;
+  color: #fff; background: #211c33;
   border-top: 1px solid rgba(145, 146, 187, .35);
 }
 .site-footer p {
@@ -458,13 +460,21 @@ button { font: inherit; color: inherit; }
 
 /* The captured response. Set apart because the page did not write it. */
 .output {
+  /* The site's lilac band, verbatim, so the text on paper is its text. */
+  --ink: #29243f;
+  --bright: #29243f;
+  --quiet: #574f7d;
+  --accent: #574f7d;
+  --accent-mark: rgba(87, 79, 125, .22);
+
   font-size: var(--t-4);
   line-height: 1.7;
-  color: var(--bright);
-  background: var(--surface-2);
-  border-left: 2px solid var(--mint);
-  border-radius: var(--r-s);
-  padding: clamp(.9rem, 2.5vw, 1.2rem);
+  color: var(--ink);
+  background: #fbfaf7;
+  border: 1px solid #3e375d;
+  border-top: .7rem solid #dc8f72;
+  border-radius: 0 0 var(--r) var(--r);
+  padding: clamp(1rem, 2.5vw, 1.4rem);
   overflow-wrap: anywhere;
 }
 
