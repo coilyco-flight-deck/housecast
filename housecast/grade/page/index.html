@@ -159,14 +159,60 @@ button { font: inherit; color: inherit; }
 }
 .skip:focus { top: .5rem; }
 
+
+/* The site's own chrome. Every page it serves opens on this bar and closes on
+   that footer, so a page without them is not one of its pages. */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  width: 100%; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .6rem 2em;
+  padding: .85rem clamp(1rem, 4vw, 4rem);
+  background: rgba(33, 28, 51, .96);
+  border-bottom: 1px solid rgba(145, 146, 187, .35);
+  backdrop-filter: blur(14px);
+}
+.nav-brand { display: flex; flex-direction: column; color: var(--bright); text-decoration: none; line-height: 1.1; flex: 0 0 auto; }
+.nav-brand span { font-size: 1.05rem; font-weight: 700; }
+.nav-brand small {
+  margin-top: .25rem; color: #95adbe;
+  font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.nav-meta {
+  display: flex; justify-content: flex-end; gap: clamp(.8rem, 2vw, 1.75rem);
+  list-style: none; margin: 0; padding: 0; flex-wrap: wrap;
+  font-family: var(--mono); font-size: var(--t-1); letter-spacing: .05em;
+  color: #eee; overflow-wrap: anywhere;
+}
+.site-footer {
+  width: 100%; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: auto; padding: clamp(2rem, 5vw, 3.5rem) 1rem;
+  color: var(--bright); background: #211c33;
+  border-top: 1px solid rgba(145, 146, 187, .35);
+}
+.site-footer p {
+  display: flex; gap: .7rem 1.2rem; align-items: baseline;
+  justify-content: center; flex-wrap: wrap; margin: 0; text-align: center;
+}
+.site-footer small {
+  font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .12em; text-transform: uppercase; color: #95adbe;
+}
+.page { min-height: 100%; display: flex; flex-direction: column; }
+
 /* ---------------------------------------------------------------- shell */
 /* The site opens every page on crumbs, then a display title, then its columns.
    See docs/grading-page-palette.md. */
 .board-head {
-  max-width: 96rem;
-  margin: 0 auto;
-  padding: 2.5rem clamp(1rem, 3vw, 2rem) 2rem;
+  width: 100%;
+  padding: 2.75rem 0 2.25rem;
   border-bottom: 1px solid var(--line);
+}
+.board-head > * {
+  width: min(100% - clamp(1.5rem, 5vw, 5rem), 77.5rem);
+  margin-inline: auto;
 }
 .crumbs ol {
   display: flex; gap: .5rem; flex-wrap: wrap;
@@ -178,23 +224,23 @@ button { font: inherit; color: inherit; }
 .crumbs a:hover { text-decoration: underline; text-underline-offset: .2em; }
 
 .shell {
+  width: min(100% - clamp(1.5rem, 5vw, 5rem), 77.5rem);
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: 17.5rem minmax(0, 1fr);
-  gap: 0;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
   align-items: start;
-  max-width: 96rem;
-  margin: 0 auto;
 }
 
 .rail {
   position: sticky;
-  top: 0;
-  max-height: 100vh;
+  top: 5.5rem;
+  align-self: start;
+  max-height: calc(100vh - 7rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 1.25rem 1rem 2rem;
+  padding: 2rem 1.25rem 2rem 0;
   border-right: 1px solid var(--line);
-  background: var(--surface);
 }
 
 .stream {
@@ -400,8 +446,14 @@ button { font: inherit; color: inherit; }
   text-transform: uppercase; letter-spacing: .16em; font-weight: 700;
   color: var(--ink-3); margin-bottom: .5rem;
 }
-.prompt { font-size: var(--t-3); line-height: 1.6; color: var(--ink); }
-.target { font-size: var(--t-3); line-height: 1.6; color: var(--ink-3); font-style: italic; }
+.prompt {
+  font-size: var(--t-3); line-height: 1.6; color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.target {
+  font-size: var(--t-3); line-height: 1.6; color: var(--ink-3);
+  font-style: italic; overflow-wrap: anywhere;
+}
 
 /* The captured response. Set apart because the page did not write it. */
 .output {
@@ -450,8 +502,8 @@ mark.ev {
 
 /* -------------------------------------------------------- pair verdict */
 .pair-verdict {
-  display: inline-flex; align-items: center; gap: .625rem;
-  font-size: var(--t-1);
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: .35rem .625rem;
+  font-size: var(--t-1); min-width: 0;
 }
 .pair-halves {
   font-family: var(--mono); font-size: var(--t-0);
@@ -500,9 +552,27 @@ mark.ev {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* ------------------------------------------------------------ narrow last */
+/* These relax `nowrap` set further up, so they have to come after it: same
+   specificity, and the later rule is the one that lands. */
+@media (max-width: 60rem) {
+  .pair-verdict, .pair-halves, .pair-read, .verdict { white-space: normal; }
+  .verdict { margin-left: 0; }
+  .half-h { flex-wrap: wrap; }
+}
 </style>
 
 <a class="skip" href="#stream">Skip to the cases</a>
+
+<div class="page">
+<nav class="nav">
+  <a class="nav-brand" href="#stream">
+    <span>housecast</span>
+    <small>grading board</small>
+  </a>
+  <ul class="nav-meta" id="nav-meta"></ul>
+</nav>
 
 <header class="board-head">
   <nav class="crumbs" aria-label="Breadcrumb">
@@ -512,7 +582,6 @@ mark.ev {
     </ol>
   </nav>
   <h1 class="run-name" id="run-name">grading board</h1>
-  <div class="source" id="source"></div>
 </header>
 
 <div class="shell">
@@ -561,6 +630,14 @@ mark.ev {
   </aside>
 
   <main class="stream" id="stream" tabindex="-1"></main>
+</div>
+
+<footer class="site-footer">
+  <p>
+    <b>housecast</b>
+    <small>grading board</small>
+  </p>
+</footer>
 </div>
 
 <!--
@@ -919,13 +996,11 @@ function drawRail(model) {
   document.getElementById("run-name").textContent = model.run;
   document.title = model.run + " // housecast grading board";
 
-  var source = document.getElementById("source");
-  source.textContent = "";
-  var live = el("span", "tag " + (model.source === "serve" ? "live" : "sealed"),
-    model.source === "serve" ? "live session" : "committed export");
-  source.appendChild(live);
-  source.appendChild(el("span", "tag", model.format));
-  if (!model.carriesPrivate) source.appendChild(el("span", "tag", "public half only"));
+  var meta = document.getElementById("nav-meta");
+  meta.textContent = "";
+  meta.appendChild(el("li", "", model.source === "serve" ? "live session" : "committed export"));
+  meta.appendChild(el("li", "", model.format));
+  if (!model.carriesPrivate) meta.appendChild(el("li", "", "public half only"));
 
   document.getElementById("n-annotated").textContent = String(model.counts.annotated);
   document.getElementById("n-cases").textContent = "of " + model.counts.cases + " cases";
