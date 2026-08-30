@@ -416,6 +416,7 @@ button { font: inherit; color: inherit; }
 .halves > .half + .half { border-left: 1px solid var(--line); padding-left: clamp(1.25rem, 3vw, 2.25rem); }
 @media (max-width: 52rem) { .halves > .half + .half { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1.1rem; } }
 .unit.single .halves { grid-template-columns: 1fr; }
+.unit.single .half { max-width: 68ch; }
 @media (max-width: 52rem) { .halves { grid-template-columns: 1fr; } }
 
 .half { min-width: 0; }
@@ -552,6 +553,22 @@ mark.ev {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* The site chapters a long document with a rule and a heading rather than a
+   container, and the board is already ordered by entity. */
+.chapter {
+  margin: 3.5rem 0 0;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line-2);
+  color: var(--bright);
+  font-size: var(--t-5);
+  font-weight: 700;
+  letter-spacing: -.018em;
+  scroll-margin-top: 6rem;
+}
+.chapter + .unit { border-top: 0; padding-top: 1.25rem; }
+.stream > .chapter:first-child { margin-top: 1.25rem; padding-top: 0; border-top: 0; }
+.stream > .unit:first-child { border-top: 0; }
 
 /* ------------------------------------------------------------ narrow last */
 /* These relax `nowrap` set further up, so they have to come after it: same
@@ -989,7 +1006,17 @@ function drawStream() {
     stream.appendChild(el("div", "filter-note",
       units.length + " of " + state.units.length + " cards // filter: " + state.filter));
   }
-  units.forEach(function (unit, i) { stream.appendChild(unitCard(unit, i)); });
+  var entity = null;
+  units.forEach(function (unit, i) {
+    var next = unit.entity;
+    if (next && next !== entity) {
+      entity = next;
+      var head = el("h2", "chapter", next);
+      head.id = "chapter-" + next;
+      stream.appendChild(head);
+    }
+    stream.appendChild(unitCard(unit, i));
+  });
 }
 
 function drawRail(model) {
