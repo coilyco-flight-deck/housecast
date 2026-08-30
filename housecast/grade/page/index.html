@@ -43,54 +43,56 @@
 :root {
   color-scheme: dark;
 
-  --ground:      #211c33;
-  --surface:     #29243f;
-  --surface-2:   #322c4a;
-  --surface-3:   #3e375d;
-  --line:        #3e375d;
-  --line-2:      #574f7d;
+  /* Named as the site names them, so a value can be traced back to site.css. */
+  --ground:      #16121f;
+  --surface:     #211c33;
+  --surface-2:   #0d0a14;
+  --surface-3:   #211c33;
+  --line:        rgba(145, 146, 187, .14);
+  --line-2:      rgba(145, 146, 187, .24);
 
-  --ink:         #eeeeee;
-  --ink-2:       #c6c4da;
-  --ink-3:       #9e9fc2;
+  --ink:         #e6e2f2;
+  --ink-2:       #c3bcd8;
+  --ink-3:       #9aabc4;
+  --bright:      #ffffff;
 
   /* purple carries structure and the evidence span. It is never a verdict. */
-  --accent:      #a6a7cc;
+  --accent:      #a9aad0;
   --accent-deep: #574f7d;
-  --accent-wash: rgba(166, 167, 204, .16);
-  --accent-edge: rgba(166, 167, 204, .42);
-  --accent-mark: rgba(166, 167, 204, .30);
+  --accent-wash: rgba(169, 170, 208, .16);
+  --accent-edge: rgba(145, 146, 187, .24);
+  --accent-mark: rgba(169, 170, 208, .28);
 
   /* Verdicts never rely on hue alone: each carries a glyph and a word. */
-  --affirm:      #8bae9b;
-  --affirm-wash: rgba(139, 174, 155, .13);
+  --affirm:      #93b7a4;
+  --affirm-wash: rgba(147, 183, 164, .13);
   --deduct:      #dc8f72;
   --deduct-wash: rgba(220, 143, 114, .13);
   --hold:        #f0bd68;
-  --hold-wash:   rgba(240, 189, 104, .13);
-  --idle:        #9192bb;
-  --idle-edge:   #574f7d;
-  --idle-wash:   rgba(145, 146, 187, .10);
+  --hold-wash:   rgba(240, 189, 104, .14);
+  --idle:        #9aabc4;
+  --idle-edge:   rgba(145, 146, 187, .35);
+  --idle-wash:   rgba(145, 146, 187, .08);
+  --mint:        #dff0ea;
 
   --sans: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
           Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: SFMono-Regular, ui-monospace, "SF Mono", Menlo, Consolas,
           "Liberation Mono", monospace;
 
-  /* One scale. --zoom is the projector solve and the only thing that moves. */
   --zoom: 1;
-  --t-0: .6875rem;
-  --t-1: .78125rem;
-  --t-2: .875rem;
+  --t-0: .68rem;
+  --t-1: .78rem;
+  --t-2: .88rem;
   --t-3: 1rem;
-  --t-4: 1.0625rem;
-  --t-5: 1.3125rem;
-  /* The site opens at a display weight, so the board names itself in one. */
-  --t-6: 2.25rem;
+  --t-4: 1.08rem;
+  --t-5: 1.35rem;
+  /* Every page on the site opens at a display weight. So does this one. */
+  --t-6: clamp(1.5rem, 2.4vw, 2.1rem);
 
-  /* The site has no rounded corner anywhere, so neither does this. */
-  --r:   0px;
-  --r-s: 0px;
+  /* The site's own two radii, .35rem on a plate and .2rem on a well. */
+  --r:   .35rem;
+  --r-s: .2rem;
   --gap: 1rem;
 }
 
@@ -137,12 +139,12 @@ body {
 h1, h2, h3, p, figure, blockquote { margin: 0; }
 button { font: inherit; color: inherit; }
 
-:where(a, button, [tabindex]):focus-visible,
-.unit:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: var(--r-s);
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid var(--hold);
+  outline-offset: 3px;
 }
+.unit:focus-visible { outline: none; border-left-color: var(--hold); }
+.unit:focus-visible .ent { color: var(--hold); }
 
 .vh {
   position: absolute; width: 1px; height: 1px;
@@ -220,8 +222,9 @@ button { font: inherit; color: inherit; }
 .run-name {
   font-size: var(--t-6);
   font-weight: 700;
-  letter-spacing: -.02em;
-  line-height: 1.05;
+  letter-spacing: -.03em;
+  line-height: .98;
+  color: var(--bright);
   overflow-wrap: anywhere;
 }
 /* The rail is a fixed column, so the display size steps down rather than
@@ -240,7 +243,7 @@ button { font: inherit; color: inherit; }
   font-family: var(--mono);
   font-size: var(--t-0);
   padding: .1875rem .4375rem;
-  border-radius: 0;
+  border-radius: var(--r-s);
   border: 1px solid var(--line-2);
   color: var(--ink-3);
   white-space: nowrap;
@@ -255,12 +258,12 @@ button { font: inherit; color: inherit; }
 }
 .progress-nums b { font-size: var(--t-4); color: var(--ink); font-weight: 700; }
 .bar {
-  margin-top: .375rem; height: .375rem; border-radius: 0;
+  margin-top: .375rem; height: .375rem; border-radius: 999px;
   background: var(--surface-3); overflow: hidden;
 }
 .bar > i {
   display: block; height: 100%; width: 0;
-  background: var(--accent); border-radius: 0;
+  background: var(--accent); border-radius: 999px;
   transition: width .25s ease;
 }
 
@@ -278,7 +281,7 @@ button { font: inherit; color: inherit; }
 .cells { display: flex; flex-wrap: wrap; gap: 3px; }
 .cell {
   width: .875rem; height: .875rem; padding: 0;
-  border-radius: 0; cursor: pointer;
+  border-radius: 2px; cursor: pointer;
   border: 1px dashed var(--idle-edge);
   background: var(--idle-wash);
 }
@@ -288,8 +291,8 @@ button { font: inherit; color: inherit; }
 .cell[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .legend { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .3125rem; }
-.legend div { display: flex; align-items: center; gap: .4375rem; font-size: var(--t-1); color: var(--ink-2); }
-.swatch { width: .75rem; height: .75rem; border-radius: 0; border: 1px solid var(--line-2); flex: none; }
+.legend div { display: flex; align-items: center; gap: .4375rem; font-family: var(--mono); font-size: var(--t-0); letter-spacing: .06em; color: var(--ink-3); }
+.swatch { width: .75rem; height: .75rem; border-radius: 2px; border: 1px solid var(--line-2); flex: none; }
 .swatch.affirm { background: var(--affirm); border-color: var(--affirm); }
 .swatch.deduct { background: var(--deduct); border-color: var(--deduct); }
 .swatch.hold   { background: var(--hold);   border-color: var(--hold); }
@@ -298,36 +301,37 @@ button { font: inherit; color: inherit; }
 .controls { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .375rem; }
 .controls .split { flex-basis: 100%; height: 0; }
 .ctl {
-  background: var(--surface-2); border: 1px solid var(--line-2);
-  border-radius: var(--r-s); padding: .3125rem .5625rem;
-  font-size: var(--t-1); cursor: pointer;
+  background: transparent; border: 1px solid var(--line-2);
+  border-radius: var(--r-s); padding: .32rem .6rem;
+  font-family: var(--mono); font-size: var(--t-0);
+  text-transform: uppercase; letter-spacing: .12em; font-weight: 700;
+  color: var(--ink-3); cursor: pointer;
 }
 .ctl:hover { border-color: var(--accent-edge); color: var(--accent); }
 .ctl[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent-edge); color: var(--accent); }
 
-.keys { margin-top: 1.25rem; font-size: var(--t-0); color: var(--ink-3); line-height: 1.7; }
+.keys { margin-top: 1.25rem; font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3); line-height: 1.8; }
 .keys kbd {
   font-family: var(--mono); font-size: .95em;
   background: var(--surface-3); border: 1px solid var(--line-2);
-  border-bottom-width: 2px; border-radius: 0; padding: 0 .3125rem;
+  border-bottom-width: 2px; border-radius: var(--r-s); padding: 0 .3125rem;
   color: var(--ink-2);
 }
 
 /* ---------------------------------------------------------------- units */
 .unit {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
+  padding: 1.6rem 0 1.75rem 1.1rem;
+  border-top: 1px solid var(--line);
+  border-left: 2px solid transparent;
   scroll-margin-top: 1rem;
+  transition: border-left-color 140ms ease;
 }
-.unit[aria-current="true"] { border-color: var(--accent-edge); box-shadow: 0 0 0 1px var(--accent-edge); }
+.unit:first-child { border-top: 0; }
+.unit[aria-current="true"] { border-left-color: var(--accent); }
 
 .unit-h {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
-  padding: .625rem .875rem;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-2);
-  border-radius: var(--r) var(--r) 0 0;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem;
+  margin-bottom: .9rem;
 }
 .ent {
   font-family: var(--mono); font-size: var(--t-2); font-weight: 700;
@@ -336,7 +340,7 @@ button { font: inherit; color: inherit; }
 .attr { font-family: var(--mono); font-size: var(--t-1); color: var(--ink-2); overflow-wrap: anywhere; }
 .tt {
   font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3);
-  border: 1px solid var(--line-2); border-radius: 0; padding: .0625rem .375rem;
+  text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
 }
 .unit-h .spacer { flex: 1 1 auto; }
 
@@ -345,41 +349,41 @@ button { font: inherit; color: inherit; }
 .halves {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--line);
+  gap: 0 clamp(1.25rem, 3vw, 2.25rem);
 }
+.halves > .half + .half { border-left: 1px solid var(--line); padding-left: clamp(1.25rem, 3vw, 2.25rem); }
+@media (max-width: 52rem) { .halves > .half + .half { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1.1rem; } }
 .unit.single .halves { grid-template-columns: 1fr; }
 @media (max-width: 52rem) { .halves { grid-template-columns: 1fr; } }
 
-.half { background: var(--surface); padding: .875rem; min-width: 0; }
+.half { min-width: 0; }
 
 .half-h { display: flex; align-items: center; gap: .5rem; margin-bottom: .625rem; }
 .half-tag {
   font-family: var(--mono); font-size: var(--t-0);
-  text-transform: uppercase; letter-spacing: .1em; font-weight: 700;
-  padding: .125rem .4375rem; border-radius: var(--r-s);
-  border: 1px solid var(--line-2); color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: .16em; font-weight: 700;
+  color: var(--ink-3);
 }
-.half[data-half="in"]  .half-tag { color: var(--ink); border-color: var(--ink-3); }
-.half[data-half="out"] .half-tag { color: var(--ground); background: var(--ink-2); border-color: var(--ink-2); }
+.half[data-half="in"]  .half-tag { color: var(--mint); }
+.half[data-half="out"] .half-tag { color: var(--accent); }
 .case-id { font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3); overflow-wrap: anywhere; }
 
 .verdict {
-  margin-left: auto; display: inline-flex; align-items: center; gap: .3125rem;
-  font-size: var(--t-1); font-weight: 700; white-space: nowrap;
-  padding: .125rem .4375rem; border-radius: var(--r-s);
-  border: 1px solid currentColor;
+  margin-left: auto; display: inline-flex; align-items: center; gap: .35rem;
+  font-family: var(--mono); font-size: var(--t-0); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
 }
 .verdict .g { font-size: 1.05em; line-height: 1; }
-.verdict[data-tone="affirm"] { color: var(--affirm); background: var(--affirm-wash); }
-.verdict[data-tone="deduct"] { color: var(--deduct); background: var(--deduct-wash); }
-.verdict[data-tone="hold"]   { color: var(--hold);   background: var(--hold-wash); }
-.verdict[data-tone="idle"]   { color: var(--idle);   background: var(--idle-wash); border-style: dashed; }
+.verdict[data-tone="affirm"] { color: var(--affirm); }
+.verdict[data-tone="deduct"] { color: var(--deduct); }
+.verdict[data-tone="hold"]   { color: var(--hold); }
+.verdict[data-tone="idle"]   { color: var(--idle); }
 
 .field { margin-bottom: .625rem; }
 .field-l {
-  font-size: var(--t-0); text-transform: uppercase; letter-spacing: .09em;
-  color: var(--ink-3); margin-bottom: .1875rem;
+  font-family: var(--mono); font-size: var(--t-0);
+  text-transform: uppercase; letter-spacing: .16em; font-weight: 700;
+  color: var(--ink-3); margin-bottom: .3rem;
 }
 .prompt { font-size: var(--t-2); color: var(--ink-2); }
 .target { font-size: var(--t-2); color: var(--ink-3); font-style: italic; }
@@ -387,12 +391,12 @@ button { font: inherit; color: inherit; }
 /* The captured response. Set apart because the page did not write it. */
 .output {
   font-size: var(--t-4);
-  line-height: 1.55;
+  line-height: 1.7;
   color: var(--ink);
   background: var(--surface-2);
-  border-left: 3px solid var(--ink-3);
-  border-radius: 0 var(--r-s) var(--r-s) 0;
-  padding: .75rem .875rem;
+  border-left: 2px solid var(--mint);
+  border-radius: var(--r-s);
+  padding: clamp(.9rem, 2.5vw, 1.2rem);
   overflow-wrap: anywhere;
 }
 
@@ -414,11 +418,11 @@ mark.ev {
 .meter.over { color: var(--hold); }
 
 .critique {
-  margin-top: .75rem;
-  border-left: 3px solid var(--accent);
+  margin-top: .9rem;
+  border-left: 2px solid var(--accent);
   background: var(--accent-wash);
-  border-radius: 0 var(--r-s) var(--r-s) 0;
-  padding: .625rem .75rem;
+  border-radius: var(--r-s);
+  padding: .8rem 1rem;
   font-size: var(--t-2);
 }
 .critique .field-l { color: var(--accent); }
