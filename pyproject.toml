@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Kai Ase Siren" }]
+# Development Status corrects the 0.0.1 name-claim placeholder, which shipped
+# `1 - Planning` because at that point there was no software behind the name.
 classifiers = [
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -36,6 +39,8 @@ housecast = "housecast.__main__:main"
 
 [project.urls]
 Homepage = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast"
+Source = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast"
+Issues = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast/issues"
 
 [dependency-groups]
 dev = [

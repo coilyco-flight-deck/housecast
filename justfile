@@ -56,6 +56,18 @@ roster *ARGS:
 sync *ARGS:
     @uv sync --all-extras "$@"
 
+# Refuse a publish whose tag disagrees with the packaged version. `just release-check housecast-v0.3.0`.
+release-check *ARGS:
+    @uv run python scripts/release_tag.py "$@"
+
+# Build the sdist and wheel into dist/.
+build *ARGS:
+    @uv build "$@"
+
+# Upload dist/ to PyPI. Reads the token from UV_PUBLISH_TOKEN, never from argv.
+publish *ARGS:
+    @uv publish --trusted-publishing never --check-url https://pypi.org/simple/housecast/ "$@"
+
 # Print the case list the current roster implies.
 evalkit-matrix *ARGS:
     @sh scripts/eval-matrix.sh "$@"

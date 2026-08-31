@@ -75,9 +75,9 @@ There is no Makefile. Each recipe runs its command directly through uv.
   no tokens, and no host or tailnet identifiers in tracked files.
 - Roster data describes people and seats. Treat any real personal detail as
   out of scope for this repository until a slice explicitly admits it.
-- Claiming `housecast` or `house-cast` on PyPI is externally visible and
-  effectively irreversible. `agent-compose#347` owns it and it needs Kai
-  present. Do not upload a placeholder.
+- The name is claimed, so that gate is spent. What remains irreversible is a
+  version: pushing a `housecast-v*` tag uploads to PyPI, and that number can
+  never be reused. Treat a tag push as the externally visible action it now is.
 
 ## Cross-repo contracts
 
@@ -97,10 +97,15 @@ This file's frontmatter declares `workflow: merge-remote-main`. Canonical
 history lives on Forgejo, and the GitHub mirror is separate setup on a separate
 gate.
 
-No PyPI distribution exists. Consumers depend on this repository from Forgejo
+No release is on PyPI yet. Consumers depend on this repository from Forgejo
 through `[tool.uv.sources]`, pinned by tag, which is the same shape the estate
-uses for `aos-eval`. Cutting a `housecast-v*` tag is how a consumer is given
-something to pin, and it publishes nothing outward.
+uses for `aos-eval`.
+
+**Cutting a `housecast-v*` tag now publishes outward.** It used to publish
+nothing, and `.forgejo/workflows/publish.yml` changed that: a pushed tag builds
+and uploads to PyPI, where a version is accepted once and cannot be replaced.
+Bump `housecast/__init__.py` first, since the train refuses a tag that disagrees
+with it. See [`docs/publishing.md`](docs/publishing.md).
 
 **Pin `housecast-v0.1.4` or later.** The four tags below it were cut during the
 migration and each is broken in some way: `v0.1.0` was force-moved, `v0.1.1`
@@ -108,11 +113,11 @@ predates the grading-anchor check, `v0.1.2` fails mypy strict, and `v0.1.3`
 reports the wrong version. They are kept rather than deleted because the history
 is honest, and named here so nobody pins one by reaching for the lowest number.
 
-The PyPI publish workflow is still `agent-compose#337`. The name claim landed
-under `agent-compose#347`: `housecast` is held on PyPI as a 0.0.1 placeholder,
-and nothing further goes up there until the publishing slice in
-`agent-compose#329` scope A lands. `house-cast` needs no defensive hold, since
-PyPI refuses it as too similar to `housecast`.
+The name claim landed under `agent-compose#347`: `housecast` is held on PyPI as
+a 0.0.1 placeholder. `house-cast` needs no defensive hold, since PyPI refuses it
+as too similar to `housecast`. The publish workflow is the packaging half of
+`agent-compose#329` scope A; the rest of that scope, growing the compositor's
+public API, is still open.
 
 Keep [`docs/FEATURES.md`](docs/FEATURES.md) current when a shipped capability
 changes, in the same commit that changes it.

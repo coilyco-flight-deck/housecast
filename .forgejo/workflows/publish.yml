@@ -1,0 +1,82 @@
+# Publish housecast to PyPI when a housecast-v* tag is pushed. Like ci.yml,
+# every step invokes a justfile recipe, so the train and a developer running
+# `just build` locally cannot disagree about what publishing is.
+#
+# PyPI accepts a version once and yanking is not deleting, so this gate is
+# ordered against that: the tag must agree with the packaged version, and the
+# offline gates must pass, both before anything is built or uploaded. A tag can
+# point at any commit, and ci.yml only gates main and pull requests, so running
+# `just check` here is a second run rather than a duplicated one.
+#
+# PyPI trusted publishing supports GitHub, GitLab, Google, and ActiveState as
+# identity providers, and Forgejo is none of them, so this authenticates with an
+# API token. `PYPI_TOKEN` is a repository Actions secret sourced from SSM
+# `/coilysiren/pypi/token` by agentic-os `just sync-actions-secrets`. It reaches
+# uv through the environment rather than argv, so it never lands in a process
+# listing. See docs/publishing.md.
+#
+# `--check-url` in the publish recipe makes a retry idempotent: files already on
+# PyPI are skipped rather than failing the run, so a workflow_dispatch rerun
+# after a partial upload finishes the job instead of wedging.
+#
+# The tag reaches `just release-check` through RELEASE_TAG rather than the run
+# line, so a tag carrying shell metacharacters is data to the recipe instead of
+# script.
+
+name: publish
+
+on:
+  push:
+    tags: ["housecast-v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "housecast-v* tag to publish. Defaults to the dispatch ref."
+        required: false
+        default: ""
+
+concurrency:
+  group: publish-pypi
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  UV_HTTP_TIMEOUT: "180"
+
+jobs:
+  publish:
+    runs-on: docker
+    timeout-minutes: 20
+    container:
+      image: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: The tag and the packaged version agree
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: just release-check "$RELEASE_TAG"
+
+      - name: Offline gates (just check)
+        run: just check
+
+      - name: Build the sdist and wheel
+        run: just build
+
+      - name: Upload to PyPI
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: just publish

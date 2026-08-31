@@ -27,12 +27,12 @@ Coarse inventory of the major capabilities housecast ships.
   grade present` serves it with anonymous voting, a separate process so the divide between a
   private critique and a room is which command runs. See [`presenting.md`](presenting.md),
   [`deck.md`](deck.md).
+* **The PyPI release train.** A pushed `housecast-v*` tag gates, builds, and uploads with a token from SSM. See [`publishing.md`](publishing.md).
 
 ## Not shipped
 
-No PyPI distribution, only the name held as a 0.0.1 placeholder under `agent-compose#347`, so
-consumers install from Forgejo with uv and publishing is `agent-compose#329` scope A. The Go
-engine in agent-compose still composes, deleted under `agent-compose#339`, blocked separately.
+No release is on PyPI yet, only the 0.0.1 name claim from `agent-compose#347`, so the next tag is
+the first real upload. agent-compose's Go engine still composes, deleted under `agent-compose#339`.
 
 ## See also
 

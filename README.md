@@ -11,8 +11,9 @@ identical.
 The engine and the eval runner both live here now, moved out of agent-compose
 under `agent-compose#337`. [`docs/FEATURES.md`](docs/FEATURES.md) is the
 inventory. The name `housecast` is held on PyPI as a 0.0.1 placeholder under
-`agent-compose#347`, now closed. The software itself is still unpublished, so
-consumers install from Forgejo.
+`agent-compose#347`, now closed. The release train that turns a `housecast-v*`
+tag into a real upload is wired, and until the first tag runs it, consumers
+install from Forgejo.
 
 ## housecast and acompose
 
@@ -62,7 +63,7 @@ lint, format check, types, and tests in one recipe.
 
 ## Installing it elsewhere
 
-There is no PyPI release, only the reserved name. Depend on it from Forgejo
+No release is on PyPI yet, only the reserved name. Depend on it from Forgejo
 with uv:
 
 ```toml
@@ -75,6 +76,9 @@ housecast = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast
 
 That is the same shape the estate already uses for `aos-eval`. Add the `eval`
 extra when the consumer needs the board runner rather than just the engine.
+Once a `housecast-v*` tag has run the train in
+[`docs/publishing.md`](docs/publishing.md), `pip install housecast` is the
+shorter path.
 
 ## Layout
 
