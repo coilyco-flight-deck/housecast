@@ -68,6 +68,10 @@ build *ARGS:
 publish *ARGS:
     @uv publish --trusted-publishing never --check-url https://pypi.org/simple/housecast/ "$@"
 
+# Upload dist/ to TestPyPI, the throwaway index. Same token variable, different registry.
+publish-test *ARGS:
+    @uv publish --trusted-publishing never --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/housecast/ "$@"
+
 # Print the case list the current roster implies.
 evalkit-matrix *ARGS:
     @sh scripts/eval-matrix.sh "$@"

@@ -1,6 +1,6 @@
-# Publish housecast to PyPI when a housecast-v* tag is pushed. Like ci.yml,
-# every step invokes a justfile recipe, so the train and a developer running
-# `just build` locally cannot disagree about what publishing is.
+# Publish housecast when a housecast-v* tag is pushed. Like ci.yml, every step
+# invokes a justfile recipe, so the train and a developer running `just build`
+# locally cannot disagree about what publishing is.
 #
 # PyPI accepts a version once and yanking is not deleting, so this gate is
 # ordered against that: the tag must agree with the packaged version, and the
@@ -10,14 +10,20 @@
 #
 # PyPI trusted publishing supports GitHub, GitLab, Google, and ActiveState as
 # identity providers, and Forgejo is none of them, so this authenticates with an
-# API token. `PYPI_TOKEN` is a repository Actions secret sourced from SSM
-# `/coilysiren/pypi/token` by agentic-os `just sync-actions-secrets`. It reaches
-# uv through the environment rather than argv, so it never lands in a process
+# API token. `PYPI_TOKEN` and `TEST_PYPI_TOKEN` are repository Actions secrets
+# sourced from SSM by agentic-os `just sync-actions-secrets`. Each reaches uv
+# through the environment rather than argv, so neither lands in a process
 # listing. See docs/publishing.md.
 #
-# `--check-url` in the publish recipe makes a retry idempotent: files already on
-# PyPI are skipped rather than failing the run, so a workflow_dispatch rerun
-# after a partial upload finishes the job instead of wedging.
+# `--check-url` in both publish recipes makes a retry idempotent: files already
+# on the index are skipped rather than failing the run, so a rerun after a
+# partial upload finishes the job instead of wedging.
+#
+# The `index` input defaults to testpypi so a hand-run is harmless by default.
+# A tag push always takes the real index, and dispatching there is a deliberate
+# choice rather than the path of least resistance. testpypi skips the tag guard
+# on purpose: the point of that run is to prove build, auth, and upload from an
+# ordinary branch without spending a version number on the real index.
 #
 # The tag reaches `just release-check` through RELEASE_TAG rather than the run
 # line, so a tag carrying shell metacharacters is data to the recipe instead of
@@ -30,13 +36,19 @@ on:
     tags: ["housecast-v*"]
   workflow_dispatch:
     inputs:
+      index:
+        description: "Which index to upload to."
+        required: true
+        default: "testpypi"
+        type: choice
+        options: [testpypi, pypi]
       tag:
-        description: "housecast-v* tag to publish. Defaults to the dispatch ref."
+        description: "housecast-v* tag. Required for pypi, ignored for testpypi."
         required: false
         default: ""
 
 concurrency:
-  group: publish-pypi
+  group: publish-${{ github.event.inputs.index || 'pypi' }}
   cancel-in-progress: false
 
 permissions:
@@ -66,6 +78,7 @@ jobs:
             uv-${{ runner.os }}-
 
       - name: The tag and the packaged version agree
+        if: ${{ github.event.inputs.index != 'testpypi' }}
         env:
           RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: just release-check "$RELEASE_TAG"
@@ -76,7 +89,14 @@ jobs:
       - name: Build the sdist and wheel
         run: just build
 
+      - name: Upload to TestPyPI
+        if: ${{ github.event.inputs.index == 'testpypi' }}
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: just publish-test
+
       - name: Upload to PyPI
+        if: ${{ github.event.inputs.index != 'testpypi' }}
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: just publish
