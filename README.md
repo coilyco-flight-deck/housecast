@@ -10,8 +10,9 @@ identical.
 
 The engine and the eval runner both live here now, moved out of agent-compose
 under `agent-compose#337`. [`docs/FEATURES.md`](docs/FEATURES.md) is the
-inventory. Nothing is published to PyPI yet: consumers install from Forgejo,
-and the distribution claim is `agent-compose#347`, which waits on Kai.
+inventory. The name `housecast` is held on PyPI as a 0.0.1 placeholder under
+`agent-compose#347`, now closed. The software itself is still unpublished, so
+consumers install from Forgejo.
 
 ## housecast and acompose
 
@@ -61,7 +62,8 @@ lint, format check, types, and tests in one recipe.
 
 ## Installing it elsewhere
 
-There is no PyPI release. Depend on it from Forgejo with uv:
+There is no PyPI release, only the reserved name. Depend on it from Forgejo
+with uv:
 
 ```toml
 [project]

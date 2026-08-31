@@ -30,9 +30,9 @@ Coarse inventory of the major capabilities housecast ships.
 
 ## Not shipped
 
-No PyPI distribution, so consumers install from Forgejo with uv, and the name claim is
-`agent-compose#347` waiting on Kai. The Go engine in agent-compose still composes and is deleted
-under `agent-compose#339`, blocked separately.
+No PyPI distribution, only the name held as a 0.0.1 placeholder under `agent-compose#347`, so
+consumers install from Forgejo with uv and publishing is `agent-compose#329` scope A. The Go
+engine in agent-compose still composes, deleted under `agent-compose#339`, blocked separately.
 
 ## See also
 
