@@ -5,6 +5,9 @@ consumed it without knowing which engine wrote it. Emitting the same shape here
 is what takes Go out of the eval path without touching evalkit at all. Only the
 fields evalkit reads are emitted; agent-compose#338 owns the wider question of
 whether the board should read the roster directly instead.
+
+`acts` is deliberately not emitted. Nothing reads it yet, and a field with no
+consumer is a contract this module has to keep for free.
 """
 
 from __future__ import annotations
@@ -12,7 +15,29 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from housecast.roster import Roster
+from housecast.roster import Roster, Voice
+
+
+def _voice(voice: Voice | None) -> dict[str, Any] | None:
+    """Empty fields are dropped, so a bank nobody authored is absent, not [].
+
+    evalkit melds role voice with each personality's and skips a seat whose
+    sources are all empty, so an emitted-but-empty voice would derive a case
+    with no rule in its target.
+    """
+    if voice is None:
+        return None
+    out: dict[str, Any] = {"summary": voice.summary}
+    for key, value in (
+        ("cadence", voice.cadence),
+        ("person", voice.person),
+        ("tell", voice.tell),
+        ("prefer", list(voice.prefer)),
+        ("avoid", list(voice.avoid)),
+    ):
+        if value:
+            out[key] = value
+    return out
 
 
 def person_snapshot(roster: Roster) -> dict[str, Any]:
@@ -32,6 +57,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "personalities": list(role.personalities),
             "favorite_color": role.favorite_color,
             "identity": {"name": role.identity_name, "pronouns": role.identity_pronouns},
+            **({"voice": v} if (v := _voice(role.voice)) else {}),
             "seats": [
                 {
                     k: v
@@ -63,6 +89,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
                 "color": p.color,
                 "motif": p.motif,
                 "emblem": {"names": list(p.emblem.names), "emoji": p.emblem.emoji},
+                **({"voice": v} if (v := _voice(p.voice)) else {}),
             }
             for name, p in roster.personalities.items()
         },
