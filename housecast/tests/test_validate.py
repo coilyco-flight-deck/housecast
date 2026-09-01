@@ -34,45 +34,45 @@ def test_owner_may_not_declare_the_boundary_it_owns(loaded: Roster) -> None:
     owned = "build-foundational-software"
     assert loaded.boundaries[owned].owner == "platform"
     loaded.roles["platform"].defers.append(owned)
-    with pytest.raises(validate.RosterError, match="also declares it"):
+    with pytest.raises(roster.RosterError, match="also declares it"):
         validate.check_boundary_ownership(loaded)
 
 
 def test_owner_may_not_scope_the_boundary_it_owns(loaded: Roster) -> None:
     owned = "build-foundational-software"
     loaded.roles["platform"].scoped.append(roster.Scoped(owned, "anywhere at all"))
-    with pytest.raises(validate.RosterError, match="also scopes it"):
+    with pytest.raises(roster.RosterError, match="also scopes it"):
         validate.check_boundary_ownership(loaded)
 
 
 def test_missing_personality_binding_is_rejected(loaded: Roster) -> None:
     loaded.roles["director"].personalities.append("unbound")
-    with pytest.raises(validate.RosterError, match="has no catalog binding"):
+    with pytest.raises(roster.RosterError, match="has no catalog binding"):
         validate.check_personality_bindings(loaded)
 
 
 def test_a_role_with_no_personalities_is_rejected(loaded: Roster) -> None:
     loaded.roles["director"].personalities.clear()
-    with pytest.raises(validate.RosterError, match="activates no personalities"):
+    with pytest.raises(roster.RosterError, match="activates no personalities"):
         validate.check_personality_bindings(loaded)
 
 
 def test_mismatched_definition_set_is_rejected(loaded: Roster) -> None:
     loaded.boundary_order.append("no-such-boundary")
-    with pytest.raises(validate.RosterError, match="mismatched set"):
+    with pytest.raises(roster.RosterError, match="mismatched set"):
         validate.check_definition_set(loaded)
 
 
 def test_a_role_deferring_an_unknown_boundary_is_rejected(loaded: Roster) -> None:
     loaded.roles["director"].defers.append("no-such-boundary")
-    with pytest.raises(validate.RosterError, match="defers unknown boundary"):
+    with pytest.raises(roster.RosterError, match="defers unknown boundary"):
         validate.check_definition_set(loaded)
 
 
 def test_an_orphan_personality_is_rejected(loaded: Roster) -> None:
     orphan = dataclasses.replace(loaded.personalities["decisive"], name="orphan")
     loaded.personalities["orphan"] = orphan
-    with pytest.raises(validate.RosterError, match="bound to no role"):
+    with pytest.raises(roster.RosterError, match="bound to no role"):
         validate.check_definition_set(loaded)
 
 
@@ -81,7 +81,7 @@ def test_out_of_band_personality_color_is_rejected(loaded: Roster, bad: str) -> 
     loaded.personalities["decisive"] = dataclasses.replace(
         loaded.personalities["decisive"], color=bad
     )
-    with pytest.raises(validate.RosterError):
+    with pytest.raises(roster.RosterError):
         validate.check_personality_colors(loaded)
 
 
@@ -104,7 +104,7 @@ def test_an_overlong_role_body_is_rejected(loaded: Roster) -> None:
     role = loaded.roles["director"]
     frontmatter, body = validate.split_frontmatter(role.body, role.skill)
     role.body = f"---\n{frontmatter}\n---\n" + body + ("\n\nword" * 500)
-    with pytest.raises(validate.RosterError, match="maximum is 1200"):
+    with pytest.raises(roster.RosterError, match="maximum is 1200"):
         validate.check_copy_contract(loaded)
 
 
@@ -112,14 +112,14 @@ def test_a_role_body_under_three_paragraphs_is_rejected(loaded: Roster) -> None:
     role = loaded.roles["director"]
     frontmatter, _ = validate.split_frontmatter(role.body, role.skill)
     role.body = f"---\n{frontmatter}\n---\n\n# Portfolio Director\n\n" + ("word " * 200)
-    with pytest.raises(validate.RosterError, match="at least three paragraphs"):
+    with pytest.raises(roster.RosterError, match="at least three paragraphs"):
         validate.check_copy_contract(loaded)
 
 
 def test_a_skill_whose_frontmatter_names_another_skill_is_rejected(loaded: Roster) -> None:
     role = loaded.roles["director"]
     role.body = role.body.replace("name: role-director", "name: role-somebody-else", 1)
-    with pytest.raises(validate.RosterError, match="does not declare name"):
+    with pytest.raises(roster.RosterError, match="does not declare name"):
         validate.check_skill_frontmatter(loaded)
 
 
@@ -128,7 +128,7 @@ def test_a_boundary_missing_a_side_is_rejected(loaded: Roster) -> None:
     loaded.boundaries["modify-live-backend"] = dataclasses.replace(
         boundary, body=boundary.body.replace(validate.BOUNDARY_DEFER_HEADING, "## Something else")
     )
-    with pytest.raises(validate.RosterError, match="needs both"):
+    with pytest.raises(roster.RosterError, match="needs both"):
         validate.check_copy_contract(loaded)
 
 

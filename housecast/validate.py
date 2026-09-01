@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from housecast import color
+from housecast.roster import RosterError
 
 if TYPE_CHECKING:
     from housecast.roster import Roster
@@ -58,10 +59,6 @@ def description(raw: str, skill: str) -> str:
             sentence, sep, _ = value.partition(". ")
             return sentence + "." if sep else value.strip()
     raise _error(f"person skill {skill!r}: missing description")
-
-
-class RosterError(ValueError):
-    pass
 
 
 def _error(message: str) -> RosterError:

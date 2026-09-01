@@ -19,11 +19,7 @@ import pytest
 import yaml
 
 from housecast import render, roster
-from housecast.roster import Roster
-
-# `validate` defines its own RosterError, distinct from `roster`'s, and the
-# checks dispatched from `roster.validate` raise that one.
-from housecast.validate import RosterError
+from housecast.roster import Roster, RosterError
 
 
 @pytest.fixture(scope="module")

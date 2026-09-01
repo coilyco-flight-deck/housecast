@@ -15,7 +15,7 @@ import pytest
 import yaml
 
 from housecast import roster as roster_module
-from housecast.roster import load
+from housecast.roster import RosterError, load
 
 MINIMAL = pathlib.Path(roster_module.DATA).parent / "minimal-roster.yaml"
 
@@ -56,7 +56,5 @@ def test_every_key_in_it_is_load_bearing(path: tuple[str, ...], tmp_path: pathli
     document = yaml.safe_load(MINIMAL.read_text())
     candidate = tmp_path / "roster.yaml"
     candidate.write_text(yaml.safe_dump(_without(document, path)), encoding="utf-8")
-    # ValueError rather than RosterError: `roster` and `validate` each define
-    # their own, so no one name catches both halves of a load (#14).
-    with pytest.raises((KeyError, TypeError, ValueError)):
+    with pytest.raises((KeyError, TypeError, RosterError)):
         load(candidate)

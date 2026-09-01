@@ -34,8 +34,7 @@ ORDER = (
     roster.Adjacent,
 )
 
-# Where each keyed type's YAML lives, so required-key status comes off the
-# minimal roster rather than off the dataclass default. The two disagree:
+# Required-key status comes off the minimal roster, not the dataclass default:
 # `Role.scoped` has no default and the loader still reads it with `.get`.
 SECTIONS: dict[str, str | None] = {
     "Roster": None,
