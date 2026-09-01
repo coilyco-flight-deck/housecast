@@ -16,7 +16,7 @@ Coarse inventory of the major capabilities housecast ships.
 * **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read,
   which is what removed Go from the eval path.
 * **evalkit, the board runner.** Derives the board from the roster, runs it through Inspect against
-  Agent Proxy, and reports the coverage gap between them. See [`evaluation.md`](evaluation.md).
+  Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md), [`evaluation-workflow.md`](evaluation-workflow.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
   taxonomy, one-way export, and `grade serve`, which holds one run open for a grader on loopback
   and refuses to bind past it. See [`grading.md`](grading.md),

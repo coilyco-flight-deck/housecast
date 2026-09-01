@@ -15,12 +15,11 @@ challenge, and `challenges.yaml` is where those land.
 
 ## Coverage
 
-`just evalkit-coverage` reports what the two sides do not share: cases derived
-with no prompt, prompts no longer derived, authored cases with no annotation,
-and graded records whose case is gone. It exits zero, because the grader is a
-human and blocking would put every roster edit behind an annotation session.
-`[tool.evalkit.coverage]` in `pyproject.toml` carries `blocking` and
-`retired_runs`, so flipping the gate is configuration rather than a patch.
+`just evalkit-coverage` reports what the two sides do not share: cases derived with no
+prompt, prompts no longer derived, authored cases with no annotation, and graded records
+whose case is gone. It exits zero, because the grader is a human and blocking would put
+every roster edit behind an annotation session. `[tool.evalkit.coverage]` in
+`pyproject.toml` carries `blocking` and `retired_runs`: configuration, not a patch.
 
 ## The runner
 
@@ -37,4 +36,5 @@ than in the schema. `evalkit/profile.py` declares the test types: a profile edit
 
 ## See also
 
+* [`evaluation-workflow.md`](evaluation-workflow.md) - the verb order, and what each type decides.
 * [`role-boundaries.md`](role-boundaries.md) - the allocations the board derives from.
