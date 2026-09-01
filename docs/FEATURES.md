@@ -10,9 +10,9 @@ Coarse inventory of the major capabilities housecast ships.
 * **The roster language.** `housecast/data/roster.yaml` carries roles, personalities, boundaries,
   acts, and the invariant. See [`roster-language.md`](roster-language.md),
   [`role-boundaries.md`](role-boundaries.md).
-* **Attribute acts.** Every role, personality, and boundary side names three things a seat can
-  actually run, rendered onto the identity card as `## Run`. A boundary's acts follow the side the
-  seat holds rather than the owner's. See [`roster-language.md`](roster-language.md).
+* **Attribute acts, and the overlay that extends them.** Every role, personality, and boundary side
+  names three runnable things, rendered as `## Run`, following the side the seat holds. A private
+  overlay appends estate-only acts without redefining anything. See [`overlay.md`](overlay.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read,
   which is what removed Go from the eval path.
 * **evalkit, the board runner.** Derives the board from the roster and runs it through Inspect
