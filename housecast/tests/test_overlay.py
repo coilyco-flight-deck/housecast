@@ -101,7 +101,7 @@ def test_the_appended_act_reaches_the_identity_card(
 @pytest.mark.parametrize(
     "doc",
     [
-        {"roles": {"sysadmn": [{"tool": "t", "text": "x"}]}},
+        {"roles": {"sys-admin": [{"tool": "t", "text": "x"}]}},
         {"personalities": {"grounded-ish": [{"tool": "t", "text": "x"}]}},
         {"boundaries": {"modify-live-backends": {"own": []}}},
     ],

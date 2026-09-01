@@ -121,6 +121,9 @@ class Role:
     body: str
     methods: list[str] = field(default_factory=list)
     favorite_color: str = ""
+    # Per-role rather than per-meld (agent-compose#396): a meld is not a unique
+    # key, since two roles sharing one fail the favorite-colour floor.
+    creature: str = ""
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
 
@@ -238,6 +241,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             adjacents=[Adjacent(a["role"], a["reason"]) for a in spec.get("adjacents") or []],
             body=spec["body"],
             methods=list(spec.get("methods") or []),
+            creature=str(spec.get("creature", "")),
             acts=_acts(spec.get("acts")),
         )
     roster = Roster(
@@ -264,5 +268,6 @@ def validate(roster: Roster) -> None:
     rules.check_personality_bindings(roster)
     rules.check_definition_set(roster)
     rules.check_personality_colors(roster)
+    rules.check_creature_names(roster)
     rules.check_skill_frontmatter(roster)
     rules.check_copy_contract(roster)

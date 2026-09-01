@@ -122,6 +122,23 @@ def check_personality_colors(roster: Roster) -> None:
             raise _error(f"personality {name!r} color: {exc}") from exc
 
 
+def check_creature_names(roster: Roster) -> None:
+    """Named per role and unique, the way emblem names are.
+
+    Uniqueness is the point rather than tidiness: the creature is one of the
+    four parts a seat states as its identity, and two seats answering with the
+    same one makes that sentence stop identifying anybody.
+    """
+    seen: dict[str, str] = {}
+    for name in roster.role_order:
+        creature = roster.roles[name].creature
+        if not creature:
+            raise _error(f"role {name!r} has no creature")
+        if creature in seen:
+            raise _error(f"creature {creature!r} is on both {seen[creature]!r} and {name!r}")
+        seen[creature] = name
+
+
 def check_skill_frontmatter(roster: Roster) -> None:
     """Every skill body declares its own name in frontmatter."""
     entries = [(r.skill, r.body) for r in roster.roles.values()]

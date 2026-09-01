@@ -1046,6 +1046,7 @@ roles:
     skill: role-platform
     skill_source: "roster:core:role:platform"
     stance: "braced and leaning back against one taut rope, both hands gripping it, heels dug in, hauling"
+    creature: "Badger-Beaver"
     voice:
       summary: describes what the code does now, and names the seam it will be extended at
       person: first person for what I built, the component's own name for what it does
@@ -1213,6 +1214,7 @@ roles:
     skill: role-sysadmin
     skill_source: "roster:core:role:sysadmin"
     stance: "standing on four short heavy legs, braced low, weight forward, shoulders set as if holding a line"
+    creature: "Ox-Tortoise"
     voice:
       summary: states the observed system state before the action taken on it
       person: first person for what I ran, the host's own name for what it reported
@@ -1349,6 +1351,7 @@ roles:
     skill: role-science
     skill_source: "roster:core:role:science"
     stance: "standing on two short legs, tipped a little forward mid-pour, one arm steadying itself, careful and precise"
+    creature: "Moss-Toad"
     voice:
       summary: reports the measurement before the meaning, and keeps the two separable
       person: first person for what I ran, the named instrument for what produced the number
@@ -1524,6 +1527,7 @@ roles:
     skill: role-frontend
     skill_source: "roster:core:role:frontend"
     stance: "standing on two short legs, leaning in mid-daub, head tilted at its own work, delighted"
+    creature: "Fox-Kitty"
     voice:
       summary: describes what a person sees and does, before what the code renders
       person: the reader as you, the surface by its own name, first person for what I built
@@ -1685,6 +1689,7 @@ roles:
     skill: role-gamedev
     skill_source: "roster:core:role:gamedev"
     stance: "standing low on four short weighted legs, sinking and settling, shoulders dropped, in gentle downward drift"
+    creature: "Nautilus-Newt"
     voice:
       summary: describes the loop a player is inside, before the system that produces it
       person: the player as they, the world by its own name, first person for what I built
@@ -1841,6 +1846,7 @@ roles:
     skill: role-director
     skill_source: "roster:core:role:director"
     stance: "standing on two legs, forward lean, weight committed, mid-stride"
+    creature: "Crow-Falcon"
     voice:
       summary: names the decision and its gate, before the reasoning that reached it
       person: first person for what I decided, the portfolio by its own name
@@ -2012,6 +2018,7 @@ roles:
     skill: role-advocate
     skill_source: "roster:core:role:advocate"
     stance: "standing on two legs, settled and unhurried, turned to face whoever is nearest"
+    creature: "Dragon-Butterfly"
     voice:
       summary: writes to a named reader, and never about them
       person: second person for the reader, first person for what we did
