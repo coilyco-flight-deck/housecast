@@ -99,6 +99,9 @@ class Seat:
     harness: str
     tier: str | None = None
     channel: str | None = None
+    # The seat's own product name, authored rather than derived. Absent stays
+    # absent: identity describes and grants nothing (agent-compose#396).
+    legal_name: str | None = None
 
 
 @dataclass(frozen=True)
@@ -256,7 +259,8 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             identity_name=spec["identity"]["name"],
             identity_pronouns=spec["identity"]["pronouns"],
             seats=[
-                Seat(s["key"], s["harness"], s.get("tier"), s.get("channel")) for s in spec["seats"]
+                Seat(s["key"], s["harness"], s.get("tier"), s.get("channel"), s.get("legal_name"))
+                for s in spec["seats"]
             ],
             adjacents=[Adjacent(a["role"], a["reason"]) for a in spec.get("adjacents") or []],
             body=spec["body"],

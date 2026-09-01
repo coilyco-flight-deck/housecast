@@ -1089,12 +1089,15 @@ roles:
       pronouns: "she"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: openhands
+        legal_name: "OpenHands"
         harness: openhands
     adjacents:
       - role: sysadmin
@@ -1255,14 +1258,18 @@ roles:
       pronouns: "she"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: holmesgpt
+        legal_name: "HolmesGPT"
         harness: holmesgpt
       - key: goose
+        legal_name: "Goose"
         harness: goose
     adjacents:
       - role: platform
@@ -1400,12 +1407,15 @@ roles:
       pronouns: "she"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: openhands
+        legal_name: "OpenHands"
         harness: openhands
     adjacents:
       - role: platform
@@ -1574,12 +1584,15 @@ roles:
       pronouns: "she"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: penpot
+        legal_name: "Penpot"
         harness: penpot
     adjacents:
       - role: advocate
@@ -1739,12 +1752,15 @@ roles:
       pronouns: "they"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: openhands
+        legal_name: "OpenHands"
         harness: openhands
     adjacents:
       - role: frontend
@@ -1895,14 +1911,18 @@ roles:
       pronouns: "they"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: plandex
+        legal_name: "Plandex"
         harness: plandex
       - key: hermes
+        legal_name: "Hermes"
         harness: hermes
     adjacents:
       - role: advocate
@@ -2070,18 +2090,24 @@ roles:
       pronouns: "they"
     seats:
       - key: claude
+        legal_name: "Claude"
         harness: claude
         tier: frontier
       - key: codex
+        legal_name: "Codex"
         harness: codex
         tier: frontier
       - key: anythingllm
+        legal_name: "AnythingLLM"
         harness: anythingllm
       - key: mixpost
+        legal_name: "Mixpost"
         harness: mixpost
       - key: openhands
+        legal_name: "OpenHands"
         harness: openhands
       - key: discord
+        legal_name: "Discord"
         harness: discord
         tier: oss
     adjacents:

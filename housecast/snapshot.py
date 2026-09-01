@@ -67,6 +67,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
                         ("name", role.identity_name),
                         ("pronouns", role.identity_pronouns),
                         ("tier", s.tier),
+                        ("legal_name", s.legal_name),
                     )
                     if v is not None
                 }
