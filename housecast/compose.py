@@ -50,6 +50,7 @@ def go_json_compact(value: Any) -> str:
 def _identity(roster: Roster, role: Role) -> dict[str, Any]:
     return {
         "person": roster.person,
+        "display_name": role.display_name,
         "purpose": role.purpose,
         "seats": [_seat(role, seat) for seat in role.seats],
         "personalities": [
