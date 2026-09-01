@@ -974,7 +974,7 @@ personalities:
       is safe is precisely the one that stops anyone checking.
   warm:
     skill: personality-warm
-    color: "#ff9c79"
+    color: "#f09372"
     motif: "wool"
     voice:
       summary: attends to the person before the problem
