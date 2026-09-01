@@ -1045,7 +1045,7 @@ roles:
     skill: role-platform
     skill_source: "roster:core:role:platform"
     stance: "braced and leaning back against one taut rope, both hands gripping it, heels dug in, hauling"
-    creature: "Badger-Beaver"
+    creature: "Earth-Beaver-Ant"
     outro:
       clean: "Built, and the seam held."
       failure: "It broke at the seam. The branch is still there."
@@ -1218,7 +1218,7 @@ roles:
     skill: role-sysadmin
     skill_source: "roster:core:role:sysadmin"
     stance: "standing on four short heavy legs, braced low, weight forward, shoulders set as if holding a line"
-    creature: "Ox-Tortoise"
+    creature: "Earth-Tortoise-Ox"
     outro:
       clean: "Ended where it started. Nothing left running."
       failure: "It fell over here. Nothing else went with it."
@@ -1362,7 +1362,7 @@ roles:
     skill: role-science
     skill_source: "roster:core:role:science"
     stance: "standing on two short legs, tipped a little forward mid-pour, one arm steadying itself, careful and precise"
-    creature: "Moss-Toad"
+    creature: "Earth-Frog-Mole"
     outro:
       clean: "Measured. The numbers are in the log."
       failure: "It stopped before the last reading."
@@ -1543,7 +1543,7 @@ roles:
     skill: role-frontend
     skill_source: "roster:core:role:frontend"
     stance: "standing on two short legs, leaning in mid-daub, head tilted at its own work, delighted"
-    creature: "Fox-Kitty"
+    creature: "Water-Otter-Cat"
     outro:
       clean: "Done, and it looked good doing it."
       failure: "It fell over. The empty state was prettier."
@@ -1711,7 +1711,7 @@ roles:
     skill: role-gamedev
     skill_source: "roster:core:role:gamedev"
     stance: "standing low on four short weighted legs, sinking and settling, shoulders dropped, in gentle downward drift"
-    creature: "Nautilus-Newt"
+    creature: "Water-Newt-Crab"
     outro:
       clean: "Run complete. The loop closed."
       failure: "Died on the third run. The world is still there."
@@ -1874,7 +1874,7 @@ roles:
     skill: role-director
     skill_source: "roster:core:role:director"
     stance: "standing on two legs, forward lean, weight committed, mid-stride"
-    creature: "Crow-Falcon"
+    creature: "Air-Falcon-Adder"
     outro:
       clean: "Decided, and closed."
       failure: "Stopped at the gate. Nothing was committed."
@@ -2053,7 +2053,7 @@ roles:
     skill: role-advocate
     skill_source: "roster:core:role:advocate"
     stance: "standing on two legs, settled and unhurried, turned to face whoever is nearest"
-    creature: "Dragon-Butterfly"
+    creature: "Air-Sparrow-Dog"
     outro:
       clean: "That is everything. Nothing waiting on you."
       failure: "It did not finish. Nothing was sent."
