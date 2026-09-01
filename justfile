@@ -124,6 +124,10 @@ grade-serve *ARGS:
 grade-deck *ARGS:
     @uv run --extra eval housecast grade deck "$@"
 
+# Write a graded run into a self-contained copy of the page. `just grade-seal RUN --out B.html`.
+grade-seal *ARGS:
+    @uv run --extra eval housecast grade seal "$@"
+
 # Serve a built deck to a room, with anonymous voting. `just grade-present DECK`.
 grade-present *ARGS:
     @uv run --extra eval housecast grade present "$@"

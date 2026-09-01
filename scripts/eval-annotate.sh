@@ -18,7 +18,7 @@ uv run --extra eval python -m evalkit.roster \
   --person "$render_dir/person.json" \
   --out "$render_dir/entities.json"
 
-uv run --extra eval aos-eval annotate \
+uv run --extra eval housecast grade annotate \
   --dataset "$dataset" \
   --out "$out" \
   --roster "$render_dir/entities.json" \
