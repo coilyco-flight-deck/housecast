@@ -137,6 +137,12 @@ def check_creature_names(roster: Roster) -> None:
         if creature in seen:
             raise _error(f"creature {creature!r} is on both {seen[creature]!r} and {name!r}")
         seen[creature] = name
+        element = roster.roles[name].element
+        if not element:
+            raise _error(f"role {name!r} has no element")
+        head = creature.split("-")[0].lower()
+        if head != element:
+            raise _error(f"role {name!r}: creature opens {head!r}, element is {element!r}")
 
 
 def check_skill_frontmatter(roster: Roster) -> None:

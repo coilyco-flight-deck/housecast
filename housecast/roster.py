@@ -140,6 +140,9 @@ class Role:
     # Per-role rather than per-meld (agent-compose#396): a meld is not a unique
     # key, since two roles sharing one fail the favorite-colour floor.
     creature: str = ""
+    # Selects the animal clade a seat is drawn from, never its colour. Kai's
+    # assignment, mirrored by the renderer (agentic-os-xxx#60).
+    element: str = ""
     outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
@@ -266,6 +269,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             body=spec["body"],
             methods=list(spec.get("methods") or []),
             creature=str(spec.get("creature", "")),
+            element=str(spec.get("element", "")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
         )

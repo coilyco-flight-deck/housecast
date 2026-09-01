@@ -70,3 +70,23 @@ def test_the_card_does_not_render_it_yet(shipped: Roster) -> None:
     Go engine and the pin have to move in the same change."""
     card = render.identity_card(shipped, "science")
     assert shipped.roles["science"].creature not in card
+
+
+def test_the_creature_opens_with_its_own_element(shipped: Roster) -> None:
+    """Slot 1 is the element, so the name and the lineage cannot drift apart.
+
+    agentic-os-xxx#60: the renderer held its own element assignment and the
+    names encoded a different one, disagreeing on two of seven seats before
+    anyone noticed. This is the check that makes that unrepresentable.
+    """
+    for name in shipped.role_order:
+        role = shipped.roles[name]
+        assert role.creature.split("-")[0].lower() == role.element
+
+
+def test_an_element_mismatch_is_refused(tmp_path: pathlib.Path) -> None:
+    def flip(doc: dict[str, Any]) -> None:
+        doc["roles"]["science"]["element"] = "fire"
+
+    with pytest.raises(RosterError, match="element is"):
+        roster.load(rewritten(tmp_path, flip))
