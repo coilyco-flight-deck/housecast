@@ -41,6 +41,19 @@ class Voice:
 
 
 @dataclass(frozen=True)
+class Outro:
+    """What a session says as it closes. Role only, and not melded.
+
+    Voice melds because it is read once as doctrine. An outro is read in half a
+    second by somebody already leaving, and role plus two personalities runs to
+    three sentences, which is a paragraph rather than a banner.
+    """
+
+    clean: str = ""
+    failure: str = ""
+
+
+@dataclass(frozen=True)
 class Act:
     """One thing an attribute requires a seat to actually run.
 
@@ -124,6 +137,7 @@ class Role:
     # Per-role rather than per-meld (agent-compose#396): a meld is not a unique
     # key, since two roles sharing one fail the favorite-colour floor.
     creature: str = ""
+    outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
 
@@ -190,6 +204,12 @@ def _acts(spec: list[dict[str, Any]] | None) -> list[Act]:
     ]
 
 
+def _outro(spec: dict[str, Any] | None) -> Outro | None:
+    if not spec:
+        return None
+    return Outro(clean=str(spec.get("clean", "")), failure=str(spec.get("failure", "")))
+
+
 def load(path: pathlib.Path | str = DATA) -> Roster:
     path = pathlib.Path(path)
     raw = path.read_bytes()
@@ -242,6 +262,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             body=spec["body"],
             methods=list(spec.get("methods") or []),
             creature=str(spec.get("creature", "")),
+            outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
         )
     roster = Roster(
