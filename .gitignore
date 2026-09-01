@@ -12,3 +12,6 @@ build/
 
 # Eval run cache: composed prompts, Inspect logs, datasets, annotations.
 .evalkit/
+
+# One-off experiment scratch, promoted into evaluations/ when it produces a record.
+.exp/

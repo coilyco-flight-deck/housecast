@@ -114,3 +114,8 @@ excludes = ["evaluations/**"]
 [tool.agentic-os.documentation-layout]
 band = "small"
 excludes = ["evaluations/**"]
+# `excludes` governs placement and deliberately does not reach the size caps.
+# A run record is evidence rather than a page: it carries verbatim subject
+# output and a method, and splitting one in half to fit is how it stops being
+# readable as one record.
+size_excludes = ["evaluations/**"]
