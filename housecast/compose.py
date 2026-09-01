@@ -103,6 +103,8 @@ def _seat(role: Role, seat: Seat) -> dict[str, Any]:
     }
     if seat.tier:
         out["tier"] = seat.tier
+    if seat.legal_name:
+        out["legal_name"] = seat.legal_name
     return out
 
 
