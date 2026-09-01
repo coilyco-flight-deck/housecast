@@ -92,3 +92,24 @@ def test_validate_reports_every_shape_problem_at_once() -> None:
         [challenge("a", test_type="role-fit"), challenge("b", test_type="boundary")]
     )
     assert len(problems) == 4
+
+
+def test_an_empty_response_is_reported_rather_than_read_as_a_fail() -> None:
+    """A blank card is not the seat failing, so a grader has to be told which one it is."""
+    challenge = Challenge(
+        id="solo", entity="e", test_type="role-fit", prompt="p", target="t", attribute="a"
+    )
+    report = build([challenge], [Response(challenge_id="solo", epoch=1, text="")])
+    assert report.blank == ["solo"]
+    assert [entry.challenge.id for entry in report.kept] == ["solo"]
+    assert not report.dropped
+    assert report.summary == "1 kept, 0 dropped, 1 blank"
+
+
+def test_a_run_with_text_is_not_reported_blank() -> None:
+    challenge = Challenge(
+        id="solo", entity="e", test_type="role-fit", prompt="p", target="t", attribute="a"
+    )
+    report = build([challenge], [Response(challenge_id="solo", epoch=1, text="an answer")])
+    assert not report.blank
+    assert report.summary == "1 kept, 0 dropped"

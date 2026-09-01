@@ -25,10 +25,14 @@ class DatasetReport:
 
     kept: list[DatasetEntry] = field(default_factory=list)
     dropped: list[Dropped] = field(default_factory=list)
+    # Kept rather than dropped: the case ran and the other epochs are in the
+    # log. A blank card a grader cannot score is still not a fail by the seat.
+    blank: list[str] = field(default_factory=list)
 
     @property
     def summary(self) -> str:
-        return f"{len(self.kept)} kept, {len(self.dropped)} dropped"
+        line = f"{len(self.kept)} kept, {len(self.dropped)} dropped"
+        return f"{line}, {len(self.blank)} blank" if self.blank else line
 
 
 def build(challenges: list[Challenge], responses: list[Response], epoch: int = 1) -> DatasetReport:
@@ -47,6 +51,8 @@ def build(challenges: list[Challenge], responses: list[Response], epoch: int = 1
             report.dropped.append(Dropped(challenge.id, "no subject runs"))
             continue
         chosen = next((run for run in runs if run.epoch == epoch), runs[0])
+        if not chosen.text:
+            report.blank.append(challenge.id)
         report.kept.append(DatasetEntry(challenge=challenge, output=chosen.text))
     return report
 

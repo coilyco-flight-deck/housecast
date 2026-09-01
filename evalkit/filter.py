@@ -81,6 +81,8 @@ def main(argv: list[str] | None = None) -> int:
     print(report.summary)
     for drop in report.dropped:
         print(f"  dropped {drop.challenge_id}: {drop.reason}")
+    for blank in report.blank:
+        print(f"  blank {blank}: the annotated epoch returned no text")
     return 0
 
 
