@@ -52,6 +52,10 @@ compose *ARGS:
 roster *ARGS:
     @uv run python -m housecast roster "$@"
 
+# Print the roster field reference, rendered from the dataclasses.
+fields *ARGS:
+    @uv run python -m housecast fields "$@"
+
 # Sync the engine and eval dependencies.
 sync *ARGS:
     @uv sync --all-extras "$@"

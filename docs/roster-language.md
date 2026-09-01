@@ -36,4 +36,5 @@ the Go check from a Python failure.
 
 ## See also
 
+* `just fields`, and [`minimal-roster.yaml`](../housecast/data/minimal-roster.yaml) - every field, and the smallest roster that loads.
 * [`composition.md`](composition.md) - what the engine does with a loaded roster.

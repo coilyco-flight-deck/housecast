@@ -2,6 +2,7 @@
 
     python -m housecast compose --role director --out DIR
     python -m housecast roster --out DIR
+    python -m housecast fields
     python -m housecast grade annotate --dataset D --out O
 
 `roster` writes the person.json shape evalkit reads, which is what took the Go
@@ -15,6 +16,7 @@ import pathlib
 import sys
 
 from housecast import compose as compose_module
+from housecast import reference as reference_module
 from housecast import roster as roster_module
 from housecast import snapshot as snapshot_module
 
@@ -50,6 +52,13 @@ def _roster(args: argparse.Namespace) -> int:
     return 0
 
 
+def _fields(args: argparse.Namespace) -> int:
+    """Rendered rather than committed, so there is no second copy to go stale."""
+    del args
+    print(reference_module.render(), end="")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     # `grade` owns its own parser, so it is split off before argparse sees it.
     raw = sys.argv[1:] if argv is None else argv
@@ -72,6 +81,9 @@ def main(argv: list[str] | None = None) -> int:
     roster_parser = sub.add_parser("roster", help="project the roster as person.json")
     roster_parser.add_argument("--out", required=True)
     roster_parser.set_defaults(handler=_roster)
+
+    fields_parser = sub.add_parser("fields", help="print the roster field reference")
+    fields_parser.set_defaults(handler=_fields)
 
     sub.add_parser("grade", help="grade a board dataset (needs the eval extra)")
 
