@@ -13,27 +13,27 @@ or changing an adjacency changes the output, which is what stops the board
 falling behind the roster it tests. A human writes the prompt into each derived
 challenge, and `challenges.yaml` is where those land.
 
+## Coverage
+
+`just evalkit-coverage` reports what the two sides do not share: cases derived
+with no prompt, prompts no longer derived, authored cases with no annotation,
+and graded records whose case is gone. It exits zero, because the grader is a
+human and blocking would put every roster edit behind an annotation session.
+`[tool.evalkit.coverage]` in `pyproject.toml` carries `blocking` and
+`retired_runs`, so flipping the gate is configuration rather than a patch.
+
 ## The runner
 
-`evalkit/task.py` is the Inspect task, replacing a hand-rolled fan-out with
-`inspect eval`. Inspect's epochs are what a repetition count used to be. It runs
-**unscored**, because the scorer is a human. That seam is deliberate: a board can
-be regraded without re-running it, and a run repeated without regrading it.
-Grading is [`grading.md`](grading.md). Transport goes through Agent Proxy,
-configured by `AGENTPROXY_BASE_URL` and checked by `agent_proxy_configured()`
-before a run rather than partway through.
+`evalkit/task.py` is the Inspect task. Its epochs are what a repetition count was,
+and it runs **unscored** because the scorer is a human: a board is regradable
+without re-running and repeatable without regrading. Grading is [`grading.md`](grading.md).
+Transport goes through Agent Proxy, checked by `agent_proxy_configured()` up front.
 
 ## The projections
 
-`evalkit/roster.py` projects the person snapshot into the entity roster the
-shared annotator renders, spelling out `owns`, `defers`, `scoped`, and traits
-there rather than in the shared schema. `evalkit/profile.py` declares this
-board's test types: `boundary`, `role-fit`, `personality`, `voice`. Adding one is
-a profile edit, never a schema edit.
-
-## Still to write
-
-* The workflow end to end, and what each test type looks for.
+`evalkit/roster.py` projects the person snapshot into the entity roster the shared
+annotator renders, spelling out `owns`, `defers`, `scoped`, and traits there rather
+than in the schema. `evalkit/profile.py` declares the test types: a profile edit.
 
 ## See also
 

@@ -80,6 +80,10 @@ publish-test *ARGS:
 evalkit-matrix *ARGS:
     @sh scripts/eval-matrix.sh "$@"
 
+# Report cases the roster implies but nobody wrote, graded, or still derives.
+evalkit-coverage *ARGS:
+    @uv run --extra eval python -m evalkit.coverage "$@"
+
 # Compose one compiled bundle per role as the eval system prompts.
 evalkit-prompts *ARGS:
     @sh scripts/eval-prompts.sh "$@"

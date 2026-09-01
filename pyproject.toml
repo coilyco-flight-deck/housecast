@@ -79,6 +79,18 @@ python_version = "3.12"
 strict = true
 files = ["housecast", "evalkit"]
 
+# The board coverage gate. Reporting rather than blocking on purpose: the
+# grader is a human, so blocking puts every roster edit behind an annotation
+# session. `agent-compose#329` decision 8 expects this to flip later.
+[tool.evalkit.coverage]
+blocking = false
+# Graded with the nine-seat roster that no longer exists, so their cases orphan
+# permanently rather than pending. challenges.yaml's header records the same.
+retired_runs = [
+    "evaluations/pilot/ops-board-2026-08-12",
+    "evaluations/pilot/ops-board-2026-08-12-regraded",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["housecast/tests", "housecast/grade/tests", "evalkit/tests"]
 

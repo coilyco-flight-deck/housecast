@@ -65,5 +65,8 @@ jobs:
       - name: Board derives from the roster with no Go in the path
         run: just evalkit-matrix
 
+      - name: Board coverage against the roster
+        run: just evalkit-coverage
+
       - name: Repository validators (just pre-commit)
         run: just pre-commit
