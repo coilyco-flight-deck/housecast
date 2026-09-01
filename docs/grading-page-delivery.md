@@ -13,16 +13,15 @@ It reads whichever it finds, and the renderer never learns which it got.
 
 An adapter normalises each into one view model, because a path exercised in one
 delivery mode is untested in the others. The export drops empty fields, so
-`critique`, `evidence`, `label`, `half`, and `pair_id` arrive as absent keys.
-Its `pairs` holds only pairs with a graded half, so cards group from the cases
-on the same key and an ungraded pair still gets a card.
+`critique`, `evidence`, `label`, `half`, and `pair_id` arrive absent, and
+`pairs` holds only graded pairs, so cards group by key and an ungraded pair
+still gets one.
 
 ## No build step, and a file path
 
 The private half must never reach a distributed artifact. `serve` enforces that
-by binding loopback, and the page by having nothing that could bake a payload
-in. A bundler is where that mistake gets made, so there is none and the tracked
-file holds `null` in its export slot.
+by binding loopback, and the page by having no bundler to bake a payload in,
+which is where that mistake gets made. The tracked file holds `null` in its slot.
 
 `servedOverHttp()` gates the fetch on `location.protocol`, so from `file:` the
 page makes no request at all. The acceptance test is the corrected one on
@@ -33,7 +32,9 @@ export, zero critique blocks, and no critique text in the file.
 
 ## Sealing
 
-`grade seal RUN --out board.html` writes the export into a **copy** of the page.
-It refuses to write over the tracked file, which keeps holding `null`, and rides
-`export`'s own refusal rather than adding a second gate. `--include-private`
-seals the critique, and that artifact must never reach a projector.
+`grade seal RUN --out board.html` writes the export into a **copy** of the page,
+folding the fonts and motif in as data URIs because a `file://` artifact has no
+siblings to fetch, and refusing a missing one. Inlined only here: base64 in the
+tracked page once matched trufflehog as a Box key. Sealing still refuses to
+overwrite that file, rides `export`'s refusal rather than adding a second gate,
+and `--include-private` seals the critique, which is never for a projector.

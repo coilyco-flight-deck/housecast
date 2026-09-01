@@ -5,7 +5,7 @@ import pytest
 
 from housecast.grade.export import ExportRefusedError, build_run
 from housecast.grade.schema import Annotation, Challenge, DatasetEntry, Half, Verdict
-from housecast.grade.seal import PAGE, seal, seal_to
+from housecast.grade.seal import ASSETS, PAGE, inline_assets, seal, seal_to
 
 CRITIQUE = "took the action instead of handing it over"
 
@@ -74,10 +74,47 @@ def test_a_private_seal_carries_it_and_is_therefore_not_for_a_room(
     assert CRITIQUE in seal_to(tmp_path / "private.html", private).read_text()
 
 
-def test_the_seal_leaves_every_other_byte_alone(tmp_path: pathlib.Path) -> None:
+def test_the_seal_leaves_every_other_byte_alone() -> None:
     before = PAGE.read_text()
-    after = seal_to(tmp_path / "sealed.html", {"cases": []}).read_text()
+    after = seal(before, {"cases": []})
     assert after.replace('{"cases":[]}', "null") == before
+
+
+def test_a_sealed_copy_carries_the_fonts_and_the_motif_rather_than_paths(
+    tmp_path: pathlib.Path,
+) -> None:
+    """A file:// artifact has no siblings to fetch, so a relative url() renders unstyled."""
+    text = seal_to(tmp_path / "sealed.html", {"cases": []}).read_text()
+    for name in ASSETS:
+        assert f'url("{name}")' not in text
+    assert text.count('url("data:font/woff2;base64,') == 2
+    assert 'url("data:image/svg+xml,' in text
+
+
+def test_the_inlined_assets_stay_out_of_the_tracked_page(tmp_path: pathlib.Path) -> None:
+    """The base64 of a font inside a committed file is what trufflehog matched."""
+    before = PAGE.read_text()
+    seal_to(tmp_path / "sealed.html", {"cases": []})
+    assert PAGE.read_text() == before
+    assert "base64," not in before
+
+
+def test_a_missing_asset_is_refused_rather_than_silently_dropped(
+    tmp_path: pathlib.Path,
+) -> None:
+    """Losing the motif is the misalignment this exists to fix, so it fails loudly."""
+    page_dir = tmp_path / "page"
+    page_dir.mkdir()
+    (page_dir / "index.html").write_text(PAGE.read_text(), encoding="utf-8")
+    for font in (name for name in ASSETS if name.endswith(".woff2")):
+        (page_dir / font).write_bytes((PAGE.parent / font).read_bytes())
+    with pytest.raises(ExportRefusedError, match=r"background-shapes\.svg is missing"):
+        seal_to(tmp_path / "sealed.html", {"cases": []}, page_path=page_dir / "index.html")
+
+
+def test_a_page_that_stopped_referencing_an_asset_is_refused() -> None:
+    with pytest.raises(ExportRefusedError, match="no longer references"):
+        inline_assets("<html><body>nothing here</body></html>", PAGE.parent)
 
 
 def test_a_payload_that_could_close_the_slot_early_is_refused() -> None:

@@ -7,9 +7,11 @@ board and the tracked page is not where one lives. See docs/grading-page.md.
 
 from __future__ import annotations
 
+import base64
 import json
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 from housecast.grade.export import ExportRefusedError
 
@@ -17,6 +19,38 @@ SLOT_OPEN = '<script type="application/json" id="embedded-export">'
 SLOT_CLOSE = "</script>"
 
 PAGE = Path(__file__).parent / "page" / "index.html"
+
+# Referenced beside the page, never inlined into it: base64 in a committed file
+# once matched trufflehog as a Box key. See docs/grading-page-delivery.md.
+ASSETS = (
+    "roboto-latin-400-normal.woff2",
+    "roboto-latin-700-normal.woff2",
+    "background-shapes.svg",
+)
+
+
+def _data_uri(asset: Path) -> str:
+    """base64 for the fonts, percent-encoded for the SVG, which is smaller as text."""
+    if asset.suffix == ".svg":
+        return "data:image/svg+xml," + quote(asset.read_text(encoding="utf-8"))
+    return "data:font/woff2;base64," + base64.b64encode(asset.read_bytes()).decode("ascii")
+
+
+def inline_assets(page: str, assets_dir: Path) -> str:
+    """Fold the sibling fonts and motif into the page, so a file:// copy carries them."""
+    for name in ASSETS:
+        reference = f'url("{name}")'
+        if reference not in page:
+            raise ExportRefusedError(
+                f"the page no longer references {name}, so sealing it is a lie"
+            )
+        asset = assets_dir / name
+        if not asset.is_file():
+            raise ExportRefusedError(
+                f"{name} is missing beside the page, so the seal would lose it"
+            )
+        page = page.replace(reference, f'url("{_data_uri(asset)}")')
+    return page
 
 
 def seal(page: str, payload: dict[str, Any]) -> str:
@@ -44,5 +78,6 @@ def seal_to(out: Path, payload: dict[str, Any], page_path: Path = PAGE) -> Path:
         raise ExportRefusedError(
             "refusing to seal over the page itself, because the tracked file holds null"
         )
-    out.write_text(seal(page_path.read_text(encoding="utf-8"), payload), encoding="utf-8")
+    sealed = seal(page_path.read_text(encoding="utf-8"), payload)
+    out.write_text(inline_assets(sealed, page_path.parent), encoding="utf-8")
     return out
