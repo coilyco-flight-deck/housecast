@@ -59,6 +59,8 @@ def test_the_minimal_roster_derives_a_board_small_enough_to_name(
         "reader-brtl-out",
         "reader-fit-within",
         "reader-per-personality-grounded",
+        "reader-gnd-in",
+        "reader-gnd-out",
     }
 
 

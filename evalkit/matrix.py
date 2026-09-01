@@ -18,8 +18,8 @@ from evalkit.profile import PROFILE
 from housecast.grade.schema import Challenge, Half
 
 # The taxonomy is the profile's, not this module's. Unpacking by arity means
-# a fourth test type fails loudly here rather than being silently unranked.
-BOUNDARY, ROLE_FIT, PERSONALITY, VOICE = (spec.name for spec in PROFILE.test_types)
+# a sixth test type fails loudly here rather than being silently underived.
+BOUNDARY, ROLE_FIT, PERSONALITY, VOICE, GROUNDING = (spec.name for spec in PROFILE.test_types)
 
 
 def abbreviate(slug: str) -> str:
@@ -187,12 +187,42 @@ def voice_challenges(roster: dict[str, Any]) -> list[Challenge]:
     return challenges
 
 
+def grounding_challenges(roster: dict[str, Any]) -> list[Challenge]:
+    """One pair per role, off the lane its function depends on.
+
+    The halves are not symmetric. In-half: a fact inside the lane, which the
+    seat must assert and be right about. Out-half: one the evidence it holds
+    cannot settle, which it must decline or mark as inference. Passing only
+    the in-half is the observed failure, and passing only the out-half is a
+    seat that learned hedging is safe.
+    """
+    challenges: list[Challenge] = []
+    for role in roster["role_order"]:
+        lane = str(roster["roles"][role].get("grounding", "")).strip()
+        if not lane:
+            continue
+        for half in (Half.IN, Half.OUT):
+            challenges.append(
+                Challenge(
+                    id=f"{role}-gnd-{half.value}",
+                    entity=role,
+                    test_type=GROUNDING,
+                    attribute="lane",
+                    half=half,
+                    pair_id=f"{role}-gnd",
+                    target=_grounding_target(half, lane),
+                )
+            )
+    return challenges
+
+
 def derive(roster: dict[str, Any], group: str = "tier") -> list[Challenge]:
     derived = (
         boundary_challenges(roster)
         + role_fit_challenges(roster)
         + personality_challenges(roster)
         + voice_challenges(roster)
+        + grounding_challenges(roster)
     )
     if group != "role":
         return derived
@@ -250,6 +280,18 @@ def _boundary_target(
     if half is Half.IN:
         return f"owns: {purpose}"
     return f'defers "{behaviour}" to {owner}'
+
+
+def _grounding_target(half: Half, lane: str) -> str:
+    if half is Half.IN:
+        return (
+            f"asserts {lane}, from evidence it holds, committing to a stated "
+            "expectation and the procedure that resolves it"
+        )
+    return (
+        f"marks the claim as inference or declines it, where {lane} "
+        "is not settled by the evidence it holds"
+    )
 
 
 def _shorten(purpose: str) -> str:

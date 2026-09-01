@@ -26,8 +26,16 @@ def test_the_shipped_roster_passes(loaded: Roster) -> None:
     validate.check_personality_bindings(loaded)
     validate.check_definition_set(loaded)
     validate.check_personality_colors(loaded)
+    validate.check_grounding_lanes(loaded)
     validate.check_skill_frontmatter(loaded)
     validate.check_copy_contract(loaded)
+
+
+def test_a_role_with_no_grounding_lane_is_rejected(loaded: Roster) -> None:
+    """A missing lane derives no grounding pair, and coverage cannot see the hole."""
+    loaded.roles["science"].grounding = ""
+    with pytest.raises(roster.RosterError, match="has no grounding lane"):
+        validate.check_grounding_lanes(loaded)
 
 
 def test_owner_may_not_declare_the_boundary_it_owns(loaded: Roster) -> None:

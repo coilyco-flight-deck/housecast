@@ -21,6 +21,9 @@ PROFILE = Profile(
         # Voice is a judgement of degree like personality, and needs the same
         # room to answer in. See agent-compose#378.
         TestTypeSpec("voice", "fit", 100, ("attribute",)),
+        # Paired for boundary's reason: the out-half is what stops hedging
+        # scoring as grounding. See docs/grading-grounding.md.
+        TestTypeSpec("grounding", "binary", 50, ("attribute", "half", "pair_id")),
     ),
     attribute_order=(
         "build-foundational-software",

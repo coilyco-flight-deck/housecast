@@ -39,7 +39,7 @@ LABEL_HELP = {
     Fit.NO_FIT: "does not fit",
 }
 
-TYPE_STYLES = ("bright_cyan", "bright_magenta", "bright_yellow", "bright_green")
+TYPE_STYLES = ("bright_cyan", "bright_magenta", "bright_yellow", "bright_green", "bright_blue")
 
 
 def read_key() -> str:

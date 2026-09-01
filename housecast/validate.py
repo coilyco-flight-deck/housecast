@@ -142,6 +142,18 @@ def check_creature_names(roster: Roster) -> None:
             raise _error(f"role {name!r}: creature opens {head!r}, element is {element!r}")
 
 
+def check_grounding_lanes(roster: Roster) -> None:
+    """Every role names the class of fact its function depends on.
+
+    Required rather than optional because the board derives from the roster: a
+    role with no lane silently contributes no grounding pair, and coverage
+    reports a gap it cannot see. See docs/grading.md.
+    """
+    for name in roster.role_order:
+        if not roster.roles[name].grounding:
+            raise _error(f"role {name!r} has no grounding lane")
+
+
 def check_skill_frontmatter(roster: Roster) -> None:
     """Every skill body declares its own name in frontmatter."""
     entries = [(r.skill, r.body) for r in roster.roles.values()]

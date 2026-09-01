@@ -28,8 +28,8 @@ reaches the **core** dependency set, whatever the extra carries.
 
 `Profile` exists so a deployment declares its own test types without this schema
 growing a branch per consumer. `evalkit/profile.py` is agent-compose's, carrying
-`boundary`, `role-fit`, `personality`, and `voice`. sirens-echo declares its own.
-Adding a test type is a profile edit, never a schema edit.
+`boundary`, `role-fit`, `personality`, `voice`, and [`grounding`](grading-grounding.md). sirens-echo declares its own.
+Adding one is a profile edit plus a deriver, never a schema edit: `evalkit/matrix.py` unpacks the test types by arity, so a new one fails loudly rather than deriving nothing.
 
 ## See also
 

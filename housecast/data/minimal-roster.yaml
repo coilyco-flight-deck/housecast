@@ -71,6 +71,7 @@ roles:
       pronouns: they
     creature: bird-wren
     element: bird
+    grounding: "what the source it opened actually says"
     seats:
       - key: claude
         harness: claude

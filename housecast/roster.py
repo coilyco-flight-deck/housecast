@@ -143,6 +143,9 @@ class Role:
     # Selects the animal clade a seat is drawn from, never its colour. Kai's
     # assignment, mirrored by the renderer (agentic-os-xxx#60).
     element: str = ""
+    # The class of fact this role's function depends on, per-role because the
+    # evidence differs. See docs/grading-grounding.md.
+    grounding: str = ""
     outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
@@ -270,6 +273,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             methods=list(spec.get("methods") or []),
             creature=str(spec.get("creature", "")),
             element=str(spec.get("element", "")),
+            grounding=str(spec.get("grounding", "")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
         )
@@ -298,5 +302,6 @@ def validate(roster: Roster) -> None:
     rules.check_definition_set(roster)
     rules.check_personality_colors(roster)
     rules.check_creature_names(roster)
+    rules.check_grounding_lanes(roster)
     rules.check_skill_frontmatter(roster)
     rules.check_copy_contract(roster)

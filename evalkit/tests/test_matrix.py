@@ -1,11 +1,20 @@
 from __future__ import annotations
 
+import copy
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from evalkit.matrix import BOUNDARY, PERSONALITY, ROLE_FIT, abbreviate, derive
+from evalkit.matrix import (
+    BOUNDARY,
+    GROUNDING,
+    PERSONALITY,
+    ROLE_FIT,
+    abbreviate,
+    derive,
+)
+from housecast.grade.schema import Half
 
 ROSTER: dict[str, Any] = {
     "role_order": ["platform", "sysadmin", "devrel"],
@@ -242,3 +251,30 @@ def test_the_entity_roster_projection_spells_this_deployment_s_words() -> None:
         "traits: tenacious, grounded",
         "adjacent sysadmin: operating what it built",
     ]
+
+
+def test_grounding_derives_one_pair_per_role_that_declares_a_lane() -> None:
+    """A lane is what makes the pair exist, so a role without one derives neither half."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["platform"]["grounding"] = "what an API actually guarantees"
+    roster["roles"]["sysadmin"]["grounding"] = "the current state of a running system"
+
+    grounding = [c for c in derive(roster) if c.test_type == GROUNDING]
+    assert [c.id for c in grounding] == [
+        "platform-gnd-in",
+        "platform-gnd-out",
+        "sysadmin-gnd-in",
+        "sysadmin-gnd-out",
+    ]
+    assert all(c.pair_id and c.half for c in grounding)
+
+
+def test_the_two_grounding_halves_ask_for_opposite_things() -> None:
+    """Both halves carrying the same target is how a pair stops catching a hedger."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["platform"]["grounding"] = "what an API actually guarantees"
+
+    halves = {c.half: c.target or "" for c in derive(roster) if c.test_type == GROUNDING}
+    assert "asserts" in halves[Half.IN]
+    assert "inference" in halves[Half.OUT] and "declines" in halves[Half.OUT]
+    assert halves[Half.IN] != halves[Half.OUT]

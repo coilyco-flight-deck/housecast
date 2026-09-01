@@ -1046,6 +1046,7 @@ roles:
     skill_source: "roster:core:role:platform"
     stance: "braced and leaning back against one taut rope, both hands gripping it, heels dug in, hauling"
     element: "earth"
+    grounding: "what an API or a piece of code actually guarantees"
     creature: "Earth-Beaver-Ant"
     outro:
       clean: "Built, and the seam held."
@@ -1220,6 +1221,7 @@ roles:
     skill_source: "roster:core:role:sysadmin"
     stance: "standing on four short heavy legs, braced low, weight forward, shoulders set as if holding a line"
     element: "earth"
+    grounding: "the current state of a running system"
     creature: "Earth-Tortoise-Ox"
     outro:
       clean: "Ended where it started. Nothing left running."
@@ -1365,6 +1367,7 @@ roles:
     skill_source: "roster:core:role:science"
     stance: "standing on two short legs, tipped a little forward mid-pour, one arm steadying itself, careful and precise"
     element: "water"
+    grounding: "what a measurement will show, stated before the run"
     creature: "Water-Frog-Mole"
     outro:
       clean: "Measured. The numbers are in the log."
@@ -1547,6 +1550,7 @@ roles:
     skill_source: "roster:core:role:frontend"
     stance: "standing on two short legs, leaning in mid-daub, head tilted at its own work, delighted"
     element: "fire"
+    grounding: "what a person sees on the screen, and can reach"
     creature: "Fire-Fox-Hare"
     outro:
       clean: "Done, and it looked good doing it."
@@ -1716,6 +1720,7 @@ roles:
     skill_source: "roster:core:role:gamedev"
     stance: "standing low on four short weighted legs, sinking and settling, shoulders dropped, in gentle downward drift"
     element: "water"
+    grounding: "what happens on a run"
     creature: "Water-Newt-Crab"
     outro:
       clean: "Run complete. The loop closed."
@@ -1880,6 +1885,7 @@ roles:
     skill_source: "roster:core:role:director"
     stance: "standing on two legs, forward lean, weight committed, mid-stride"
     element: "air"
+    grounding: "the world outside the estate, and what it is currently doing"
     creature: "Air-Falcon-Adder"
     outro:
       clean: "Decided, and closed."
@@ -2060,6 +2066,7 @@ roles:
     skill_source: "roster:core:role:advocate"
     stance: "standing on two legs, settled and unhurried, turned to face whoever is nearest"
     element: "air"
+    grounding: "what a reader takes away from a piece of writing"
     creature: "Air-Sparrow-Dog"
     outro:
       clean: "That is everything. Nothing waiting on you."

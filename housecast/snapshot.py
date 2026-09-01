@@ -50,6 +50,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "skill": role.skill,
             "skill_source": role.skill_source,
             "stance": role.stance,
+            "grounding": role.grounding,
             "supported_model_tiers": list(role.supported_model_tiers),
             "boundaries": list(role.defers),
             "scoped_boundaries": [{"name": s.name, "scope": s.scope} for s in role.scoped],
