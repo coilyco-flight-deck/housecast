@@ -84,11 +84,14 @@ files = ["housecast", "evalkit"]
 # session. `agent-compose#329` decision 8 expects this to flip later.
 [tool.evalkit.coverage]
 blocking = false
-# Graded with the nine-seat roster that no longer exists, so their cases orphan
-# permanently rather than pending. challenges.yaml's header records the same.
+# Run against a roster that no longer exists, so their cases orphan permanently
+# rather than pending. The two ops boards were graded under the nine-seat
+# roster. board-2026-08-26 is ungraded and superseded by board-2026-09-01,
+# which covers all 105 cases rather than 91 (housecast#18).
 retired_runs = [
     "evaluations/pilot/ops-board-2026-08-12",
     "evaluations/pilot/ops-board-2026-08-12-regraded",
+    "evaluations/reflow-v3/board-2026-08-26",
 ]
 
 [tool.pytest.ini_options]

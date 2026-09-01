@@ -7,7 +7,12 @@
 # Bundle: composed at e672939, after the boundary edit in e21fcca.
 # Filter kept 91 of 91. No challenge lost its subject run.
 #
-# Nothing here is scored. `aos-eval annotate` is the next step and Kai grades.
+# Nothing here is scored, and nothing here will be. Superseded by
+# board-2026-09-01, which covers all 105 cases the roster derives rather than
+# 91. This run predates the seat rename at housecast#16, so 42 of its ids no
+# longer derive and grading it would produce 42 orphans. Retired in
+# pyproject.toml under [tool.evalkit.coverage]. The record stands as evidence of
+# what ran; see housecast#18.
 dataset:
 - id: platform-bfs-in
   entity: platform
