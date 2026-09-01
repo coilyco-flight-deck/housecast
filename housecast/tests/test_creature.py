@@ -21,9 +21,8 @@ import yaml
 from housecast import render, roster
 from housecast.roster import Roster
 
-# `validate` defines its own RosterError, distinct from `roster`'s. The checks
-# dispatched from `roster.validate` raise that one, so a test catching the other
-# passes on the raise and fails on the class.
+# `validate` defines its own RosterError, distinct from `roster`'s, and the
+# checks dispatched from `roster.validate` raise that one.
 from housecast.validate import RosterError
 
 
