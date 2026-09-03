@@ -70,8 +70,8 @@ boundaries:
       - tool: "git revert"
         text: "write the rollback line before the forward line: kubectl rollout undo, helm rollback, or git revert"
         side: own
-      - tool: "just"
-        text: "just run, or the project's own launch verb, when the target is one you start yourself"
+      - tool: "stat"
+        text: "stat the save, snapshot, or backup that would put it back before a routine operation on a surface others depend on, and confirm it exists rather than assuming it"
         side: scoped
       - tool: "kubectl"
         text: "kubectl config current-context, or the equivalent, and confirm the target is one your scope names before the change rather than after"
