@@ -32,7 +32,7 @@ digest becomes the subject of an in-toto `test-result/v0.1` statement whose
 under test by digest, in DSSE, signed with cosign against a KMS key.
 `housecast verify` refuses a missing, unsigned or mismatched bundle and emits a
 SLSA verification summary. The regulatory hook is Annex IV 2(g), test reports
-dated and signed by the responsible persons, not Article 12.
+dated and signed by the responsible persons, not Article 12. Whether a run already taken can be attested is measured in [`board-2026-09-01`](../evaluations/reflow-v3/board-2026-09-01/README.md).
 
 ## Still to write
 
