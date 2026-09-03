@@ -70,14 +70,14 @@ boundaries:
       - tool: "git revert"
         text: "write the rollback line before the forward line: kubectl rollout undo, helm rollback, or git revert"
         side: own
-      - tool: "stat"
-        text: "stat the save, snapshot, or backup that would put it back before a routine operation on a surface others depend on, and confirm it exists rather than assuming it"
-        side: scoped
       - tool: "kubectl"
         text: "kubectl config current-context, or the equivalent, and confirm the target is one your scope names before the change rather than after"
         side: scoped
-      - tool: "create_issue"
-        text: "create_issue the moment the change wanted is one your scope does not name, rather than reaching for it because the command is identical"
+      - tool: "grep"
+        text: "grep the surface's own log for the result of the change, not its health check, since a process stays up while serving it silently disabled"
+        side: scoped
+      - tool: "stat"
+        text: "stat the save, snapshot, or backup that would put it back before a routine operation on a surface others depend on, and confirm it exists rather than assuming it"
         side: scoped
       - tool: "kubectl"
         text: "kubectl get, logs, and describe are reads and stay open to you: run them and paste the output"
