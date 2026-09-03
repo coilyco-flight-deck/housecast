@@ -64,6 +64,19 @@ wedge-1 exists to close.
 The residual risk is the `>=0.3.255` spec resolving to something other than the
 locked 0.3.260 in the runner's environment.
 
+## Where the log is not
+
+Searched on 2026-09-03, so the next reader skips these:
+
+* **kais-macbook-pro.** No housecast checkout under `~/projects` at all, and no
+  `.evalkit/` directory or `*.eval` file anywhere under `~`.
+* **kai-server.** `~/projects/coilyco-flight-deck/` exists and is populated,
+  `agentic-os` among it, and housecast is not checked out there.
+* **The host behind `http://ser8:8080/v1`**, which the run command in
+  `evalkit/task.py` names for Agent Proxy, is unchecked rather than clear. Its
+  node-stats readable root excludes home directories, so nothing there was
+  ruled out. It is the likeliest place left to look.
+
 Anyone holding the log closes this in one line:
 
     python3 -c "from inspect_ai.log import read_eval_log; \
