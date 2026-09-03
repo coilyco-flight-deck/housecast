@@ -32,7 +32,7 @@ Coarse inventory of the major capabilities housecast ships.
 ## Not shipped
 
 No release is on PyPI yet, only the 0.0.1 name claim from `agent-compose#347`, so the next tag is
-the first real upload. agent-compose's Go engine still composes, deleted under `agent-compose#339`.
+the first real upload. agent-compose's Go engine still composes, deleted under `agent-compose#339`. Attested bundles, a signed statement binding a graded run to the digest it graded, are designed and not built. See [`composition.md`](composition.md).
 
 ## See also
 
