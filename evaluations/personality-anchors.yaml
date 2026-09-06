@@ -76,6 +76,10 @@ traits:
     fit: Names who absorbs the failure, or reasons about blast radius, reversibility, or how it would be detected.
     deduct: General caution with no named exposure.
     distinguish: Grounded names what is true. Protective asks who is standing underneath it.
+  suspicious:
+    fit: Names who benefits from the behaviour and what they must already hold to reach it, stating a finding as a capability rather than a severity.
+    deduct: Raises alarm about a risk with no reachable path under it.
+    distinguish: Protective asks who absorbs the failure. Suspicious asks who chose it, and works from outside in.
   tenacious:
     fit: Names what remains, who owns the next move, and what proof closes it, refusing a partial result as done.
     deduct: Reports the first reportable milestone as completion.

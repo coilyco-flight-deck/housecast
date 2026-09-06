@@ -72,7 +72,7 @@ def test_the_creature_opens_with_its_own_element(shipped: Roster) -> None:
     """Slot 1 is the element, so the name and the lineage cannot drift apart.
 
     agentic-os-xxx#60: the renderer held its own element assignment and the
-    names encoded a different one, disagreeing on two of seven seats before
+    names encoded a different one, disagreeing on two of the seven seats then
     anyone noticed. This is the check that makes that unrepresentable.
     """
     for name in shipped.role_order:

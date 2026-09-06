@@ -27,13 +27,13 @@ because no bundle depends on them.
 
 The solve is joint rather than per-role. `favorites()` picks for the whole roster
 at once so no two roles land too close, and `legible()` holds the band that keeps
-every result readable on the surfaces it renders on.
+every result readable. Adding a role therefore moves the rest, measured when
+`infosec` arrived: five of the seven existing seats shifted and two held.
 
 ## Still to write
 
 * Why OKLab rather than a simpler space, a real decision recorded nowhere.
 * The legible band: its bounds, and what they were tuned against.
-* Whether existing roles may move when a role is added.
 
 ## See also
 

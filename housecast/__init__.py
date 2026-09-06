@@ -9,9 +9,9 @@ inside evalkit.
 Discharged from the #332 tracer's cheat list:
 
 * favorite_color is derived, not read. color.favorites ports the OKLab joint
-  solve including the 400-round spread, and all seven roles match Go exactly.
+  solve including the 400-round spread, and all eight roles match Go exactly.
 * Both delivery modes are emitted. native-skills and compiled are each
-  byte-identical to the Go engine for all seven roles.
+  byte-identical to the Go engine for all eight roles.
 * Validation exists: boundary ownership, personality bindings, the definition
   set, the legible colour band, skill frontmatter, and the copy contract.
 * Content digests match Go byte for byte, including the identity digest, which
