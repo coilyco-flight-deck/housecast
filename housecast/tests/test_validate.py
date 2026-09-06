@@ -29,6 +29,7 @@ def test_the_shipped_roster_passes(loaded: Roster) -> None:
     validate.check_grounding_lanes(loaded)
     validate.check_skill_frontmatter(loaded)
     validate.check_copy_contract(loaded)
+    validate.check_prose_floors(loaded)
 
 
 def test_a_role_with_no_grounding_lane_is_rejected(loaded: Roster) -> None:
@@ -155,3 +156,47 @@ def test_unsupported_model_tier_is_refused(loaded: Roster) -> None:
     assert "oss" not in loaded.roles["director"].supported_model_tiers
     with pytest.raises(ValueError, match="does not support model tier"):
         compose.compose(loaded, "director", "oss", pathlib.Path("/tmp/zq49-unreachable"))
+
+
+def test_a_thin_role_body_is_rejected(loaded: Roster) -> None:
+    role = loaded.roles["director"]
+    frontmatter, _ = validate.split_frontmatter(role.body, role.skill)
+    role.body = f"---\n{frontmatter}\n---\n\n# Portfolio Director\n\n" + ("word " * 50)
+    with pytest.raises(roster.RosterError, match="minimum is 140"):
+        validate.check_prose_floors(loaded)
+
+
+def test_a_thin_personality_body_is_rejected(loaded: Roster) -> None:
+    """Go enforces this floor and the Python port dropped it. #7033."""
+    personality = loaded.personalities["grounded"]
+    frontmatter, _ = validate.split_frontmatter(personality.body, personality.skill)
+    thin = f"---\n{frontmatter}\n---\n\n# Grounded\n\n" + ("word " * 40)
+    loaded.personalities["grounded"] = dataclasses.replace(personality, body=thin)
+    with pytest.raises(roster.RosterError, match="minimum is 120"):
+        validate.check_prose_floors(loaded)
+
+
+def test_a_thin_boundary_side_is_rejected(loaded: Roster) -> None:
+    """The thinnest shipped side sits one word above this floor."""
+    boundary = loaded.boundaries["modify-live-backend"]
+    frontmatter, body = validate.split_frontmatter(boundary.body, boundary.skill)
+    head, _, _ = body.partition(validate.BOUNDARY_DEFER_HEADING)
+    thin = (
+        f"---\n{frontmatter}\n---\n"
+        + head
+        + validate.BOUNDARY_DEFER_HEADING
+        + "\n\nword word word\n"
+    )
+    loaded.boundaries["modify-live-backend"] = dataclasses.replace(boundary, body=thin)
+    with pytest.raises(roster.RosterError, match="defer side has 3 words, minimum is 80"):
+        validate.check_prose_floors(loaded)
+
+
+def test_the_ceiling_check_no_longer_carries_the_role_floor(loaded: Roster) -> None:
+    """Go splits them: ceilings bind every package, floors bind the shipped roster."""
+    role = loaded.roles["director"]
+    frontmatter, _ = validate.split_frontmatter(role.body, role.skill)
+    role.body = f"---\n{frontmatter}\n---\n\na\n\nb\n\nc\n"
+    validate.check_copy_contract(loaded)
+    with pytest.raises(roster.RosterError, match="minimum is 140"):
+        validate.check_prose_floors(loaded)

@@ -21,6 +21,7 @@ MAX_ROLE_BODY_WORDS = 1200
 MIN_PERSONALITY_BODY_WORDS = 120
 MAX_PERSONALITY_BODY_WORDS = 320
 MIN_ROLE_PARAGRAPHS = 3
+MIN_BOUNDARY_SIDE_WORDS = 80
 
 BOUNDARY_OWN_HEADING = "## If you own this boundary"
 BOUNDARY_DEFER_HEADING = "## If you defer this boundary"
@@ -176,10 +177,6 @@ def check_copy_contract(roster: Roster) -> None:
             raise _error(
                 f"role {role_name!r} skill body has {words} words, maximum is {MAX_ROLE_BODY_WORDS}"
             )
-        if words < MIN_ROLE_BODY_WORDS:
-            raise _error(
-                f"role {role_name!r} body has {words} words, minimum is {MIN_ROLE_BODY_WORDS}"
-            )
         paragraphs = paragraph_count(body)
         if paragraphs < MIN_ROLE_PARAGRAPHS:
             raise _error(
@@ -206,3 +203,55 @@ def check_copy_contract(roster: Roster) -> None:
             )
         if own > defer:
             raise _error(f"boundary {name!r} skill body states the defer side before the own side")
+
+
+def _boundary_sides(body: str) -> dict[str, str]:
+    """Split a boundary body into its own/scoped/defer prose, as Go does."""
+    own = body.find(BOUNDARY_OWN_HEADING)
+    defer = body.find(BOUNDARY_DEFER_HEADING)
+    if own < 0 or defer < 0:
+        return {}
+    sections = {"own": body[own:defer], "defer": body[defer:]}
+    scoped = body.find(BOUNDARY_SCOPED_HEADING)
+    if scoped >= 0:
+        sections["own"] = body[own:scoped]
+        sections["scoped"] = body[scoped:defer]
+    return {label: section.partition("\n")[2] for label, section in sections.items()}
+
+
+def check_prose_floors(roster: Roster) -> None:
+    """Keep a shipped entry from thinning into a label.
+
+    Ported from Go's validateRosterProseFloors, which the Go engine calls only
+    from shipped_roster_test.go and never from its load path. The ceilings in
+    check_copy_contract bind every package; these floors bind the roster this
+    repo ships. So this is a test-called check: registering it in validate()
+    rejects legitimate thin fixtures, which is how the port first went wrong.
+    """
+    for role_name in roster.role_order:
+        role = roster.roles[role_name]
+        _, body = split_frontmatter(role.body, role.skill)
+        words = word_count(body)
+        if words < MIN_ROLE_BODY_WORDS:
+            raise _error(
+                f"role {role_name!r} body has {words} words, minimum is {MIN_ROLE_BODY_WORDS}"
+            )
+    for name in sorted(roster.personalities):
+        personality = roster.personalities[name]
+        _, body = split_frontmatter(personality.body, personality.skill)
+        words = word_count(body)
+        if words < MIN_PERSONALITY_BODY_WORDS:
+            raise _error(
+                f"personality {name!r} body has {words} words, "
+                f"minimum is {MIN_PERSONALITY_BODY_WORDS}"
+            )
+    for name in roster.boundary_order:
+        boundary = roster.boundaries[name]
+        _, body = split_frontmatter(boundary.body, boundary.skill)
+        for label, prose in _boundary_sides(body).items():
+            words = word_count(prose)
+            if words < MIN_BOUNDARY_SIDE_WORDS:
+                raise _error(
+                    f"boundary {name!r} {label} side has {words} words, "
+                    f"minimum is {MIN_BOUNDARY_SIDE_WORDS}"
+                )
