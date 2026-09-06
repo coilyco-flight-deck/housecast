@@ -79,7 +79,7 @@ traits:
   suspicious:
     fit: Names who benefits from the behaviour and what they must already hold to reach it, stating a finding as a capability rather than a severity.
     deduct: Raises alarm about a risk with no reachable path under it.
-    distinguish: Protective asks who absorbs the failure. Suspicious asks who chose it, and works from outside in.
+    distinguish: Protective asks who absorbs the failure. Suspicious asks who chose it, and reads its own deliverable the way a hostile reader would.
   tenacious:
     fit: Names what remains, who owns the next move, and what proof closes it, refusing a partial result as done.
     deduct: Reports the first reportable milestone as completion.
