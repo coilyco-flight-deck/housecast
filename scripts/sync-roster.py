@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Sync data/roster.yaml's vendored bodies and acts from the Go source tree.
+"""Sync data/roster.yaml's vendored bodies and acts from the roster source tree.
 
-Scaffolding, not architecture. agent-compose/internal/person/data is the author
-surface until #339 deletes the Go engine, and until then roster.yaml is a
-vendored mirror that drifts silently. checks/tests/test_source_drift.py in
-agent-compose is what catches the drift; this is what closes it.
+Scaffolding, not architecture. agent-compose/seed/roster/data is the author
+surface, and until it is the only one roster.yaml is a vendored mirror that
+drifts silently. checks/tests/test_source_drift.py in agent-compose is what
+catches the drift; this is what closes it.
 
-The edits are textual on purpose. roster.yaml carries a hand-written header and
-block scalars that a YAML round-trip destroys.
+Reading the source is a real YAML parse. Writing roster.yaml stays textual on
+purpose: it carries a hand-written header and block scalars that a round-trip
+destroys, which is why only the source side uses a parser.
 """
 
 from __future__ import annotations
@@ -16,14 +17,35 @@ import pathlib
 import re
 import sys
 
+import yaml
+
 ROSTER = pathlib.Path(__file__).resolve().parent.parent / "housecast" / "data" / "roster.yaml"
-ACT = re.compile(r'^\s*act\s+(?:"(?P<side>own|scoped|defer)"\s+)?tool="(?P<tool>[^"]+)"\s+"(?P<text>.+)"\s*$')
 
 KINDS = {"role": "roles", "personality": "personalities", "boundary": "boundaries"}
+SIDES = {"own", "scoped", "defer"}
 
 
 def skill_body(path: pathlib.Path) -> str:
     return path.read_text()
+
+
+def read_acts(spec: pathlib.Path) -> list[dict]:
+    """The acts a single entity declares, in file order.
+
+    An entity carrying no `acts:` is legal and yields none. A malformed act is
+    not: this file feeds a drift test, so a silently dropped act would read as
+    drift in roster.yaml and send the next reader to the wrong side of it.
+    """
+    document = yaml.safe_load(spec.read_text()) or {}
+    acts = []
+    for position, act in enumerate(document.get("acts") or [], start=1):
+        if not isinstance(act, dict) or not act.get("tool") or not act.get("text"):
+            raise SystemExit(f"{spec}: act {position} needs both tool and text")
+        side = act.get("side")
+        if side is not None and side not in SIDES:
+            raise SystemExit(f"{spec}: act {position} has side {side!r}, want one of {sorted(SIDES)}")
+        acts.append({"side": side, "tool": str(act["tool"]), "text": str(act["text"])})
+    return acts
 
 
 def read_source(data: pathlib.Path) -> dict[str, dict[str, dict]]:
@@ -34,14 +56,11 @@ def read_source(data: pathlib.Path) -> dict[str, dict[str, dict]]:
         kind, _, slug = entry.name.partition("-")
         if kind not in KINDS:
             raise SystemExit(f"unexpected entity directory {entry.name}")
-        kdl = entry / f"{kind}.kdl"
-        acts = []
-        for line in kdl.read_text().splitlines():
-            match = ACT.match(line)
-            if match:
-                acts.append(match.groupdict())
+        spec = entry / f"{kind}.yaml"
+        if not spec.is_file():
+            raise SystemExit(f"missing {spec}")
         found[KINDS[kind]][slug] = {
-            "acts": acts,
+            "acts": read_acts(spec),
             "body": skill_body(entry / "SKILL.md"),
         }
     return found
@@ -102,7 +121,7 @@ def rewrite(text: str, source: dict[str, dict[str, dict]]) -> str:
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print(f"usage: {sys.argv[0]} <agent-compose/internal/person/data>", file=sys.stderr)
+        print(f"usage: {sys.argv[0]} <agent-compose/seed/roster/data>", file=sys.stderr)
         return 2
     data = pathlib.Path(sys.argv[1])
     if not data.is_dir():
