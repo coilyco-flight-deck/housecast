@@ -56,6 +56,10 @@ roster *ARGS:
 fields *ARGS:
     @uv run python -m housecast fields "$@"
 
+# Re-vendor roster.yaml's bodies and acts. `just sync-roster ../agent-compose/seed/roster/data`.
+sync-roster *ARGS:
+    @uv run python scripts/sync-roster.py "$@"
+
 # Sync the engine and eval dependencies.
 sync *ARGS:
     @uv sync --all-extras "$@"
