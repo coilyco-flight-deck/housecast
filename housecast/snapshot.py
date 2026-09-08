@@ -57,6 +57,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "adjacents": [{"role": a.role, "reason": a.reason} for a in role.adjacents],
             "personalities": list(role.personalities),
             "favorite_color": role.favorite_color,
+            "archived": role.archived,
             "identity": {"name": role.identity_name, "pronouns": role.identity_pronouns},
             **({"voice": v} if (v := _voice(role.voice)) else {}),
             "seats": [

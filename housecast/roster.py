@@ -149,6 +149,9 @@ class Role:
     outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
+    # Retired from selection, kept whole and still a valid adjacency target.
+    # See docs/roster-language.md.
+    archived: bool = False
 
     def active_boundaries(self, boundaries: dict[str, Boundary]) -> list[str]:
         """Deferred, then scoped, then the single boundary this role owns."""
@@ -276,6 +279,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             grounding=str(spec.get("grounding", "")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
+            archived=bool(spec.get("archived", False)),
         )
     roster = Roster(
         person=doc["person"],

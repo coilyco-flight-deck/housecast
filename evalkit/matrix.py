@@ -36,14 +36,16 @@ def boundary_challenges(roster: dict[str, Any]) -> list[Challenge]:
         owner = str(spec.get("owner", ""))
         deferring = [
             role
-            for role in roster["role_order"]
+            for role in active_roles(roster)
             if boundary in roster["roles"][role].get("boundaries", [])
         ]
         scoped = scoped_grants(roster, boundary)
         short = abbreviate(boundary)
         behaviour = owner_behaviour(str(spec.get("summary", "")), owner, roster)
         for role in [*deferring, *scoped, owner]:
-            if not role:
+            # `owner` arrives unfiltered, so an archived owner is caught here
+            # rather than in the two lists above.
+            if not role or roster["roles"][role].get("archived", False):
                 continue
             purpose = _shorten(str(roster["roles"][role].get("purpose", "")))
             scope = scoped.get(role)
@@ -64,6 +66,20 @@ def boundary_challenges(roster: dict[str, Any]) -> list[Challenge]:
     return challenges
 
 
+def active_roles(roster: dict[str, Any]) -> list[str]:
+    """Role order minus the archived, in order.
+
+    An archived role is retired from selection but kept whole in the roster, so
+    it still validates and still answers the adjacency edges other roles point
+    at it. It is the subject of no challenge, because a board that keeps
+    deriving cases for a seat nobody can launch reports a coverage gap that no
+    amount of writing closes. See docs/roster-language.md.
+    """
+    return [
+        role for role in roster["role_order"] if not roster["roles"][role].get("archived", False)
+    ]
+
+
 def scoped_grants(roster: dict[str, Any], boundary: str) -> dict[str, str]:
     """Roles holding one boundary within a scope, in roster order.
 
@@ -72,7 +88,7 @@ def scoped_grants(roster: dict[str, Any], boundary: str) -> dict[str, str]:
     nothing without this. See docs/role-boundaries.md.
     """
     grants: dict[str, str] = {}
-    for role in roster["role_order"]:
+    for role in active_roles(roster):
         for entry in roster["roles"][role].get("scoped_boundaries", []) or []:
             if str(entry.get("name", "")) == boundary:
                 grants[role] = str(entry.get("scope", ""))
@@ -94,7 +110,7 @@ def owner_behaviour(summary: str, owner: str, roster: dict[str, Any]) -> str:
 
 def role_fit_challenges(roster: dict[str, Any]) -> list[Challenge]:
     challenges: list[Challenge] = []
-    for role in roster["role_order"]:
+    for role in active_roles(roster):
         challenges.append(
             Challenge(
                 id=f"{role}-fit-within",
@@ -120,7 +136,7 @@ def role_fit_challenges(roster: dict[str, Any]) -> list[Challenge]:
 def personality_challenges(roster: dict[str, Any]) -> list[Challenge]:
     """One challenge per trait, each run against the fully composed bundle."""
     challenges: list[Challenge] = []
-    for role in roster["role_order"]:
+    for role in active_roles(roster):
         traits = list(roster["roles"][role]["personalities"])
         for trait in traits:
             peers = ", ".join(other for other in traits if other != trait)
@@ -143,7 +159,7 @@ def voice_challenges(roster: dict[str, Any]) -> list[Challenge]:
     in meld order, exactly as the identity card composes them.
     """
     challenges: list[Challenge] = []
-    for role in roster["role_order"]:
+    for role in active_roles(roster):
         spec = roster["roles"][role]
         sources = [spec.get("voice")]
         traits = roster.get("personalities", {})
@@ -197,7 +213,7 @@ def grounding_challenges(roster: dict[str, Any]) -> list[Challenge]:
     seat that learned hedging is safe.
     """
     challenges: list[Challenge] = []
-    for role in roster["role_order"]:
+    for role in active_roles(roster):
         lane = str(roster["roles"][role].get("grounding", "")).strip()
         if not lane:
             continue

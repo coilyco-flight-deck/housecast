@@ -8,8 +8,8 @@ Coarse inventory of the major capabilities housecast ships.
   allocation, derives the identity primitives, and emits an immutable bundle. See
   [`composition.md`](composition.md), [`identity.md`](identity.md).
 * **The roster language.** `housecast/data/roster.yaml` carries roles, personalities, boundaries,
-  acts, and the invariant. See [`roster-language.md`](roster-language.md),
-  [`role-boundaries.md`](role-boundaries.md).
+  acts, the invariant, and whether a role is archived. See
+  [`roster-language.md`](roster-language.md), [`role-boundaries.md`](role-boundaries.md).
 * **Attribute acts, and the overlay that extends them.** Every role, personality, and boundary side
   names three runnable things, rendered as `## Run`, following the side the seat holds. A private
   overlay appends estate-only acts without redefining anything. See [`overlay.md`](overlay.md).
