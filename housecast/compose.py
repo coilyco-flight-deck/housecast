@@ -12,7 +12,7 @@ import json
 import pathlib
 from typing import TYPE_CHECKING, Any
 
-from housecast import render
+from housecast import render, voiceprofile
 
 if TYPE_CHECKING:
     from housecast.roster import Role, Roster, Seat
@@ -169,20 +169,31 @@ def manifest(
 
 def _delivery(roster: Roster, role_name: str, mode: str) -> dict[str, Any]:
     if mode == "native-skills":
-        return {
+        out = {
             "mode": mode,
             "instructions": "content/instructions.md",
             "skills_root": "content/skills",
-            "body_bytes": len(render.instructions(roster, role_name).encode()),
         }
-    if mode == "compiled":
-        return {
+    elif mode == "compiled":
+        out = {
             "mode": mode,
             "instructions": "content/instructions.md",
             "compiled_context": "delivery/compiled.md",
-            "body_bytes": len(compiled_document(roster, role_name).encode()),
         }
-    raise ValueError(f"unknown delivery mode {mode!r}")
+    else:
+        raise ValueError(f"unknown delivery mode {mode!r}")
+    if voice_profile(roster, role_name) is not None:
+        out["voice_profile"] = "content/voice-profile.json"
+    body = render.instructions(roster, role_name) if mode == "native-skills" else compiled_document(roster, role_name)
+    out["body_bytes"] = len(body.encode())
+    return out
+
+
+def voice_profile(roster: Roster, role_name: str) -> dict[str, Any] | None:
+    """The seat's merged linter profile. No source ships one here, so no carried half."""
+    return voiceprofile.build(
+        f"{roster.source}:{role_name}", [], voiceprofile.generated(voiceprofile.banks(roster, role_name))
+    )
 
 
 def trace(roster: Roster, role_name: str, delivery: str = "native-skills") -> dict[str, Any]:
@@ -374,4 +385,7 @@ def compose(
         go_json(manifest(roster, role_name, model_tier, delivery)) + "\n"
     )
     (out_dir / "trace.json").write_text(go_json(trace(roster, role_name, delivery)) + "\n")
+    profile = voice_profile(roster, role_name)
+    if profile is not None:
+        (out_dir / "content" / "voice-profile.json").write_text(go_json(profile) + "\n")
     return out_dir
