@@ -153,6 +153,34 @@ The fleet runs two lanes, and both authorize the same core actions:
 - Comment the surprise, not the diff. Long explanation goes in `docs/`, and a
   short pointer stays in the code.
 
+### Never ask for a grade a pending ticket would invalidate
+
+A grade is a human decision about four inputs: the case prompt, the response
+being graded, the target it is graded against, and the label set and word cap
+that bound the call. Change any one of them and the earlier decision is not a
+weaker grade, it is a grade of something else.
+
+So before asking a human to grade a board, clear every open record whose
+resolution would change one of those four for any case in it. Not most of them
+and not the ones that look big. A single ticket landing after a pass costs the
+whole pass, so the cheap-looking ask is never as cheap as the minutes it takes.
+
+Two input sources are easy to miss:
+
+- `housecast/data/roster.yaml`. Boundary rules, acts, and personality text are
+  what a case target is authored against, so a record that edits them edits the
+  target. It also changes what a seat would answer, so the stored responses
+  stop describing the deployment the roster now names.
+- The profile. A label set or word cap edit rescores every case it reaches
+  without touching a word of the board.
+
+Rerunning the board is the same event rather than an exception: a new response
+is a new case.
+
+When a record cannot be cleared first, say which cases it touches and what a
+pass taken now would still be good for, rather than asking anyway and finding
+out afterwards.
+
 ## Checkout residency
 
 This repository is not resident. It has no checkout under `~/projects/<owner>/`.
