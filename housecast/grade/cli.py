@@ -12,6 +12,7 @@ import json
 import sys
 from importlib import metadata
 from pathlib import Path
+from typing import Any
 
 import click
 from rich.console import Console
@@ -22,6 +23,7 @@ from housecast.grade import attributes as attributes_mod
 from housecast.grade import board as board_mod
 from housecast.grade import dataset as dataset_mod
 from housecast.grade import deck as deck_mod
+from housecast.grade import pin as pin_mod
 from housecast.grade import present as present_mod
 from housecast.grade import seal as seal_mod
 from housecast.grade import serve as serve_mod
@@ -33,11 +35,14 @@ from housecast.grade.io import (
     grader_from_path,
     load_annotations,
     load_dataset,
+    load_pin,
     load_profile,
+    pin_path,
     read_grader,
     read_yaml,
+    save_pin,
 )
-from housecast.grade.schema import pair_results
+from housecast.grade.schema import DatasetEntry, Profile, pair_results
 
 INTRO = """housecast grade: the grading half. Committed YAML in, human decisions and one-way
 display payloads out. No runner and no model client live here.
@@ -87,6 +92,13 @@ COMMANDS
               cases. Withholds every slug, includes the reveal on purpose, and
               scans what it built because a room is a public surface.
   pairs       Print pair results for a graded dataset.
+  pin         Record the digests of the five inputs a grade depends on: the case
+              prompt, the stored response, the target, the label set with its
+              word cap, and the charter the annotator is shown. Written beside
+              the dataset as pin.yaml. annotate and serve refuse a run whose
+              inputs moved, naming which case or entity moved, because grading
+              across a change reports it as grader disagreement. --force
+              re-pins, which is how a deliberate change is accepted.
   present     Serve a built deck to a room. Public by default, because nothing
               private is in it. Anonymous voting, held in memory and discarded
               on exit. The presenter's control is the one gated thing.
@@ -161,6 +173,85 @@ def help_command() -> None:
     click.echo(HELP)
 
 
+def check_pin(
+    dataset_path: Path,
+    entries: list[DatasetEntry],
+    profile: Profile,
+    roster_data: dict[str, Any] | None,
+) -> None:
+    """Refuse a grading surface whose inputs moved since the run was pinned.
+
+    An unpinned run is warned about rather than refused. Every board that
+    exists today predates the pin, and refusing them would make this a
+    migration rather than a guard.
+    """
+    pinned = load_pin(pin_path(dataset_path))
+    if pinned is None:
+        click.echo(
+            f"housecast grade: {dataset_path.parent.name} is unpinned, so nothing checks "
+            "whether its inputs moved. Take one with `housecast grade pin`.",
+            err=True,
+        )
+        return
+    try:
+        pin_mod.check(pinned, entries, profile, roster_data)
+    except pin_mod.PinMismatchError as moved:
+        click.echo(f"housecast grade: {moved}", err=True)
+        raise SystemExit(1) from moved
+
+
+@main.command(name="pin")
+@click.option(
+    "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
+)
+@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
+@click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
+@click.option(
+    "--out", type=click.Path(path_type=Path), help="defaults to pin.yaml beside the dataset"
+)
+@click.option("--check", "check_only", is_flag=True, help="report drift and exit, writing nothing")
+@click.option("--force", is_flag=True, help="overwrite an existing pin, accepting the change")
+@click.pass_context
+def pin_command(
+    context: click.Context,
+    dataset_path: Path,
+    profile_path: Path | None,
+    roster: Path | None,
+    out: Path | None,
+    check_only: bool,
+    force: bool,
+) -> None:
+    """Pin the five inputs a grade depends on, or check a run against its pin."""
+    intro(context)
+    profile = load_profile(profile_path)
+    entries = load_dataset(dataset_path)
+    roster_data = json.loads(roster.read_text()) if roster else None
+    target = out or pin_path(dataset_path)
+    existing = load_pin(target)
+
+    if check_only or (existing is not None and not force):
+        if existing is None:
+            click.echo(f"housecast grade pin: {target} does not exist", err=True)
+            raise SystemExit(1)
+        drifts = pin_mod.verify(existing, entries, profile, roster_data)
+        for drift in drifts:
+            click.echo(str(drift), err=True)
+        if drifts:
+            counted = "1 input" if len(drifts) == 1 else f"{len(drifts)} inputs"
+            click.echo(f"{counted} moved. Re-pin with --force to accept the change.", err=True)
+            raise SystemExit(1)
+        click.echo(f"{len(entries)} cases match {target}")
+        outro(f"housecast grade annotate --dataset {dataset_path} --out annotations.yaml")
+        return
+
+    taken = pin_mod.take(entries, profile, roster_data)
+    save_pin(target, taken)
+    charters = len(taken["charters"])
+    unpinned = "" if roster else ", and no roster was given so no charter is pinned"
+    click.echo(f"pinned {len(taken['cases'])} cases and {charters} charters to {target}{unpinned}")
+    outro(f"housecast grade annotate --dataset {dataset_path} --out annotations.yaml")
+
+
 @main.command()
 @click.option(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
@@ -191,6 +282,10 @@ def annotate(
     annotations = load_annotations(out)
     roster_data = json.loads(roster.read_text()) if roster else None
     console = Console()
+
+    # Checked against the full run rather than an --entity slice, before a
+    # single case is shown. See housecast.grade.pin.
+    check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
 
     if not summary and not annotate_mod.annotate_session(
         entries, annotations, out, profile, roster_data, grader
@@ -440,19 +535,19 @@ def serve_command(
 ) -> None:
     """Hold one run open for grading in a browser."""
     intro(context)
+    profile = load_profile(profile_path)
+    roster_data = json.loads(roster.read_text()) if roster else None
     # Checked before the run is loaded, so a refused bind costs nothing and the
     # reason reaches the operator before any private text is in memory.
     try:
         serve_mod.check_bind(host, expose)
-        session = serve_mod.GradingSession.open(
-            run_dir,
-            load_profile(profile_path),
-            json.loads(roster.read_text()) if roster else None,
-            grader,
-        )
+        session = serve_mod.GradingSession.open(run_dir, profile, roster_data, grader)
     except (serve_mod.BindRefusedError, GraderNameRejectedError, FileNotFoundError) as refused:
         click.echo(f"housecast grade serve: {refused}", err=True)
         raise SystemExit(1) from refused
+
+    dataset_path = run_dir / "dataset.yaml"
+    check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
 
     counts = session.counts()
     click.echo(

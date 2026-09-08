@@ -18,6 +18,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from housecast.grade.io import save_annotations
+from housecast.grade.pin import charter_parts
 from housecast.grade.schema import (
     AGENT_COMPOSE,
     DEDUCTIONS,
@@ -65,12 +66,15 @@ def entity_header(console: Console, roster: dict[str, Any], entity: str) -> None
     The roster is a projection the deployment composes, because owns, defers,
     and traits are its words. This layer renders lines rather than reading a
     shape it would then have to know. See docs/grading.md.
+
+    The lines come from `pin.charter_lines` so the digest covers what a grader
+    is actually shown. A pin over a projection this function does not use would
+    be a pin over nothing.
     """
-    spec = roster.get("entities", {}).get(entity)
-    if not spec:
+    display, purpose, notes = charter_parts(roster, entity)
+    if not display and not purpose and not notes:
         return
-    lines = [f"[bold]{spec.get('display_name', entity)}[/bold]  {spec.get('purpose', '')}"]
-    lines.extend(str(note) for note in spec.get("notes", []))
+    lines = [f"[bold]{display}[/bold]  {purpose}", *notes]
     console.print(Panel("\n".join(lines), border_style="bright_white", title="entity"))
 
 

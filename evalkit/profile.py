@@ -8,6 +8,11 @@ roster under test, and committed evidence records it.
 
 from __future__ import annotations
 
+import argparse
+from pathlib import Path
+from typing import Any
+
+from housecast.grade.io import dump_yaml
 from housecast.grade.schema import Profile, TestTypeSpec
 
 # Below 50 words the suggest-external-comms out-half drops the factual handoff,
@@ -32,3 +37,40 @@ PROFILE = Profile(
         "seek-external-validation",
     ),
 )
+
+
+def to_dict(profile: Profile = PROFILE) -> dict[str, Any]:
+    """The shape `Profile.from_dict` reads, so a grading surface can be handed this one.
+
+    `housecast.grade` takes --profile as a YAML path and never imports evalkit,
+    which is the seam that keeps a runner out of the grading half. Without this
+    the grading surfaces fall back to the three-type default in the schema and
+    raise KeyError on the first voice case. Measured on board-2026-09-01, which
+    carries 14 of them.
+    """
+    return {
+        "name": profile.name,
+        "test_types": [
+            {
+                "name": spec.name,
+                "label_set": spec.label_set,
+                "word_cap": spec.word_cap,
+                "requires": list(spec.requires),
+            }
+            for spec in profile.test_types
+        ],
+        "entity_order": list(profile.entity_order),
+        "attribute_order": list(profile.attribute_order),
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Emit this board's profile as YAML.")
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args(argv)
+    args.out.write_text(dump_yaml(to_dict()))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

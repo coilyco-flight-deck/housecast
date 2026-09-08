@@ -18,8 +18,13 @@ uv run --extra eval python -m evalkit.roster \
   --person "$render_dir/person.json" \
   --out "$render_dir/entities.json"
 
+# Handed over as YAML because the grading half never imports evalkit. Without
+# it the three-type default raises KeyError on the first voice case.
+uv run --extra eval python -m evalkit.profile --out "$render_dir/profile.yaml"
+
 uv run --extra eval housecast grade annotate \
   --dataset "$dataset" \
   --out "$out" \
+  --profile "$render_dir/profile.yaml" \
   --roster "$render_dir/entities.json" \
   "$@"

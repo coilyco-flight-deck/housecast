@@ -77,6 +77,23 @@ def save_dataset(path: Path, dataset: list[DatasetEntry]) -> None:
     path.write_text(dump_yaml({"dataset": [entry.to_dict() for entry in dataset]}))
 
 
+PIN_NAME = "pin.yaml"
+
+
+def pin_path(dataset_path: Path) -> Path:
+    """Beside the dataset it pins, so a run directory carries its own answer."""
+    return dataset_path.parent / PIN_NAME
+
+
+def load_pin(path: Path) -> dict[str, Any] | None:
+    """None where a run was never pinned, which is a different state from drift."""
+    return read_yaml(path) if path.exists() else None
+
+
+def save_pin(path: Path, pinned: dict[str, Any]) -> None:
+    path.write_text(dump_yaml(pinned))
+
+
 def load_annotations(path: Path) -> dict[str, Annotation]:
     if not path.exists():
         return {}
