@@ -124,6 +124,10 @@ evalkit-annotate *ARGS:
 grade-serve *ARGS:
     @uv run --extra eval housecast grade serve "$@"
 
+# How often two graders split a case. `just grade-disagreement --dataset D --annotations A --annotations B`.
+grade-disagreement *ARGS:
+    @uv run --extra eval housecast grade disagreement "$@"
+
 # Build the room-facing deck. `just grade-deck ROUNDS --run RUN_DIR --out DECK`.
 grade-deck *ARGS:
     @uv run --extra eval housecast grade deck "$@"

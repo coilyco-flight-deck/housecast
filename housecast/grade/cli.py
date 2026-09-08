@@ -16,6 +16,7 @@ from pathlib import Path
 import click
 from rich.console import Console
 
+from housecast.grade import agreement as agreement_mod
 from housecast.grade import annotate as annotate_mod
 from housecast.grade import attributes as attributes_mod
 from housecast.grade import board as board_mod
@@ -27,10 +28,13 @@ from housecast.grade import serve as serve_mod
 from housecast.grade import taxonomy as taxonomy_mod
 from housecast.grade.export import ExportRefusedError, export_run_dir
 from housecast.grade.io import (
+    GraderNameRejectedError,
     dump_yaml,
+    grader_from_path,
     load_annotations,
     load_dataset,
     load_profile,
+    read_grader,
     read_yaml,
 )
 from housecast.grade.schema import pair_results
@@ -75,6 +79,10 @@ COMMANDS
               must contain. check compares those to what a dataset authored,
               and names every missing case, half-authored pair, and boundary
               case no declaration derived.
+  disagreement  How often two graders labelled the same case differently. Takes
+              --annotations once per grader and counts only the cases every one
+              of them reached, because a denominator that absorbs the ungraded
+              reports agreement nobody measured.
   deck        Build the room-facing artifact: authored rounds joined to graded
               cases. Withholds every slug, includes the reveal on purpose, and
               scans what it built because a room is a public surface.
@@ -89,6 +97,8 @@ COMMANDS
               same per-decision write, and the evidence span is selected rather
               than retyped. Loopback only unless --expose says otherwise, because
               the payload carries the critique and evidence annotate would hide.
+              --grader names the writer, so two people grading one board write
+              two files instead of overwriting each other case by case.
   taxonomy    Axial coding. Groups deductions by structural axis and shared
               critique terms into a ranked failure taxonomy.
   validate    Check a dataset against a profile's required fields.
@@ -102,6 +112,7 @@ FILE SHAPES
   rounds.yaml       {deck, rounds: [{id, case, commitments: [...]}]}
   dataset.yaml      {dataset: [{id, entity, test_type, prompt, target, output, ...}]}
   annotations.yaml  {annotations: [{id, label, critique, evidence}]}
+  annotations.<grader>.yaml  the same shape, one file per grader on a shared board
   attributes.yaml   {schema, attributes: [{id, rule, inside, outside, origin, seed}]}
   profile.yaml      {name, test_types: [{name, label_set, word_cap, requires}], ...}
 
@@ -159,6 +170,7 @@ def help_command() -> None:
 @click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
 @click.option("--entity", "entities", multiple=True, help="grade only these entities")
 @click.option("--summary", is_flag=True, help="print results and exit without grading")
+@click.option("--grader", help="stamp who graded into the file, so a copy stays attributable")
 @click.pass_context
 def annotate(
     context: click.Context,
@@ -168,6 +180,7 @@ def annotate(
     roster: Path | None,
     entities: tuple[str, ...],
     summary: bool,
+    grader: str | None,
 ) -> None:
     """Grade a dataset by hand, one keystroke per decision."""
     intro(context)
@@ -180,7 +193,7 @@ def annotate(
     console = Console()
 
     if not summary and not annotate_mod.annotate_session(
-        entries, annotations, out, profile, roster_data
+        entries, annotations, out, profile, roster_data, grader
     ):
         console.print("\n[yellow]stopped early, annotations saved[/yellow]")
 
@@ -292,6 +305,62 @@ def pairs(context: click.Context, dataset_path: Path, annotations_path: Path) ->
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
 @click.option(
+    "--annotations",
+    "annotation_paths",
+    type=click.Path(exists=True, path_type=Path),
+    multiple=True,
+    required=True,
+    help="one grader's annotations file, passed once per grader",
+)
+@click.option("--format", "output_format", type=click.Choice(("text", "yaml")), default="text")
+@click.option("--out", type=click.Path(path_type=Path))
+@click.pass_context
+def disagreement(
+    context: click.Context,
+    dataset_path: Path,
+    annotation_paths: tuple[Path, ...],
+    output_format: str,
+    out: Path | None,
+) -> None:
+    """How often two graders labelled the same case differently."""
+    intro(context)
+    if len(annotation_paths) < 2:
+        click.echo(
+            "disagreement needs at least two --annotations files, because one grader "
+            "agrees with herself by construction",
+            err=True,
+        )
+        raise SystemExit(1)
+
+    # The file's own claim first. A filename is what a copy or an export changes.
+    graders = {
+        (read_grader(path) or grader_from_path(path)): load_annotations(path)
+        for path in annotation_paths
+    }
+    if len(graders) < len(annotation_paths):
+        click.echo(
+            "two of those files carry the same grader name, so one would shadow the other: "
+            "name them annotations.<grader>.yaml",
+            err=True,
+        )
+        raise SystemExit(1)
+
+    entries = load_dataset(dataset_path)
+    report = agreement_mod.compare(entries, graders)
+    rendered = (
+        dump_yaml({"agreement": report.to_dict()})
+        if output_format == "yaml"
+        else agreement_mod.render(report)
+    )
+    write_out(rendered, out)
+    outro(f"housecast grade taxonomy --dataset {dataset_path} --annotations {annotation_paths[0]}")
+
+
+@main.command()
+@click.option(
+    "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
+)
+@click.option(
     "--annotations", "annotations_path", type=click.Path(exists=True, path_type=Path), required=True
 )
 @click.option("--format", "output_format", type=click.Choice(("text", "yaml")), default="text")
@@ -346,6 +415,10 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
     type=click.Path(exists=True, file_okay=False, path_type=Path),
     help="a built grading page to mount at /",
 )
+@click.option(
+    "--grader",
+    help="write annotations.<grader>.yaml, so two graders on one board do not overwrite each other",
+)
 @click.option("--host", default="127.0.0.1", show_default=True)
 @click.option("--port", default=serve_mod.DEFAULT_PORT, show_default=True)
 @click.option(
@@ -360,6 +433,7 @@ def serve_command(
     profile_path: Path | None,
     roster: Path | None,
     static: Path | None,
+    grader: str | None,
     host: str,
     port: int,
     expose: bool,
@@ -374,8 +448,9 @@ def serve_command(
             run_dir,
             load_profile(profile_path),
             json.loads(roster.read_text()) if roster else None,
+            grader,
         )
-    except (serve_mod.BindRefusedError, FileNotFoundError) as refused:
+    except (serve_mod.BindRefusedError, GraderNameRejectedError, FileNotFoundError) as refused:
         click.echo(f"housecast grade serve: {refused}", err=True)
         raise SystemExit(1) from refused
 
