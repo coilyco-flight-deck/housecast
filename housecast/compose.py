@@ -168,13 +168,17 @@ def manifest(
 
 
 def _delivery(roster: Roster, role_name: str, mode: str) -> dict[str, Any]:
+    # Key order is the Go Delivery struct's, because parity is byte-identical.
+    out: dict[str, Any]
     if mode == "native-skills":
+        body = render.instructions(roster, role_name)
         out = {
             "mode": mode,
             "instructions": "content/instructions.md",
             "skills_root": "content/skills",
         }
     elif mode == "compiled":
+        body = compiled_document(roster, role_name)
         out = {
             "mode": mode,
             "instructions": "content/instructions.md",
@@ -184,16 +188,14 @@ def _delivery(roster: Roster, role_name: str, mode: str) -> dict[str, Any]:
         raise ValueError(f"unknown delivery mode {mode!r}")
     if voice_profile(roster, role_name) is not None:
         out["voice_profile"] = "content/voice-profile.json"
-    body = render.instructions(roster, role_name) if mode == "native-skills" else compiled_document(roster, role_name)
     out["body_bytes"] = len(body.encode())
     return out
 
 
 def voice_profile(roster: Roster, role_name: str) -> dict[str, Any] | None:
     """The seat's merged linter profile. No source ships one here, so no carried half."""
-    return voiceprofile.build(
-        f"{roster.source}:{role_name}", [], voiceprofile.generated(voiceprofile.banks(roster, role_name))
-    )
+    banks = voiceprofile.banks(roster, role_name)
+    return voiceprofile.build(f"{roster.source}:{role_name}", [], voiceprofile.generated(banks))
 
 
 def trace(roster: Roster, role_name: str, delivery: str = "native-skills") -> dict[str, Any]:

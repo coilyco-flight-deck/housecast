@@ -31,7 +31,7 @@ def _slug(term: str) -> str:
 
 
 def _is_word_char(c: str) -> bool:
-    return c == "_" or c.isascii() and c.isalnum()
+    return c == "_" or (c.isascii() and c.isalnum())
 
 
 def _pattern(term: str) -> str:

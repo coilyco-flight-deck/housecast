@@ -49,7 +49,8 @@ def test_go_quote_meta_rather_than_re_escape() -> None:
 
 def test_empty_and_unslugged_terms_are_skipped() -> None:
     class _Voice:
-        avoid = ["  ", "", "leverage", "Leverage", "!!!"]
+        def __init__(self) -> None:
+            self.avoid = ["  ", "", "leverage", "Leverage", "!!!"]
 
     rules = voiceprofile.generated([("Role", _Voice())])  # type: ignore[list-item]
     assert [r["id"] for r in rules] == ["avoid-leverage"]
