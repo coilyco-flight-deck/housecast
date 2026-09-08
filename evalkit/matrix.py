@@ -80,7 +80,6 @@ def active_roles(roster: dict[str, Any]) -> list[str]:
     ]
 
 
-
 def scoped_grants(roster: dict[str, Any], boundary: str) -> dict[str, str]:
     """Roles holding one boundary within a scope, in roster order.
 
