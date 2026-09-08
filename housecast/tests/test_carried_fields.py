@@ -75,3 +75,13 @@ def test_the_projection_carries_archived() -> None:
 
     assert projected["underwriter"]["archived"] is True
     assert projected["science"]["archived"] is False
+
+
+def test_compose_refuses_an_archived_role() -> None:
+    """The Go resolver refuses too, and the two engines owe the same semantics."""
+    import pytest
+
+    from housecast import compose as compose_module
+
+    with pytest.raises(ValueError, match="archived"):
+        compose_module.compose(roster.load(), "underwriter", "frontier", "/tmp/unused-bundle")

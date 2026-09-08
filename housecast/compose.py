@@ -350,6 +350,10 @@ def compose(
     delivery: str = "native-skills",
 ) -> pathlib.Path:
     role = roster.roles[role_name]
+    # The Go resolver refuses here too. Parsing may differ between the engines,
+    # semantics may not. See docs/roster-language.md.
+    if role.archived:
+        raise ValueError(f"role {role_name!r} is archived and cannot be composed")
     if model_tier not in role.supported_model_tiers:
         raise ValueError(
             f"role {role_name!r} does not support model tier {model_tier!r}; "

@@ -22,11 +22,17 @@ def loaded() -> Roster:
     return roster.load()
 
 
+def _composable() -> list[str]:
+    """Role order minus the archived, which compose refuses by design."""
+    loaded_roster = roster.load()
+    return [n for n in loaded_roster.role_order if not loaded_roster.roles[n].archived]
+
+
 def _cases() -> list[tuple[str, str]]:
     loaded_roster = roster.load()
     return [
         (name, tier)
-        for name in loaded_roster.role_order
+        for name in _composable()
         for tier in loaded_roster.roles[name].supported_model_tiers
     ]
 
@@ -62,7 +68,7 @@ def test_native_bundle_is_internally_consistent(
     )
 
 
-@pytest.mark.parametrize("role", roster.load().role_order)
+@pytest.mark.parametrize("role", _composable())
 def test_compiled_bundle_carries_every_body(
     loaded: Roster,
     tmp_path: pathlib.Path,
