@@ -120,18 +120,63 @@ where to look, not as evidence about where graders will split.
      0.8285  sysadmin-sec-in          boundary
      0.8250  advocate-sec-in          boundary
 
-## Most divergent pairs
+## The 28 pairs, ranked
 
-The method scores a boundary as a pair, never a half, so these are the unit
-`housecast#7009` picks from. Mean of the two halves, 28 pairs total.
+The method scores a boundary as a pair, never a half, so this is the unit
+`housecast#7009` picks from. Errors are jackknife over the five responses,
+because the ten pairwise distances among them share responses and treating them
+as independent halves the error.
 
-     0.8097  platform-sev   worst half in
-     0.7942  platform-mlb   worst half in
-     0.7937  frontend-sev   worst half in
-     0.7895  sysadmin-sec   worst half in
-     0.7881  science-sev    worst half out
-     0.7854  platform-bfs   worst half out
-     0.7832  advocate-sec   worst half in
+     1. 0.8097 +/-0.0288  platform-sev   in=0.8143 out=0.8052  worst=in   (+0.2 SE)
+     2. 0.7942 +/-0.0270  platform-mlb   in=0.8024 out=0.7860  worst=in   (+0.3 SE)
+     3. 0.7937 +/-0.0150  frontend-sev   in=0.8289 out=0.7586  worst=in * (+2.3 SE)
+     4. 0.7895 +/-0.0224  sysadmin-sec   in=0.8285 out=0.7505  worst=in   (+1.7 SE)
+     5. 0.7881 +/-0.0180  science-sev    in=0.7619 out=0.8143  worst=out  (-1.5 SE)
+     6. 0.7854 +/-0.0251  platform-bfs   in=0.7822 out=0.7886  worst=out  (-0.1 SE)
+     7. 0.7832 +/-0.0399  advocate-sec   in=0.8250 out=0.7413  worst=in   (+1.0 SE)
+     8. 0.7722 +/-0.0254  science-bfs    in=0.7406 out=0.8037  worst=out  (-1.2 SE)
+     9. 0.7713 +/-0.0212  advocate-bfs   in=0.7788 out=0.7639  worst=in   (+0.4 SE)
+    10. 0.7698 +/-0.0752  science-sec    in=0.7946 out=0.7450  worst=in   (+0.3 SE)
+    11. 0.7683 +/-0.0181  gamedev-sev    in=0.7152 out=0.8214  worst=out* (-2.9 SE)
+    12. 0.7631 +/-0.0783  science-mlb    in=0.7701 out=0.7560  worst=in   (+0.1 SE)
+    13. 0.7585 +/-0.0529  gamedev-bfs    in=0.7952 out=0.7218  worst=in   (+0.7 SE)
+    14. 0.7364 +/-0.0206  frontend-bfs   in=0.7661 out=0.7067  worst=in   (+1.4 SE)
+    15. 0.7329 +/-0.0263  sysadmin-sev   in=0.7591 out=0.7066  worst=in   (+1.0 SE)
+    16. 0.7303 +/-0.0265  frontend-mlb   in=0.7162 out=0.7444  worst=out  (-0.5 SE)
+    17. 0.7258 +/-0.0381  platform-sec   in=0.7200 out=0.7315  worst=out  (-0.2 SE)
+    18. 0.7187 +/-0.0380  advocate-mlb   in=0.7496 out=0.6877  worst=in   (+0.8 SE)
+    19. 0.7176 +/-0.0413  gamedev-mlb    in=0.7449 out=0.6903  worst=in   (+0.7 SE)
+    20. 0.7174 +/-0.0231  director-mlb   in=0.7133 out=0.7215  worst=out  (-0.2 SE)
+    21. 0.7156 +/-0.0500  advocate-sev   in=0.7545 out=0.6767  worst=in   (+0.8 SE)
+    22. 0.6941 +/-0.0365  sysadmin-bfs   in=0.7244 out=0.6638  worst=in   (+0.8 SE)
+    23. 0.6916 +/-0.0357  frontend-sec   in=0.7578 out=0.6255  worst=in   (+1.9 SE)
+    24. 0.6889 +/-0.0364  director-bfs   in=0.7347 out=0.6431  worst=in   (+1.3 SE)
+    25. 0.6836 +/-0.0416  director-sev   in=0.7151 out=0.6521  worst=in   (+0.8 SE)
+    26. 0.6816 +/-0.0566  director-sec   in=0.6561 out=0.7071  worst=out  (-0.5 SE)
+    27. 0.6501 +/-0.0436  sysadmin-mlb   in=0.6132 out=0.6869  worst=out  (-0.8 SE)
+    28. 0.6392 +/-0.0367  gamedev-sec    in=0.6208 out=0.6576  worst=out  (-0.5 SE)
+
+The head-to-tail contrast is the only comparison this instrument supports, and it
+holds: rank 1 against rank 28 is `+0.1705 +/-0.0466`, which is 3.7 SE. Adjacent
+ranks are not separable and should not be read against each other.
+
+## The worst-half label is mostly noise
+
+`worst` names the half with the higher divergence, where `in` is the half the role
+must own and `out` is the half it must defer. **Only 2 of the 28 pairs have an
+in/out gap that clears 2 SE**, marked with a star above:
+
+    gamedev-sev    gap -0.1062  (-2.9 SE)  the deferral half is genuinely less stable
+    frontend-sev   gap +0.0703  (+2.3 SE)  the ownership half is genuinely less stable
+
+Every other worst-half label is inside its own error bar. Reading `platform-bfs`
+as an out-half pair is reading a 0.0064 gap against a 0.0502 error, and reading
+`science-sev` that way is 1.5 SE, suggestive rather than shown.
+
+The board-wide direction is mild and runs the other way: in-halves average 0.7494
+and out-halves 0.7271, and the ownership half is the less stable one in 18 of 28
+pairs. So a pair whose deferral half is genuinely the unstable one is the minority
+case, and `gamedev-sev` is the clearest instance of it on the board.
 
 ## What to do with this before Friday
 
@@ -153,3 +198,9 @@ settle whether it is.
 * `dispersion.csv` - 105 rows, per case.
 * `dispersion-pairs.csv` - 28 rows, per boundary pair, ranked.
 * `annotation-queue.csv` - all 105 cases in grading order.
+* `dataset.yaml` - epoch 1 of every case, the input `just evalkit-annotate` takes.
+
+`dataset.yaml` is why the uncommitted log is survivable. It carries the text a
+grader reads, and `dispersion.csv` carries the spread across the other four
+epochs, so both halves of what the run produced are in the repository even
+though the 7.7MB log is not.
