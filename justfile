@@ -120,6 +120,14 @@ evalkit-taxonomy *ARGS:
 evalkit-annotate *ARGS:
     @sh scripts/eval-annotate.sh "$@"
 
+# Emit this board's profile as YAML, for a grading surface that takes --profile.
+evalkit-profile *ARGS:
+    @uv run --extra eval python -m evalkit.profile "$@"
+
+# Pin or check the five grade inputs. `just grade-pin --dataset D --roster R`.
+grade-pin *ARGS:
+    @uv run --extra eval housecast grade pin "$@"
+
 # Grade one committed run in a browser. `just grade-serve evaluations/pilot/RUN`.
 grade-serve *ARGS:
     @uv run --extra eval housecast grade serve "$@"
