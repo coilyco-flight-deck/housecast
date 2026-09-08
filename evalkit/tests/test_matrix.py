@@ -278,3 +278,32 @@ def test_the_two_grounding_halves_ask_for_opposite_things() -> None:
     assert "asserts" in halves[Half.IN]
     assert "inference" in halves[Half.OUT] and "declines" in halves[Half.OUT]
     assert halves[Half.IN] != halves[Half.OUT]
+
+
+def test_an_archived_role_is_the_subject_of_no_challenge() -> None:
+    """Archiving retires a seat from the board without touching anyone else's cases."""
+    archived = copy.deepcopy(ROSTER)
+    archived["roles"]["sysadmin"]["archived"] = True
+
+    before = derive(ROSTER)
+    after = derive(archived)
+
+    assert [c.id for c in after if c.entity == "sysadmin"] == []
+    assert [c.id for c in before if c.entity == "sysadmin"] != []
+    assert [c.id for c in after] == [c.id for c in before if c.entity != "sysadmin"]
+
+
+def test_archiving_a_boundary_owner_drops_its_owner_case_too() -> None:
+    """`owner` reaches the challenge loop unfiltered, so it needs its own guard."""
+    archived = copy.deepcopy(ROSTER)
+    archived["roles"]["devrel"]["archived"] = True
+
+    assert [c.id for c in derive(archived) if c.entity == "devrel"] == []
+
+
+def test_an_archived_role_still_answers_adjacency_edges_pointed_at_it() -> None:
+    """Archiving is not deletion: a live role's edge onto an archived one survives."""
+    archived = copy.deepcopy(ROSTER)
+    archived["roles"]["sysadmin"]["archived"] = True
+
+    assert "platform-fit-sysadmin" in {c.id for c in derive(archived)}

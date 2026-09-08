@@ -2328,6 +2328,7 @@ roles:
     purpose: "Assess whether an AI system is fit to ship, name the exclusions, and stand behind the file that proves it."
     skill: role-underwriter
     skill_source: "roster:core:role:underwriter"
+    archived: true
     stance: "standing side-on rather than square, weight on the back foot, head turned to keep the approach in view, one hand angling a flat plate outward"
     element: "fire"
     grounding: "what an authority reading the file in bad faith would accept"

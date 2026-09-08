@@ -57,3 +57,21 @@ def test_the_shipped_roster_renders_no_methods_line() -> None:
     assert loaded.roles["science"].methods == []
     assert loaded.roles["science"].seats[0].channel is None
     assert "**Role methods //" not in render.identity_card(loaded, "science")
+
+
+def test_archived_defaults_false_and_survives_the_loader() -> None:
+    """Absent means live, so every roster authored before the field still loads."""
+    shipped = roster.load()
+
+    assert shipped.roles["science"].archived is False
+    assert shipped.roles["underwriter"].archived is True
+
+
+def test_the_projection_carries_archived() -> None:
+    """evalkit reads person.json rather than the YAML, so the flag has to cross."""
+    from housecast import snapshot
+
+    projected = snapshot.person_snapshot(roster.load())["roles"]
+
+    assert projected["underwriter"]["archived"] is True
+    assert projected["science"]["archived"] is False
