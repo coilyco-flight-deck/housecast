@@ -58,8 +58,8 @@ to over-flag, is clean against 19,255 chars of Kai's reviewed writing. The
 
 A doctrine file that bans a phrase has to quote it. `writing-kai-voice`
 therefore trips every rail it defines, and the linter's own COMPOSED.md trips
-the em-dash rule with its worked example. Eight of Arm C's fifty-two raw hits
-are that artifact.
+the em-dash rule with its worked example. Seven of Arm C's fifty-two raw
+hits are that artifact.
 
 `flatter-rare` is the clearest case. Two raw hits, both
 `writing-kai-voice/COMPOSED.md` lines 15 and 16, zero real usages. Reported
@@ -87,14 +87,76 @@ rather than slop, including a deliberate doctrine line repeated across three
 skills. It has the worst precision in the battery and it is the rule most
 likely to make a seat learn to skip the linter.
 
-## Caveat on the twelve
+## Caveat on the twelve, and why Kai overruled it
 
-Zero hits in Arm A at 19,255 chars is weak evidence for a phrase that is rare
-to begin with. `delve`, `testament` and `game-changer` would each be expected
-near zero in any 3,000-word sample of anyone's writing, so the run does not
-separate "Kai never writes this" from "the sample is too small to say". Arm A
-bounds the false-positive rate of the battery as a whole. It does not license
-any single zero-fire rule individually.
+Zero hits in Arm A at 19,255 chars is weak evidence that a rare phrase is one
+Kai would ever write. I read that as grounds to hold the zero-fire rules back.
 
-Widening Arm A is the obvious follow-up and the corpus is the limit:
-`data/raw/` holds one demo batch, and `data/evals/` is empty.
+**Kai inverted it, and she is right.** The question a blocklist answers is not
+"is this rule safe" but "is this phrase absent and do we want it to stay
+absent". A phrase with zero hits in both Kai's corpus and the estate is the
+cheapest rule there is: it costs nothing today and it holds the line against
+drift tomorrow. The rules needing caution are the ones already firing on real
+prose, which is the opposite of the set I hesitated over.
+
+So the shipping test became: a candidate ships **unless** it fires against
+Kai's own reviewed writing.
+
+## Run two, 2026-09-08, the compiled battery
+
+295 candidates compiled from five sources, at housecast `b4cb06f`. Sources are
+named in the shipped profile's own `sources` block: Wikipedia's WikiProject AI
+Cleanup, the Kobak et al. excess-vocabulary study in Science Advances 2025, and
+three 2026 wordlists.
+
+`battery_terms.py` is the source list, `battery-gen.py` compiles it to
+`battery-rules.json`, and `run-2.txt` is the raw output. The generator
+reproduces the rules file byte for byte.
+
+**Arm A: 0 of 295. Arm B: 0 of 295.**
+
+Four candidates fired and were cut, each confirmed as real usage by reading the
+surrounding sentence rather than by count alone.
+
+* `that said` - her own email decline, used as a real pivot.
+* `on the same page` - the subject of a LinkedIn post, and it survived into the
+  approved transformation, so it is endorsed rather than tolerated.
+* `harness` - "curiosity with a test harness" in approved output, and 344 hits
+  across 118 estate files where it means the agent harness. Estate vocabulary,
+  not slop.
+* `at scale` - hers.
+
+## Two failure classes the second run added
+
+**A rule can collide with an estate proper noun.** `foundational` looked like
+the highest-frequency slop in the battery at 38 hits, until the hits turned out
+to be the `build-foundational-software` boundary slug, 47 occurrences of it
+across tracked Markdown. Narrowed with a lookaround rather than dropped, it
+falls to 11 real hits. This is distinct from self-reference: the document is not
+about the rule, it just contains the string.
+
+**A straight apostrophe never matches curly-quoted prose.** Every phrase rule
+carrying `'` had to accept `’` as well, and curly quotes are themselves on the
+tell list, so the prose most likely to need these rules is the prose they would
+have silently skipped.
+
+## What a better pattern bought
+
+Run one recommended dropping `not-x-but-y`, the one rule with evidence against
+it. Run two keeps the family and fixes the pattern instead. Requiring a comma
+or dash rather than allowing a sentence break separates the LLM reframe from
+legitimate contrast:
+
+* `It's not just a linter, it's a contract.` fires
+* `This is not a complete model. It is a useful one.` does not, and that
+  sentence is the Arm B hit that condemned the loose version
+
+A recommendation to drop a rule is sometimes a recommendation to rewrite it.
+
+## Widening Arm A
+
+Still the obvious follow-up and still the limit: `data/raw/` holds one demo
+batch and `data/evals/` is empty. Arm A is also email and social register
+rather than technical prose, so a word absent from it may simply be absent from
+that register. The estate-vocabulary check in Arm C is what covers that gap,
+and it is what caught `harness`.
