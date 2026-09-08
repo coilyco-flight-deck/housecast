@@ -29,6 +29,7 @@ SELF_REFERENCE = (
     "composed/writing-kai-voice/COMPOSED.md",
     "composed/writing-voice-guide-linter/COMPOSED.md",
     "composed/kai-voice-guide-linter/COMPOSED.md",
+    "evaluations/voice-catchphrase-2026-09-08/",
 )
 
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "data"}
