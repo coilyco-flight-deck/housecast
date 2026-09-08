@@ -11,8 +11,13 @@ cleanup() { rm -rf "$work"; }
 trap cleanup EXIT HUP INT TERM
 
 uv run python -m housecast roster --out "$work/roster" >/dev/null
-roles=$(python3 -c "import json,sys; print(' '.join(json.load(open(sys.argv[1]))['role_order']))" \
-  "$work/roster/person.json")
+# An archived role stays in role_order but compose refuses it, so filter here
+# on the same predicate evalkit.matrix.active_roles uses.
+roles=$(python3 -c "
+import json, sys
+person = json.load(open(sys.argv[1]))
+print(' '.join(r for r in person['role_order'] if not person['roles'][r].get('archived', False)))
+" "$work/roster/person.json")
 
 for role in $roles; do
   uv run python -m housecast compose --role "$role" --delivery compiled \
