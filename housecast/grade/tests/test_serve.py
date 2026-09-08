@@ -4,7 +4,13 @@ import pytest
 from fastapi.testclient import TestClient
 
 from housecast.grade.export import build_run
-from housecast.grade.io import load_annotations, save_annotations, save_dataset
+from housecast.grade.io import (
+    GraderNameRejectedError,
+    load_annotations,
+    read_grader,
+    save_annotations,
+    save_dataset,
+)
 from housecast.grade.schema import Annotation, Challenge, DatasetEntry, Half, Verdict
 from housecast.grade.serve import (
     GRADING_FORMAT,
@@ -221,3 +227,67 @@ def test_the_verbatim_rule_matches_the_terminal_loop(run_dir: pathlib.Path) -> N
     session.record(Decision(id="live-in", label="fail", critique="c", evidence="NOT TOUCH THE"))
     session.record(Decision(id="live-out", label="fail", critique="c", evidence=""))
     assert session.counts()["annotated"] == 2
+
+
+def test_two_graders_on_one_board_write_two_files_rather_than_overwriting(
+    run_dir: pathlib.Path,
+) -> None:
+    """The split test's whole point: afterwards it must say who called what."""
+    kai = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
+    mel = TestClient(create_app(GradingSession.open(run_dir, grader="mel")))
+
+    kai.post("/api/annotations", json={"id": "live-in", "label": "pass"})
+    mel.post(
+        "/api/annotations",
+        json={"id": "live-in", "label": "fail", "critique": "it moved", "evidence": "handoff"},
+    )
+
+    assert load_annotations(run_dir / "annotations.kai.yaml")["live-in"].label is Verdict.PASS
+    assert load_annotations(run_dir / "annotations.mel.yaml")["live-in"].label is Verdict.FAIL
+    assert not (run_dir / "annotations.yaml").exists()
+
+
+def test_an_unnamed_grader_keeps_the_original_filename(run_dir: pathlib.Path) -> None:
+    """Every board already graded stays readable, so the default cannot move."""
+    session = GradingSession.open(run_dir)
+    assert session.annotations_path == run_dir / "annotations.yaml"
+    assert session.payload()["grader"] is None
+
+
+def test_a_second_session_reads_back_only_its_own_graders_work(run_dir: pathlib.Path) -> None:
+    first = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
+    first.post("/api/annotations", json={"id": "live-in", "label": "pass"})
+
+    reopened = GradingSession.open(run_dir, grader="kai")
+    assert reopened.counts() == {"cases": 2, "annotated": 1}
+    assert GradingSession.open(run_dir, grader="mel").counts()["annotated"] == 0
+
+
+@pytest.mark.parametrize("name", ["../escape", "kai/mel", "Kai", "kai.mel", ""])
+def test_a_grader_name_that_would_not_survive_a_filename_is_refused(
+    run_dir: pathlib.Path, name: str
+) -> None:
+    with pytest.raises(GraderNameRejectedError):
+        GradingSession.open(run_dir, grader=name)
+
+
+def test_the_grader_is_written_into_the_file_rather_than_only_its_name(
+    run_dir: pathlib.Path,
+) -> None:
+    """A rename or an export changes a filename first, so identity cannot live there."""
+    client = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
+    client.post("/api/annotations", json={"id": "live-in", "label": "pass"})
+
+    written = run_dir / "annotations.kai.yaml"
+    assert read_grader(written) == "kai"
+
+    renamed = run_dir / "exported-copy.yaml"
+    written.rename(renamed)
+    assert read_grader(renamed) == "kai"
+    assert load_annotations(renamed)["live-in"].label is Verdict.PASS
+
+
+def test_a_solo_file_carries_no_grader_key_at_all(run_dir: pathlib.Path) -> None:
+    client = TestClient(create_app(GradingSession.open(run_dir)))
+    client.post("/api/annotations", json={"id": "live-in", "label": "pass"})
+    assert read_grader(run_dir / "annotations.yaml") is None

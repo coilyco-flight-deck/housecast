@@ -18,9 +18,9 @@ Coarse inventory of the major capabilities housecast ships.
 * **evalkit, the board runner.** Derives the board from the roster across five test types (boundary, role-fit, personality, voice, and [grounding](grading-grounding.md), which pairs a fact inside the role's lane against one its evidence cannot settle), runs it through Inspect against
   Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md), [`evaluation-workflow.md`](evaluation-workflow.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
-  taxonomy, one-way export, and `grade serve`, which holds one run open for a grader on loopback
-  and refuses to bind past it. See [`grading.md`](grading.md),
-  [`grading-surfaces.md`](grading-surfaces.md).
+  taxonomy, one-way export, `grade serve`, which holds one run open on loopback and refuses to bind
+  past it, and two graders sharing a board through `--grader` and `grade disagreement`. See
+  [`grading.md`](grading.md), [`grading-surfaces.md`](grading-surfaces.md).
 * **The grading page.** Renders a run as one card per boundary pair, both halves side by side,
   evidence highlighted. One file, no build step. See [`grading-page.md`](grading-page.md).
 * **The room-facing half.** `housecast grade deck` builds a scanned, slug-free deck and `housecast

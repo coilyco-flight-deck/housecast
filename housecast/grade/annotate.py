@@ -145,6 +145,7 @@ def annotate_session(
     out: Path,
     profile: Profile = AGENT_COMPOSE,
     roster: dict[str, Any] | None = None,
+    grader: str | None = None,
 ) -> bool:
     """Returns False when the annotator quit before finishing."""
     console = Console()
@@ -174,7 +175,7 @@ def annotate_session(
                 annotations[entry.id] = Annotation(
                     id=entry.id, label=label, critique=critique, evidence=evidence
                 )
-                save_annotations(out, annotations)
+                save_annotations(out, annotations, grader)
                 break
     return True
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,49 @@ from housecast.grade.schema import (
     Profile,
     decode_label,
 )
+
+# A grader name lands in a filename, so it is validated rather than escaped.
+GRADER_NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+
+
+class GraderNameRejectedError(Exception):
+    """A name that would not survive being a filename."""
+
+
+def annotations_name(grader: str | None) -> str:
+    """Which file this grader writes, so two of them on one board do not collide.
+
+    Unnamed keeps `annotations.yaml`, because a solo run is the common one and
+    renaming its output would strand every board already graded.
+    """
+    if grader is None:
+        return "annotations.yaml"
+    if not GRADER_NAME.fullmatch(grader):
+        raise GraderNameRejectedError(
+            f"{grader!r} is not a grader name: use lowercase letters, digits and hyphens, "
+            "because the name becomes part of a filename"
+        )
+    return f"annotations.{grader}.yaml"
+
+
+def grader_from_path(path: Path) -> str:
+    """The fallback only. `read_grader` is the answer when the file carries one."""
+    stem = path.name.removesuffix(".yaml").removesuffix(".yml")
+    prefix = "annotations."
+    return stem[len(prefix) :] if stem.startswith(prefix) and len(stem) > len(prefix) else stem
+
+
+def read_grader(path: Path) -> str | None:
+    """Who wrote this file, according to the file rather than to its name.
+
+    A filename is the first thing a copy or an export changes, so an identity
+    carried only there stops being attributable exactly when someone needs to
+    attribute it. See docs/grading-surfaces.md.
+    """
+    if not path.exists():
+        return None
+    named = read_yaml(path).get("grader")
+    return None if named is None else str(named)
 
 
 def read_yaml(path: Path) -> dict[str, Any]:
@@ -48,14 +92,22 @@ def load_annotations(path: Path) -> dict[str, Annotation]:
     }
 
 
-def save_annotations(path: Path, annotations: dict[str, Annotation]) -> None:
+def save_annotations(
+    path: Path, annotations: dict[str, Annotation], grader: str | None = None
+) -> None:
     """Rewritten whole after every single decision, by both grading surfaces.
 
     Atomic because of that frequency: a torn write here costs a whole grading
     session rather than one label, and the file is small enough that the
     temp-and-replace is free.
+
+    `grader` is written into the file rather than left to the filename, so two
+    testers stay attributable through a copy, a rename, or an export.
     """
-    payload = {"annotations": [annotations[key].to_dict() for key in sorted(annotations)]}
+    payload: dict[str, Any] = {}
+    if grader is not None:
+        payload["grader"] = grader
+    payload["annotations"] = [annotations[key].to_dict() for key in sorted(annotations)]
     scratch = path.with_name(f".{path.name}.partial")
     scratch.write_text(dump_yaml(payload))
     scratch.replace(path)

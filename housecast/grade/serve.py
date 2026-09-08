@@ -20,7 +20,12 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from housecast.grade.io import load_annotations, load_dataset, save_annotations
+from housecast.grade.io import (
+    annotations_name,
+    load_annotations,
+    load_dataset,
+    save_annotations,
+)
 from housecast.grade.schema import (
     AGENT_COMPOSE,
     DEDUCTIONS,
@@ -92,10 +97,15 @@ class GradingSession:
     entries: list[DatasetEntry] = field(default_factory=list)
     annotations: dict[str, Annotation] = field(default_factory=dict)
     roster: dict[str, Any] | None = None
+    grader: str | None = None
 
     @classmethod
     def open(
-        cls, run_dir: Path, profile: Profile = AGENT_COMPOSE, roster: dict[str, Any] | None = None
+        cls,
+        run_dir: Path,
+        profile: Profile = AGENT_COMPOSE,
+        roster: dict[str, Any] | None = None,
+        grader: str | None = None,
     ) -> GradingSession:
         dataset_path = run_dir / "dataset.yaml"
         if not dataset_path.exists():
@@ -105,13 +115,14 @@ class GradingSession:
             run_dir=run_dir,
             profile=profile,
             entries=annotation_order(load_dataset(dataset_path), profile, entity_order),
-            annotations=load_annotations(run_dir / "annotations.yaml"),
+            annotations=load_annotations(run_dir / annotations_name(grader)),
             roster=roster,
+            grader=grader,
         )
 
     @property
     def annotations_path(self) -> Path:
-        return self.run_dir / "annotations.yaml"
+        return self.run_dir / annotations_name(self.grader)
 
     def entry(self, case_id: str) -> DatasetEntry:
         for candidate in self.entries:
@@ -149,7 +160,7 @@ class GradingSession:
             evidence=decision.evidence,
         )
         self.annotations[decision.id] = annotation
-        save_annotations(self.annotations_path, self.annotations)
+        save_annotations(self.annotations_path, self.annotations, self.grader)
         return annotation
 
     def case(self, entry: DatasetEntry) -> dict[str, Any]:
@@ -224,6 +235,7 @@ class GradingSession:
         return {
             "format": GRADING_FORMAT,
             "run": self.run_dir.name,
+            "grader": self.grader,
             "profile": self.profile_payload(),
             "roster": self.roster or {},
             "counts": self.counts(),
@@ -252,7 +264,12 @@ def create_app(session: GradingSession, static: Path | None = None) -> FastAPI:
 
     @app.get("/api/health")
     def health() -> dict[str, Any]:
-        return {"ok": True, "run": session.run_dir.name, **session.counts()}
+        return {
+            "ok": True,
+            "run": session.run_dir.name,
+            "grader": session.grader,
+            **session.counts(),
+        }
 
     @app.get("/api/session")
     def read_session() -> dict[str, Any]:
