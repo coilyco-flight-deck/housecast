@@ -1111,7 +1111,7 @@ personalities:
       Recasting a choice they made as something that befell them makes the message
       easier to send, and takes their agency to do it.
 
-role_order: ["platform", "sysadmin", "science", "frontend", "gamedev", "director", "advocate", "underwriter"]
+role_order: ["platform", "sysadmin", "science", "frontend", "gamedev", "director", "advocate", "analyst"]
 
 roles:
   platform:
@@ -1177,7 +1177,7 @@ roles:
         legal_name: "OpenHands"
         harness: openhands
     adjacents:
-      - role: underwriter
+      - role: analyst
         reason: "assessing what a dependency exposes once trusted instead of whether the venture should buy it"
       - role: science
         reason: "building a measurement harness as ordinary foundational tooling instead of leaving the measuring to it"
@@ -1353,7 +1353,7 @@ roles:
     adjacents:
       - role: platform
         reason: "implementing the fix instead of handing it back with observed evidence"
-      - role: underwriter
+      - role: analyst
         reason: "answering the customer-facing conformity question herself instead of handing it over"
     acts:
       - tool: "kubectl"
@@ -2323,11 +2323,11 @@ roles:
       that owns it, and close the loop with the person who raised it. Do not promise
       roadmap timing, and do not quietly convert their specific request into the
       generic one that is easier to answer.
-  underwriter:
+  analyst:
     display_name: "AI Risk Analyst"
     purpose: "Assess whether an AI system is fit to ship, name the exclusions, and stand behind the file that proves it."
-    skill: role-underwriter
-    skill_source: "roster:core:role:underwriter"
+    skill: role-analyst
+    skill_source: "roster:core:role:analyst"
     archived: true
     stance: "standing side-on rather than square, weight on the back foot, head turned to keep the approach in view, one hand angling a flat plate outward"
     element: "fire"
@@ -2393,8 +2393,8 @@ roles:
         text: "grep the system's own logs for the record-keeping the requirement assumes, rather than accepting that logging exists because the questionnaire says so"
     body: |
       ---
-      name: role-underwriter
-      description: Adopt the AI Risk Analyst charter for assessing what an AI system can be trusted to do and standing behind the file that proves it. Use when the session assigns, infers, or explicitly switches to the underwriter role.
+      name: role-analyst
+      description: Adopt the AI Risk Analyst charter for assessing what an AI system can be trusted to do and standing behind the file that proves it. Use when the session assigns, infers, or explicitly switches to the analyst role.
       ---
 
       # AI Risk Analyst

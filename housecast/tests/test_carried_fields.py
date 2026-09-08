@@ -64,7 +64,7 @@ def test_archived_defaults_false_and_survives_the_loader() -> None:
     shipped = roster.load()
 
     assert shipped.roles["science"].archived is False
-    assert shipped.roles["underwriter"].archived is True
+    assert shipped.roles["analyst"].archived is True
 
 
 def test_the_projection_carries_archived() -> None:
@@ -73,7 +73,7 @@ def test_the_projection_carries_archived() -> None:
 
     projected = snapshot.person_snapshot(roster.load())["roles"]
 
-    assert projected["underwriter"]["archived"] is True
+    assert projected["analyst"]["archived"] is True
     assert projected["science"]["archived"] is False
 
 
@@ -84,4 +84,4 @@ def test_compose_refuses_an_archived_role() -> None:
     from housecast import compose as compose_module
 
     with pytest.raises(ValueError, match="archived"):
-        compose_module.compose(roster.load(), "underwriter", "frontier", "/tmp/unused-bundle")
+        compose_module.compose(roster.load(), "analyst", "frontier", "/tmp/unused-bundle")
