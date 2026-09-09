@@ -161,6 +161,27 @@ def write_out(text: str, out: Path | None) -> None:
         click.echo(text)
 
 
+def load_roster(path: Path | None) -> dict[str, Any] | None:
+    """The entity projection, refusing a payload no charter can be read from.
+
+    `person.json` and `entities.json` are both valid JSON and only the second
+    carries `entities`, which `pin.charter_parts` reads. Handed the first, every
+    charter renders empty, the pin covers nothing, and a clean board reports one
+    drift per entity. See housecast#7196.
+    """
+    if path is None:
+        return None
+    data: dict[str, Any] = json.loads(path.read_text())
+    # Key presence, not truthiness: a roster with no entities still carries the
+    # key, and that file pins no charter today without being an error.
+    if "entities" not in data:
+        raise click.UsageError(
+            f"{path} carries no 'entities' key, so no charter can be read from it. "
+            "Pass entities.json, projected from person.json by evalkit.roster."
+        )
+    return data
+
+
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option("--quiet", is_flag=True, help="Suppress the pushed intro line.")
 @click.version_option(version=version(), prog_name="housecast grade")
@@ -233,7 +254,7 @@ def pin_command(
     intro(context)
     profile = load_profile(profile_path)
     entries = load_dataset(dataset_path)
-    roster_data = json.loads(roster.read_text()) if roster else None
+    roster_data = load_roster(roster)
     target = out or pin_path(dataset_path)
     existing = load_pin(target)
 
@@ -292,7 +313,7 @@ def annotate(
     if entities:
         entries = [entry for entry in entries if entry.challenge.entity in set(entities)]
     annotations = load_annotations(out)
-    roster_data = json.loads(roster.read_text()) if roster else None
+    roster_data = load_roster(roster)
     console = Console()
 
     # Checked against the full run rather than an --entity slice, before a
@@ -573,7 +594,7 @@ def serve_command(
     """Hold one run open for grading in a browser."""
     intro(context)
     profile = load_profile(profile_path)
-    roster_data = json.loads(roster.read_text()) if roster else None
+    roster_data = load_roster(roster)
     # Checked before the run is loaded, so a refused bind costs nothing and the
     # reason reaches the operator before any private text is in memory.
     try:

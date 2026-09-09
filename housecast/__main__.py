@@ -24,12 +24,20 @@ from housecast import snapshot as snapshot_module
 def _grade(argv: list[str]) -> int:
     """Forward to the click group. It keeps its own parser, so argparse stops here."""
     try:
+        import click
+
         from housecast.grade.cli import main as grade_main
     except ImportError as missing:  # the grading half rides the eval extra
         raise SystemExit(
             f"housecast grade needs the eval extra: pip install 'housecast[eval]' ({missing})"
         ) from missing
-    return grade_main(args=argv, standalone_mode=False) or 0
+    try:
+        return grade_main(args=argv, standalone_mode=False) or 0
+    except click.ClickException as refused:
+        # standalone_mode=False is what lets this return an int rather than
+        # exiting, and it also turns off click's own error printing.
+        refused.show()
+        return refused.exit_code
 
 
 def _compose(args: argparse.Namespace) -> int:
