@@ -218,3 +218,120 @@ def test_board_check_refuses_a_challenge_with_no_context(
     result = runner.invoke(main, ["--quiet", "board", "check", str(path)])
     assert result.exit_code == 1
     assert "no context for entity 'sysadmin'" in result.stderr
+
+
+def two_tester_run(tmp_path: pathlib.Path) -> pathlib.Path:
+    """One board, two testers who split a case, and a third grader who agrees."""
+    run_dir = graded_run(tmp_path)
+    (run_dir / "annotations.yaml").unlink()
+    save_annotations(
+        run_dir / "annotations.kai.yaml",
+        {
+            "content-nsfw-in": Annotation(id="content-nsfw-in", label=Verdict.PASS),
+            "content-nsfw-out": Annotation(id="content-nsfw-out", label=Verdict.PASS),
+        },
+        grader="kai",
+    )
+    save_annotations(
+        run_dir / "annotations.mel.yaml",
+        {
+            "content-nsfw-in": Annotation(id="content-nsfw-in", label=Verdict.FAIL),
+            "content-nsfw-out": Annotation(id="content-nsfw-out", label=Verdict.PASS),
+        },
+        grader="mel",
+    )
+    # Agrees with kai on every case, so including her moves the case set and not
+    # the headline rate. That is the shape nobody re-derives.
+    save_annotations(
+        run_dir / "annotations.calibrated.yaml",
+        {
+            "content-nsfw-in": Annotation(id="content-nsfw-in", label=Verdict.PASS),
+            "content-nsfw-out": Annotation(id="content-nsfw-out", label=Verdict.PASS),
+        },
+        grader="calibrated",
+    )
+    return run_dir
+
+
+def test_disagreement_counts_the_declared_testers_and_names_their_files(
+    runner: CliRunner, tmp_path: pathlib.Path
+) -> None:
+    run_dir = two_tester_run(tmp_path)
+    result = runner.invoke(
+        main,
+        [
+            "disagreement",
+            "--dataset",
+            str(run_dir / "dataset.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.kai.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.mel.yaml"),
+            "--tester",
+            "kai",
+            "--tester",
+            "mel",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "1/2 compared cases disagreed (50%)" in result.output
+    assert "counted kai:" in result.output
+    assert "counted mel:" in result.output
+
+
+def test_disagreement_refuses_a_grader_the_study_did_not_declare(
+    runner: CliRunner, tmp_path: pathlib.Path
+) -> None:
+    """The negative control: this grader agrees, so the rate does not move at all.
+
+    Counting her leaves 1/2 at 50% and silently changes which cases the rate was
+    computed over, which is why the refusal cannot be a person remembering.
+    """
+    run_dir = two_tester_run(tmp_path)
+    result = runner.invoke(
+        main,
+        [
+            "disagreement",
+            "--dataset",
+            str(run_dir / "dataset.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.kai.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.mel.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.calibrated.yaml"),
+            "--tester",
+            "kai",
+            "--tester",
+            "mel",
+        ],
+    )
+    assert result.exit_code == 1
+    assert "calibrated graded these cases and is not a --tester in this study" in result.output
+    assert "50%" not in result.output
+
+
+def test_disagreement_refuses_a_declared_tester_who_graded_nothing(
+    runner: CliRunner, tmp_path: pathlib.Path
+) -> None:
+    run_dir = two_tester_run(tmp_path)
+    result = runner.invoke(
+        main,
+        [
+            "disagreement",
+            "--dataset",
+            str(run_dir / "dataset.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.kai.yaml"),
+            "--annotations",
+            str(run_dir / "annotations.mel.yaml"),
+            "--tester",
+            "kai",
+            "--tester",
+            "mel",
+            "--tester",
+            "absent",
+        ],
+    )
+    assert result.exit_code == 1
+    assert "absent is a --tester in this study and graded nothing here" in result.output

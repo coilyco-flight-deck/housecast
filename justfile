@@ -132,7 +132,7 @@ grade-pin *ARGS:
 grade-serve *ARGS:
     @uv run --extra eval housecast grade serve "$@"
 
-# How often two graders split a case. `just grade-disagreement --dataset D --annotations A --annotations B`.
+# How often two graders split a case. `just grade-disagreement --dataset D --annotations A --annotations B --tester a --tester b`.
 grade-disagreement *ARGS:
     @uv run --extra eval housecast grade disagreement "$@"
 

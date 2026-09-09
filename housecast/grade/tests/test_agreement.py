@@ -106,3 +106,20 @@ def test_the_files_own_claim_beats_its_filename(tmp_path: pathlib.Path) -> None:
     save_annotations(unstamped, graded(live_in=Verdict.PASS))
     assert read_grader(unstamped) is None
     assert grader_from_path(unstamped) == "kai"
+
+
+def test_the_report_names_every_file_that_fed_the_rate() -> None:
+    """A rate whose inputs are inferred from the invocation cannot be re-derived."""
+    report = compare(
+        board(),
+        {
+            "kai": graded(live_in=Verdict.PASS, live_out=Verdict.PASS),
+            "mel": graded(live_in=Verdict.FAIL, live_out=Verdict.PASS),
+        },
+        {"kai": "run/annotations.kai.yaml", "mel": "run/annotations.mel.yaml"},
+    )
+    assert report.to_dict()["counted"] == [
+        {"grader": "kai", "file": "run/annotations.kai.yaml"},
+        {"grader": "mel", "file": "run/annotations.mel.yaml"},
+    ]
+    assert "counted kai: run/annotations.kai.yaml" in render(report)

@@ -49,6 +49,9 @@ class CaseAgreement:
 class AgreementReport:
     graders: tuple[str, ...]
     cases: tuple[CaseAgreement, ...]
+    #: (grader, file) per counted file. A third grader can leave the rate unmoved
+    #: while changing the cases it covers, so inputs are named rather than inferred.
+    sources: tuple[tuple[str, str], ...] = ()
 
     @property
     def complete(self) -> tuple[CaseAgreement, ...]:
@@ -72,6 +75,7 @@ class AgreementReport:
     def to_dict(self) -> dict[str, Any]:
         return {
             "graders": list(self.graders),
+            "counted": [{"grader": name, "file": path} for name, path in self.sources],
             "cases": len(self.cases),
             "compared": self.compared,
             "disagreed": self.disagreed,
@@ -81,7 +85,9 @@ class AgreementReport:
 
 
 def compare(
-    dataset: list[DatasetEntry], graders: Mapping[str, dict[str, Annotation]]
+    dataset: list[DatasetEntry],
+    graders: Mapping[str, dict[str, Annotation]],
+    sources: Mapping[str, str] | None = None,
 ) -> AgreementReport:
     """Join every grader's annotations onto the dataset, in dataset order."""
     names = tuple(sorted(graders))
@@ -97,12 +103,13 @@ def compare(
         )
         for entry in dataset
     )
-    return AgreementReport(graders=names, cases=cases)
+    counted = tuple((name, (sources or {}).get(name, "")) for name in names)
+    return AgreementReport(graders=names, cases=cases, sources=counted)
 
 
 def render(report: AgreementReport) -> str:
     """One line per case, then the rate, matching how `pairs` prints."""
-    lines = []
+    lines = [f"counted {name}: {path}" for name, path in report.sources if path]
     for case in report.cases:
         if not case.complete:
             state = "incomplete, missing " + ", ".join(case.missing)
