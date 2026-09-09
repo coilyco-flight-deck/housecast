@@ -335,3 +335,77 @@ def test_disagreement_refuses_a_declared_tester_who_graded_nothing(
     )
     assert result.exit_code == 1
     assert "absent is a --tester in this study and graded nothing here" in result.output
+
+
+def roster_dataset(tmp_path: pathlib.Path) -> pathlib.Path:
+    dataset_path = tmp_path / "dataset.yaml"
+    save_dataset(
+        dataset_path,
+        [
+            DatasetEntry(
+                challenge=Challenge(
+                    id="qa-per-candid",
+                    entity="qa",
+                    test_type="personality",
+                    attribute="candid",
+                    prompt="p",
+                    target="t",
+                ),
+                output="answer",
+            )
+        ],
+    )
+    return dataset_path
+
+
+def test_pin_refuses_a_roster_carrying_no_entities(tmp_path: pathlib.Path) -> None:
+    """person.json is accepted JSON that pins no charter, so it must not be accepted."""
+    dataset_path = roster_dataset(tmp_path)
+    person = tmp_path / "person.json"
+    person.write_text(json.dumps({"role_order": ["qa"], "roles": {"qa": {"purpose": "p"}}}))
+
+    result = CliRunner().invoke(
+        main, ["pin", "--dataset", str(dataset_path), "--roster", str(person)]
+    )
+
+    assert result.exit_code != 0
+    assert "carries no 'entities' key" in result.output
+    assert "entities.json" in result.output
+
+
+def test_pin_takes_a_roster_carrying_entities(tmp_path: pathlib.Path) -> None:
+    dataset_path = roster_dataset(tmp_path)
+    entities = tmp_path / "entities.json"
+    entities.write_text(
+        json.dumps(
+            {"entity_order": ["qa"], "entities": {"qa": {"display_name": "Quinn", "purpose": "p"}}}
+        )
+    )
+
+    result = CliRunner().invoke(
+        main, ["pin", "--dataset", str(dataset_path), "--roster", str(entities)]
+    )
+
+    assert result.exit_code == 0, result.output
+
+
+def test_pin_takes_an_empty_but_well_shaped_roster(tmp_path: pathlib.Path) -> None:
+    """The guard reads key presence, not truthiness: an empty projection pins no charter today."""
+    dataset_path = roster_dataset(tmp_path)
+    empty = tmp_path / "entities.json"
+    empty.write_text(json.dumps({"entity_order": [], "entities": {}}))
+
+    result = CliRunner().invoke(
+        main, ["pin", "--dataset", str(dataset_path), "--roster", str(empty)]
+    )
+
+    assert result.exit_code == 0, result.output
+
+
+def test_pin_without_a_roster_is_still_allowed(tmp_path: pathlib.Path) -> None:
+    dataset_path = roster_dataset(tmp_path)
+
+    result = CliRunner().invoke(main, ["pin", "--dataset", str(dataset_path)])
+
+    assert result.exit_code == 0, result.output
+    assert "no roster was given" in result.output
