@@ -6,8 +6,11 @@ is what takes Go out of the eval path without touching evalkit at all. Only the
 fields evalkit reads are emitted; agent-compose#338 owns the wider question of
 whether the board should read the roster directly instead.
 
-`acts` is deliberately not emitted. Nothing reads it yet, and a field with no
-consumer is a contract this module has to keep for free.
+`acts` is emitted because the annotator charter now renders it: a grader judging
+a boundary case sees what the seat is supposed to run, not only what it owns and
+defers. Decided by Kai on housecast#7184. `tool` and `side` ride along unread so
+this stays a faithful projection rather than the three-key narrowing that dropped
+`creature` in agent-compose#1848.
 """
 
 from __future__ import annotations
@@ -55,6 +58,10 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "boundaries": list(role.defers),
             "scoped_boundaries": [{"name": s.name, "scope": s.scope} for s in role.scoped],
             "adjacents": [{"role": a.role, "reason": a.reason} for a in role.adjacents],
+            "acts": [
+                {k: v for k, v in (("tool", a.tool), ("text", a.text), ("side", a.side)) if v}
+                for a in role.acts
+            ],
             "personalities": list(role.personalities),
             "favorite_color": role.favorite_color,
             "archived": role.archived,
