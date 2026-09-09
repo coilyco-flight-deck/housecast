@@ -209,7 +209,11 @@ def check_pin(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
 @click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
-@click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
+@click.option(
+    "--roster",
+    type=click.Path(exists=True, path_type=Path),
+    help="entities.json, projected from person.json by evalkit.roster",
+)
 @click.option(
     "--out", type=click.Path(path_type=Path), help="defaults to pin.yaml beside the dataset"
 )
@@ -262,7 +266,11 @@ def pin_command(
 )
 @click.option("--out", type=click.Path(path_type=Path), required=True, help="annotations.yaml")
 @click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
-@click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
+@click.option(
+    "--roster",
+    type=click.Path(exists=True, path_type=Path),
+    help="entities.json, projected from person.json by evalkit.roster",
+)
 @click.option("--entity", "entities", multiple=True, help="grade only these entities")
 @click.option("--summary", is_flag=True, help="print results and exit without grading")
 @click.option("--grader", help="stamp who graded into the file, so a copy stays attributable")
@@ -529,7 +537,11 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
 @main.command(name="serve")
 @click.argument("run_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
-@click.option("--roster", type=click.Path(exists=True, path_type=Path), help="person.json")
+@click.option(
+    "--roster",
+    type=click.Path(exists=True, path_type=Path),
+    help="entities.json, projected from person.json by evalkit.roster",
+)
 @click.option(
     "--static",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
