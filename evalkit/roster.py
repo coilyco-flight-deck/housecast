@@ -32,6 +32,10 @@ def to_entity_roster(person: dict[str, Any]) -> dict[str, Any]:
             notes.append(f"scoped {entry['name']}: {entry['scope']}")
         if spec.get("boundaries"):
             notes.append("defers: " + ", ".join(spec["boundaries"]))
+        # One line each rather than joined: act texts run to 189 characters and
+        # carry their own commas. `tool` must already appear inside `text`.
+        for act in spec.get("acts", []):
+            notes.append(f"act: {act['text']}")
         if spec.get("personalities"):
             notes.append("traits: " + ", ".join(spec["personalities"]))
         for adjacent in spec.get("adjacents", []):

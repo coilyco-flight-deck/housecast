@@ -11,8 +11,8 @@ Coarse inventory of the major capabilities housecast ships.
   acts, the invariant, and whether a role is archived. See
   [`roster-language.md`](roster-language.md), [`role-boundaries.md`](role-boundaries.md).
 * **Attribute acts, and the overlay that extends them.** Every role, personality, and boundary side
-  names three runnable things, rendered as `## Run`, following the side the seat holds. A private
-  overlay appends estate-only acts without redefining anything. See [`overlay.md`](overlay.md).
+  names three runnable things, rendered as `## Run` by side, and a role's also in the annotator
+  charter. A private overlay appends estate-only acts without redefining. See [`overlay.md`](overlay.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read,
   which is what removed Go from the eval path.
 * **evalkit, the board runner.** Derives the board from the roster across five test types (boundary, role-fit, personality, voice, and [grounding](grading-grounding.md), which pairs a fact inside the role's lane against one its evidence cannot settle), runs it through Inspect against

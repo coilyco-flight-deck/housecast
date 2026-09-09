@@ -59,6 +59,25 @@ def test_empty_fields_are_dropped_rather_than_emitted_empty(shipped: Roster) -> 
     assert bare == {"summary": "only a summary"}
 
 
-def test_acts_stay_out_until_something_reads_them(emitted: dict[str, Any]) -> None:
-    """`snapshot.py` emits what evalkit reads. Nothing reads acts yet."""
-    assert "acts" not in emitted["roles"]["science"]
+def test_acts_are_emitted_because_the_charter_reads_them(emitted: dict[str, Any]) -> None:
+    """`snapshot.py` emits what evalkit reads, and evalkit.roster now renders acts.
+
+    Decided by Kai on housecast#7184: a grader judging a boundary case sees what
+    the seat is supposed to run. Reverting the renderer without reverting this
+    silently returns the charter to owns/defers only.
+    """
+    acts = emitted["roles"]["science"]["acts"]
+    assert acts, "science declares acts in the roster and the snapshot must carry them"
+    assert all(a["text"] for a in acts)
+
+
+def test_the_act_projection_is_not_narrowed_to_what_the_charter_renders(
+    emitted: dict[str, Any],
+) -> None:
+    """`tool` rides along unread on purpose.
+
+    agent-compose#1848 is the precedent: a projection narrowed to the keys one
+    consumer reads dropped `creature` outright, and nothing noticed until it was
+    measured against the live roster.
+    """
+    assert all(a["tool"] for a in emitted["roles"]["science"]["acts"])

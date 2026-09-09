@@ -96,3 +96,41 @@ def test_every_key_the_projection_reads_exists_on_the_snapshot() -> None:
         "defers and scoped: rename one side only and this is what fails. Assert against "
         "the snapshot, never raw roster.yaml, where these are absent by design."
     )
+
+
+def test_the_charter_carries_the_seat_s_acts() -> None:
+    """What a grader is shown for a boundary case, decided on housecast#7184."""
+    person = {
+        "role_order": ["qa"],
+        "boundaries": {},
+        "roles": {
+            "qa": {
+                "display_name": "Quinn",
+                "purpose": "checks things",
+                "boundaries": ["ship-it"],
+                "acts": [
+                    {"tool": "wc", "text": "wc -l before calling it many"},
+                    {"tool": "git", "text": "git rev-parse and quote the ref"},
+                ],
+            }
+        },
+    }
+
+    notes = roster.to_entity_roster(person)["entities"]["qa"]["notes"]
+
+    assert "act: wc -l before calling it many" in notes
+    assert "act: git rev-parse and quote the ref" in notes
+    # Acts sit with the work-shape block, after what the seat defers.
+    assert notes.index("defers: ship-it") < notes.index("act: wc -l before calling it many")
+
+
+def test_a_role_with_no_acts_gains_no_act_lines() -> None:
+    person = {
+        "role_order": ["qa"],
+        "boundaries": {},
+        "roles": {"qa": {"display_name": "Quinn", "purpose": "checks things"}},
+    }
+
+    notes = roster.to_entity_roster(person)["entities"]["qa"]["notes"]
+
+    assert not [note for note in notes if note.startswith("act: ")]
