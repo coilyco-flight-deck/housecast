@@ -87,7 +87,11 @@ COMMANDS
   disagreement  How often two graders labelled the same case differently. Takes
               --annotations once per grader and counts only the cases every one
               of them reached, because a denominator that absorbs the ungraded
-              reports agreement nobody measured.
+              reports agreement nobody measured. --tester declares the study's
+              roster and is required: a glob that pulls in a calibrated grader
+              can leave the rate unmoved while changing which cases it covers,
+              so an undeclared grader refuses instead of counting. Every file
+              counted is named in the output.
   deck        Build the room-facing artifact: authored rounds joined to graded
               cases. Withholds every slug, includes the reveal on purpose, and
               scans what it built because a room is a public surface.
@@ -407,6 +411,13 @@ def pairs(context: click.Context, dataset_path: Path, annotations_path: Path) ->
     required=True,
     help="one grader's annotations file, passed once per grader",
 )
+@click.option(
+    "--tester",
+    "testers",
+    multiple=True,
+    required=True,
+    help="a grader this study is measuring, passed once per tester",
+)
 @click.option("--format", "output_format", type=click.Choice(("text", "yaml")), default="text")
 @click.option("--out", type=click.Path(path_type=Path))
 @click.pass_context
@@ -414,6 +425,7 @@ def disagreement(
     context: click.Context,
     dataset_path: Path,
     annotation_paths: tuple[Path, ...],
+    testers: tuple[str, ...],
     output_format: str,
     out: Path | None,
 ) -> None:
@@ -440,8 +452,21 @@ def disagreement(
         )
         raise SystemExit(1)
 
+    # A glob is what puts a calibrated grader here, and one who agrees moves the case
+    # set without moving the rate. See docs/grading-surfaces.md and housecast#7163.
+    declared, found = set(testers), set(graders)
+    if declared != found:
+        for name in sorted(found - declared):
+            click.echo(f"{name} graded these cases and is not a --tester in this study", err=True)
+        for name in sorted(declared - found):
+            click.echo(f"{name} is a --tester in this study and graded nothing here", err=True)
+        raise SystemExit(1)
+
+    sources = {
+        (read_grader(path) or grader_from_path(path)): str(path) for path in annotation_paths
+    }
     entries = load_dataset(dataset_path)
-    report = agreement_mod.compare(entries, graders)
+    report = agreement_mod.compare(entries, graders, sources)
     rendered = (
         dump_yaml({"agreement": report.to_dict()})
         if output_format == "yaml"

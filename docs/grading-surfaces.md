@@ -26,7 +26,8 @@ overwriting each other. The name is validated as lowercase letters, digits and h
 filename, and it is written into the file under a `grader` key because a filename is the first thing a copy
 or an export changes. `grade disagreement` takes `--annotations` once per grader, reads that key ahead of
 the filename, and rates only the cases every grader reached: one nobody finished is incomplete rather than
-folded in, and nothing compared reports no rate rather than agreement.
+folded in, and nothing compared reports no rate rather than agreement. Required `--tester` declares the
+study's roster, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
 
 ## annotate is not deleted
 
