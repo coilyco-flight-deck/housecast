@@ -60,6 +60,14 @@ fields *ARGS:
 sync-roster *ARGS:
     @uv run python scripts/sync-roster.py "$@"
 
+# Re-vendor the coilyco kit's primitives into the grading page. `just sync-kit ../website`.
+sync-kit *ARGS:
+    @uv run python scripts/sync_kit.py "$@"
+
+# Report grading-page palette drift from the kit. Skips with no website checkout.
+sync-kit-check *ARGS:
+    @uv run python scripts/sync_kit.py --check "$@"
+
 # Sync the engine and eval dependencies.
 sync *ARGS:
     @uv sync --all-extras "$@"

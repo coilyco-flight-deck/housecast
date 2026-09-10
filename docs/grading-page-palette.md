@@ -1,39 +1,39 @@
 # The grading page palette
 
-Where the page's colour and type come from, and the three places they deviate. The treatment that
-uses them is [`grading-page-treatment.md`](grading-page-treatment.md).
+Where the colour and type come from, and where they deviate. The treatment using them is
+[`grading-page-treatment.md`](grading-page-treatment.md).
 
+## Vendored from the kit, never fetched
 
-The site publishes a token set under its `.docs` scope, and these are those names and those values:
-`--umbra` `#16121f` ground, `--penumbra` `#211c33`, `--sink`
-`#0d0a14` for a well, `--ink` `#e6e2f2`, `--bright` `#ffffff`, `--quiet`
-`#9aabc4`, plus `--mint`, `--amber`, `--coral`, `--sage` `#93b7a4`, `--peri`
-`#a9aad0`, and the two hairlines `--edge` and `--edge-soft`. Note `--quiet` is a cool blue-grey rather
-than a tint of the accent. Naming them as the
-site names them is what lets a value be traced back to `site.css` rather than re-derived.
+The page carries the coilyco kit's **primitive ramps**, verbatim from `src/sass/_kit.scss` on
+`coilyco-flight-deck/website`. The kit is authored as custom properties for this reason, in its own
+words: the site compiles that file, and a page elsewhere inlines the same text. It vendors rather
+than fetches because a shipped tool never reaches up into another repo for its runtime config, and
+the absent build step is this page's safety property.
 
-**The structure matters more than the palette, and it is hairlines and
-left-rules rather than boxes.** `.docs__body h2` separates on a `border-top`,
-`pre` carries a 2px `--mint` rule over `--sink`, `blockquote` a 2px `--amber`
-one, and every rail list a 1px `--edge-soft`. So a card here is a hairline above and a 2px rule at
-the left, the current one turning accent, and never a bordered container with a filled header.
+**Three layers, and nothing skips one.** Primitives are the only literal colours here. Roles
+(`--ground`, `--affirm`) are `var()` onto a primitive and are all a component rule may read. A rule
+may rebind a role from a primitive, as `.output` does, and may never paint one directly.
+`grade/tests/test_page_tokens.py` fails on each, and runs anywhere.
 
-Labels follow `.label` and `.docs__shelf`: mono, `.68rem`, weight 700,
-`.16em` tracking, uppercase, in `--quiet`. Focus follows the site's own ring,
-amber at 3px with a 3px offset, on controls only. **Put that ring on the card itself and it draws
-the box this whole treatment removes**, which is worth knowing before someone tries it again.
+Hand-copying is what went wrong before: the page sat on the retired `_vars.scss` names for months
+after the kit replaced them, because nothing could tell the source had moved. `just sync-kit
+../website` re-vendors and stamps the commit, `just sync-kit-check` reports drift but **skips with
+no website checkout**, so the layer tests carry CI. Moving a primitive moves every role bound to it.
 
-The board is measured against the site rather than described as matching it. The same probe over
-both pages compares mono share, white use, the spacing scale, and the largest type. Against the
-docs page the board now runs 51.2px to its 51.2px, 8 distinct gaps to its 8, and 27% mono to its
-11%.
+## The three deviations, each deliberate
 
-**27% is the floor the card's own labels set.** What remains is the response label, the in and out
-tags, the case ids, the entity and the crumbs, and 63 cards multiply every one. The prompt and the
-pass criterion dropped their labels for that reason; the response kept its own, because the well
-alone does not announce it on a fast scan.
+* **Type is this board's own** - the kit floors text at 16px, and 105 cases do not fit a projector
+  at that floor, so `--t-0` starts at `.68rem` and `--zoom` carries the room, 0.9x to 1.9x.
+* **Mono is the system stack** - a second vendored face costs more than a 27% mono share earns.
+* **Components are not adopted** - a card is a hairline and a 2px left rule, never a bordered
+  container. A composition consumes the system, it does not join it.
 
-Two things the site does that this page does not. Its `data-band` idiom swaps ground colour per
-full-bleed section, and a single-scroll board has no section breaks to hang that on. Its prose caps
-at `68ch`, and the pair card is deliberately two columns wide, which is the one place the board's
-job argues with the site's layout.
+## Structure, and what is measured
+
+`--line` is the kit's quiet hairline and `--line-2` its `--k-edge`, both neutral, so the board takes
+`--k-line-quiet` over the accent-coloured `--k-line`: that edge would sit 21 degrees from the deduct
+verdict at one lightness. The **frame does not flip** - nav and footer hold `--k-p-850` on both
+themes, the kit's rule 3, absent from the light block. Every painted role is measured live against the background it lands on, both themes, worst case
+rather than a list. `.ctl[aria-pressed]` paints brand on a 16% brand wash where brand itself lands
+at 4.30:1, so `--accent-on-wash` takes a brighter step: 5.56:1 ink, 6.10:1 paper, zero failures.

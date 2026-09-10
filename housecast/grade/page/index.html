@@ -39,47 +39,129 @@
 }
 
 /* ---------------------------------------------------------------- tokens */
-/* Values are coilysiren.me's own, read off _vars.scss. See grading-page-treatment.md. */
+/*
+  Three layers, and nothing here skips one or reads upward.
+
+    1. primitives  the coilyco kit's raw ramps, vendored verbatim. The only
+                   literal colours in this file.
+    2. roles       this board's semantic names, each one var() onto a
+                   primitive. Everything below the token block sees only these.
+    3. components  the rules that follow, which never hold a literal colour.
+
+  The kit is authored as custom properties for exactly this reason: "the site
+  compiles this file; a page elsewhere inlines the same text." This board is a
+  page elsewhere. It vendors rather than fetches, because a shipped tool never
+  reaches up into another repo for its own runtime config, and because the
+  absent build step is this page's safety property.
+
+  Vendored from coilyco-flight-deck/website@ba90beb, src/sass/_kit.scss.
+  Re-vendor with `just sync-kit ../website`, which also checks for drift.
+
+  Where this board deliberately parts from the kit, and why:
+  docs/grading-page-palette.md.
+*/
 :root {
   color-scheme: dark;
 
-  /* Named as the site names them, so a value can be traced back to site.css. */
-  --ground:      #16121f;
-  --surface:     #211c33;
-  --surface-2:   #0d0a14;
-  --surface-3:   #211c33;
-  --line:        rgba(145, 146, 187, .14);
-  --line-2:      rgba(145, 146, 187, .24);
+  /* -- layer 1: kit primitives. Vendored. Do not hand-edit; re-vendor. -- */
+  --k-n-100: #f1f1fa;
+  --k-n-0: #fcfcff;
 
-  --ink:         #e6e2f2;
-  --ink-2:       #c3bcd8;
-  --ink-3:       #9aabc4;
-  --bright:      #ffffff;
+  --k-p-950: #03020c;
+  --k-p-900: #080619;
+  --k-p-850: #130c31;
+  --k-p-800: #1e1447;
+  --k-p-750: #2c225d;
+  --k-p-700: #3a326e;
+  --k-p-650: #47456a;
+  --k-w-50: #fff9f5;
+  --k-w-100: #feeee6;
+  --k-w-200: #fce2d4;
+  --k-w-300: #f7d2be;
+  --k-w-400: #d3a891;
 
-  /* purple carries structure and the evidence span. It is never a verdict. */
-  --accent:      #a9aad0;
-  --accent-deep: #574f7d;
-  --accent-wash: rgba(169, 170, 208, .16);
-  --accent-edge: rgba(145, 146, 187, .24);
-  --accent-mark: rgba(169, 170, 208, .28);
+  --k-b-700: #3b0896;
+  --k-b-600: #5410d0;
+  --k-b-400: #9083f9;
+  --k-b-300: #a49dfc;
+  --k-b-200: #c5c3fd;
+  --k-a-700: #8e3c00;
+  --k-a-300: #fb6e00;
+
+  --k-cost-d:      #e0716a;
+  --k-cost-p: #a43b38;
+  --k-refuse-d:    #bd891c;
+  --k-refuse-p: #6b4a00;
+  --k-grant-d:     #4ca563;
+  --k-grant-p: #006e30;
+  --k-reference-d: #af7fd2;
+  --k-reference-p: #7a4b9a;
+  --k-dim-d:       #a9a6bd;
+  --k-dim-p: #5e5e6a;
+  --k-focus-both:  #7665e0;
+
+  --k-r-1: 2px;
+  --k-r-2: 4px;
+  --k-ease: cubic-bezier(0.2, 0.6, 0.3, 1);
+
+  /* -- layer 2: this board's roles, on the ink ground -- */
+  --ground:      var(--k-p-900);
+  --surface:     var(--k-p-800);
+  --surface-2:   var(--k-p-950);   /* the well a response sits in */
+  --surface-3:   var(--k-p-750);   /* raised: chips, controls */
+  --line:        var(--k-p-650);   /* the quiet hairline */
+  --line-2:      color-mix(in srgb, var(--k-a-300) 30%, var(--k-p-650));
+
+  --ink:         var(--k-n-100);
+  --ink-2:       var(--k-b-200);
+  --ink-3:       var(--k-dim-d);
+  --bright:      var(--k-n-0);
+
+  /* Purple carries structure and the evidence span. It is never a verdict. */
+  --accent:      var(--k-b-400);
+  --accent-deep: var(--k-b-600);
+  --accent-wash: color-mix(in srgb, var(--k-b-400) 16%, var(--k-p-800));
+  --accent-edge: color-mix(in srgb, var(--k-b-400) 40%, var(--k-p-800));
+  --accent-mark: color-mix(in srgb, var(--k-b-400) 28%, var(--k-p-800));
+  /* Brand text ON the brand wash, not on the ground. The accent itself lands
+     at 4.30:1 there, which is the kit's own documented trap: a value derived
+     against the ground and then painted on a tint of itself. */
+  --accent-on-wash: var(--k-b-300);
+  --accent-fg:      var(--k-n-0);
+
+  /* The captured response. It used to sit on paper on BOTH grounds, which put
+     a lit slab in the middle of a dark board. It is set apart by its rule, its
+     label and its well, so it does not also need to invert. */
+  --quote-bg:   var(--k-p-800);
+  --quote-ink:  var(--k-n-100);
+  --quote-dim:  var(--k-dim-d);
+  --quote-line: var(--k-p-750);
 
   /* Verdicts never rely on hue alone: each carries a glyph and a word. */
-  --affirm:      #93b7a4;
-  --affirm-wash: rgba(147, 183, 164, .13);
-  --deduct:      #dc8f72;
-  --deduct-wash: rgba(220, 143, 114, .13);
-  --hold:        #f0bd68;
-  --hold-wash:   rgba(240, 189, 104, .14);
-  --idle:        #9aabc4;
-  --idle-edge:   rgba(145, 146, 187, .35);
-  --idle-wash:   rgba(145, 146, 187, .08);
-  --mint:        #dff0ea;
+  --affirm:      var(--k-grant-d);
+  --affirm-wash: color-mix(in srgb, var(--k-grant-d) 13%, var(--k-p-800));
+  --deduct:      var(--k-cost-d);
+  --deduct-wash: color-mix(in srgb, var(--k-cost-d) 13%, var(--k-p-800));
+  --hold:        var(--k-refuse-d);
+  --hold-wash:   color-mix(in srgb, var(--k-refuse-d) 14%, var(--k-p-800));
+  --idle:        var(--k-dim-d);
+  --idle-edge:   var(--k-dim-d);
+  --idle-wash:   color-mix(in srgb, var(--k-dim-d) 8%, var(--k-p-800));
+
+  /* A crumb and an in-tag point at source material, which is what the kit's
+     fifth register is for. It was the one register this board never used. */
+  --mint:        var(--k-reference-d);
+
+  --focus:       var(--k-focus-both);
 
   --sans: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
           Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: SFMono-Regular, ui-monospace, "SF Mono", Menlo, Consolas,
           "Liberation Mono", monospace;
 
+  /* Type stays this board's own. The kit floors text at 16px; a projector
+     board at 63 cards does not fit that and carries --zoom instead. One of
+     the three documented deviations. */
   --zoom: 1;
   --t-0: .68rem;
   --t-1: .78rem;
@@ -87,42 +169,64 @@
   --t-3: 1rem;
   --t-4: 1.08rem;
   --t-5: 1.35rem;
-  /* Every page on the site opens at a display weight. So does this one. */
   --t-6: clamp(2.25rem, 5vw, 3.2rem);
 
-  /* The site's own two radii, .35rem on a plate and .2rem on a well. */
-  --r:   .35rem;
-  --r-s: .2rem;
+  /* Radii are the kit's, not this page's invention. */
+  --r:   var(--k-r-2);
+  --r-s: var(--k-r-1);
+  --ease: var(--k-ease);
   --gap: 1rem;
+
+  /* The frame is the kit's THIRD ground. Nav and footer are the site's chrome
+     and stay on ink whichever theme the reading surface is using, so these
+     are declared once here and deliberately NOT rebound in the light block. */
+  --frame:      var(--k-p-850);
+  --frame-ink:  var(--k-n-0);
+  --frame-dim:  var(--k-dim-d);
+  --frame-line: var(--k-p-700);
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --ground:      #fbfaf7;
-  --surface:     #ffffff;
-  --surface-2:   #f1f0f4;
-  --surface-3:   #e9e7f0;
-  --line:        #ddd9e6;
-  --line-2:      #b3adc8;
-  --ink:         #211c33;
-  --ink-2:       #29243f;
-  --ink-3:       #574f7d;
-  --bright:      #29243f;
-  --mint:        #1c6b5b;
-  --accent:      #574f7d;
-  --accent-deep: #3e375d;
-  --accent-wash: rgba(87, 79, 125, .14);
-  --accent-edge: rgba(87, 79, 125, .40);
-  --accent-mark: rgba(87, 79, 125, .22);
-  --affirm:      #3f6b55;
-  --affirm-wash: rgba(63, 107, 85, .13);
-  --deduct:      #a2492f;
-  --deduct-wash: rgba(162, 73, 47, .13);
-  --hold:        #7a5000;
-  --hold-wash:   rgba(122, 80, 0, .13);
-  --idle:        #6c6183;
-  --idle-edge:   #a99dc0;
-  --idle-wash:   rgba(108, 97, 131, .07);
+
+  /* Roles rebind to the paper ladder. Primitives above do not move. */
+  --ground:      var(--k-w-50);
+  --surface:     var(--k-w-100);
+  --surface-2:   var(--k-w-200);
+  --surface-3:   var(--k-w-300);
+  --line:        var(--k-w-400);
+  --line-2:      color-mix(in srgb, var(--k-a-700) 30%, var(--k-w-400));
+
+  --ink:         var(--k-p-900);
+  --ink-2:       var(--k-p-800);
+  --ink-3:       var(--k-dim-p);
+  --bright:      var(--k-p-950);
+
+  --accent:      var(--k-b-700);
+  --accent-deep: var(--k-b-700);
+  --accent-wash: color-mix(in srgb, var(--k-b-700) 14%, var(--k-w-100));
+  --accent-edge: color-mix(in srgb, var(--k-b-700) 40%, var(--k-w-100));
+  --accent-mark: color-mix(in srgb, var(--k-b-700) 22%, var(--k-w-100));
+  --accent-on-wash: var(--k-b-700);
+  --accent-fg:      var(--k-w-50);
+
+  /* On paper the response keeps the white card it always had. */
+  --quote-bg:   var(--k-w-50);
+  --quote-ink:  var(--k-p-900);
+  --quote-dim:  var(--k-dim-p);
+  --quote-line: var(--k-w-400);
+
+  --affirm:      var(--k-grant-p);
+  --affirm-wash: color-mix(in srgb, var(--k-grant-p) 13%, var(--k-w-100));
+  --deduct:      var(--k-cost-p);
+  --deduct-wash: color-mix(in srgb, var(--k-cost-p) 13%, var(--k-w-100));
+  --hold:        var(--k-refuse-p);
+  --hold-wash:   color-mix(in srgb, var(--k-refuse-p) 13%, var(--k-w-100));
+  --idle:        var(--k-dim-p);
+  --idle-edge:   var(--k-dim-p);
+  --idle-wash:   color-mix(in srgb, var(--k-dim-p) 8%, var(--k-w-100));
+
+  --mint:        var(--k-reference-p);
 }
 
 /* ----------------------------------------------------------------- base */
@@ -141,12 +245,17 @@ body {
 h1, h2, h3, p, figure, blockquote { margin: 0; }
 button { font: inherit; color: inherit; }
 
+/* Focus and current-ness are structure, so they take the purple family. They
+   used to take --hold, which is the colour of an UNDECIDED verdict: a focused
+   card announced itself in the one hue that already means something on a board
+   whose entire job is telling verdicts apart. Amber now only ever means
+   undecided, plus the two caution notes below. */
 :where(a, button, [tabindex]):focus-visible {
-  outline: 3px solid var(--hold);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
-.unit:focus-visible { outline: none; border-left-color: var(--hold); }
-.unit:focus-visible .ent { color: var(--hold); }
+.unit:focus-visible { outline: none; border-left-color: var(--accent); }
+.unit:focus-visible .ent { color: var(--accent); }
 
 .vh {
   position: absolute; width: 1px; height: 1px;
@@ -156,7 +265,7 @@ button { font: inherit; color: inherit; }
 
 .skip {
   position: absolute; left: .5rem; top: -3rem; z-index: 30;
-  background: var(--accent-deep); color: #fff;
+  background: var(--accent-deep); color: var(--accent-fg);
   padding: .5rem .75rem; border-radius: var(--r-s); text-decoration: none;
 }
 .skip:focus { top: .5rem; }
@@ -170,14 +279,14 @@ button { font: inherit; color: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: .6rem 2em;
   padding: .85rem clamp(1rem, 4vw, 4rem);
-  background: rgba(33, 28, 51, .96);
-  border-bottom: 1px solid rgba(145, 146, 187, .35);
+  background: color-mix(in srgb, var(--frame) 96%, transparent);
+  border-bottom: 1px solid var(--frame-line);
   backdrop-filter: blur(14px);
 }
-.nav-brand { display: flex; flex-direction: column; color: #fff; text-decoration: none; line-height: 1.1; flex: 0 0 auto; }
+.nav-brand { display: flex; flex-direction: column; color: var(--frame-ink); text-decoration: none; line-height: 1.1; flex: 0 0 auto; }
 .nav-brand span { font-size: 1.05rem; font-weight: 700; }
 .nav-brand small {
-  margin-top: .25rem; color: #95adbe;
+  margin-top: .25rem; color: var(--frame-dim);
   font-family: var(--mono); font-size: .68rem;
   letter-spacing: .12em; text-transform: uppercase;
 }
@@ -185,14 +294,14 @@ button { font: inherit; color: inherit; }
   display: flex; justify-content: flex-end; gap: clamp(.8rem, 2vw, 1.75rem);
   list-style: none; margin: 0; padding: 0; flex-wrap: wrap;
   font-family: var(--mono); font-size: var(--t-1); letter-spacing: .05em;
-  color: #eee; overflow-wrap: anywhere;
+  color: var(--frame-ink); overflow-wrap: anywhere;
 }
 .site-footer {
   width: 100%; box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   margin-top: auto; padding: clamp(2rem, 5vw, 3.5rem) 1rem;
-  color: #fff; background: #211c33;
-  border-top: 1px solid rgba(145, 146, 187, .35);
+  color: var(--frame-ink); background: var(--frame);
+  border-top: 1px solid var(--frame-line);
 }
 .site-footer p {
   display: flex; gap: .7rem 1.2rem; align-items: baseline;
@@ -200,7 +309,7 @@ button { font: inherit; color: inherit; }
 }
 .site-footer small {
   font-family: var(--mono); font-size: .68rem;
-  letter-spacing: .12em; text-transform: uppercase; color: #95adbe;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--frame-dim);
 }
 .page { min-height: 100%; display: flex; flex-direction: column; }
 
@@ -341,19 +450,30 @@ button { font: inherit; color: inherit; }
 .map-row { margin-bottom: .5rem; }
 .map-row > .ent-name {
   font-family: var(--mono); font-size: var(--t-0);
-  color: var(--ink-2); display: block; margin-bottom: .1875rem;
+  color: var(--ink-2); display: flex; align-items: center; gap: .35rem;
+  margin-bottom: .25rem;
+}
+.map-row > .ent-name .glyph { font-size: .95em; line-height: 1; }
+.map-row > .ent-name .tally {
+  margin-left: auto; color: var(--ink-3); font-variant-numeric: tabular-nums;
 }
 .cells { display: flex; flex-wrap: wrap; gap: 3px; }
 .cell {
-  width: .875rem; height: .875rem; padding: 0;
+  width: 1rem; height: 1rem; padding: 0;
   border-radius: 2px; cursor: pointer;
   border: 1px dashed var(--idle-edge);
   background: var(--idle-wash);
+  transition: transform .1s var(--ease);
 }
+.cell:hover { transform: scale(1.18); }
 .cell[data-v="pass"], .cell[data-v="fit"] { background: var(--affirm); border-color: var(--affirm); }
 .cell[data-v="fail"], .cell[data-v="does-not-fit"] { background: var(--deduct); border-color: var(--deduct); }
 .cell[data-v="undecided"] { background: var(--hold); border-color: var(--hold); }
-.cell[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* Exactly one cell is current, so the accent can mean "here" and nothing else. */
+.cell[aria-current="true"] {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--accent-wash);
+}
 
 .legend { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .3125rem; }
 .legend div { display: flex; align-items: center; gap: .4375rem; font-size: var(--t-1); color: var(--ink-3); }
@@ -372,7 +492,7 @@ button { font: inherit; color: inherit; }
   color: var(--ink-3); cursor: pointer;
 }
 .ctl:hover { border-color: var(--accent-edge); color: var(--accent); }
-.ctl[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent-edge); color: var(--accent); }
+.ctl[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent-edge); color: var(--accent-on-wash); }
 
 .keys { margin-top: 1.25rem; font-family: var(--mono); font-size: var(--t-0); color: var(--ink-3); line-height: 1.8; }
 .keys kbd {
@@ -460,19 +580,27 @@ button { font: inherit; color: inherit; }
 
 /* The captured response. Set apart because the page did not write it. */
 .output {
-  /* The site's lilac band, verbatim, so the text on paper is its text. */
-  --ink: #29243f;
-  --bright: #29243f;
-  --quiet: #574f7d;
-  --accent: #574f7d;
-  --accent-mark: rgba(87, 79, 125, .22);
+  /* A captured response is not this page's own text, so it rebinds the roles
+     beneath it and every rule below reads them without branching. What it
+     rebinds to now follows the theme: a well on ink, the white card on paper.
+     The top rule is the structural accent, not a verdict colour - it used to
+     be the coral that also means "deduct", which read as a grade on a block
+     that carries none. */
+  --ground:      var(--quote-bg);
+  --surface:     var(--quote-bg);
+  --ink:         var(--quote-ink);
+  --ink-2:       var(--quote-ink);
+  --ink-3:       var(--quote-dim);
+  --bright:      var(--quote-ink);
+  --accent-mark: color-mix(in srgb, var(--accent) 26%, var(--quote-bg));
+  --line:        var(--quote-line);
 
   font-size: var(--t-4);
   line-height: 1.7;
   color: var(--ink);
-  background: #fbfaf7;
-  border: 1px solid #3e375d;
-  border-top: .7rem solid #dc8f72;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-top: .7rem solid var(--accent);
   border-radius: 0 0 var(--r) var(--r);
   padding: clamp(1rem, 2.5vw, 1.4rem);
   overflow-wrap: anywhere;
@@ -565,17 +693,29 @@ mark.ev {
 }
 
 /* The site chapters a long document with a rule and a heading rather than a
-   container, and the board is already ordered by entity. */
+   container, and the board is already ordered by entity. The rule carries the
+   brand, not the accent: 286 is nowhere near a verdict hue, and the accent is
+   reserved for the one thing that is current. */
 .chapter {
   margin: 3.5rem 0 0;
   padding-top: 1.6rem;
-  border-top: 1px solid var(--line-2);
+  border-top: 2px solid var(--accent-edge);
   color: var(--bright);
   font-size: var(--t-5);
   font-weight: 700;
   letter-spacing: -.018em;
   scroll-margin-top: 6rem;
+  display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
 }
+.chapter .glyph {
+  font-size: .85em; line-height: 1; flex: none;
+  filter: saturate(.85);
+}
+.chapter .who {
+  font-family: var(--mono); font-size: var(--t-1); font-weight: 400;
+  color: var(--ink-3); letter-spacing: .04em;
+}
+.chapter .who b { color: var(--accent); font-weight: 700; }
 .chapter + .unit { border-top: 0; padding-top: 1.25rem; }
 .stream > .chapter:first-child { margin-top: 1.25rem; padding-top: 0; border-top: 0; }
 .stream > .unit:first-child { border-top: 0; }
@@ -631,10 +771,10 @@ mark.ev {
     </nav>
 
     <div class="legend">
-      <div><span class="swatch affirm"></span> pass // fit</div>
-      <div><span class="swatch deduct"></span> fail // does not fit</div>
-      <div><span class="swatch hold"></span> undecided</div>
-      <div><span class="swatch idle"></span> not yet graded</div>
+      <div><span class="swatch affirm"></span> <span aria-hidden="true">&#9679;</span> pass // fit</div>
+      <div><span class="swatch deduct"></span> <span aria-hidden="true">&#9679;</span> fail // does not fit</div>
+      <div><span class="swatch hold"></span> <span aria-hidden="true">&#9679;</span> undecided</div>
+      <div><span class="swatch idle"></span> <span aria-hidden="true">&#9675;</span> not yet graded</div>
     </div>
 
     <div class="controls">
@@ -862,6 +1002,24 @@ function halfPanel(kase) {
 /* The payload's own `pairs` list carries only pairs with a graded half, so
    the units below are grouped from the cases instead. Same grouping key,
    and an ungraded pair still gets a card. */
+/* Who each entity is, mirrored from housecast/data/roster.yaml. Element gives
+   the glyph, because the kit holds no spare hue: every warm one is locked to a
+   verdict and there is no blue at all, so an invented element palette would
+   land a decoration next to a grade. test_page_roster.py fails on drift.
+   An entity the roster does not name renders with no glyph and no name. */
+var ROSTER = {
+  platform: { who: "Angie",     element: "earth", glyph: "\uD83E\uDEA8" },
+  sysadmin: { who: "Vera",      element: "earth", glyph: "\uD83E\uDEA8" },
+  science:  { who: "Evie",      element: "water", glyph: "\uD83D\uDCA7" },
+  frontend: { who: "Delphi",    element: "fire",  glyph: "\uD83D\uDD25" },
+  gamedev:  { who: "Sprite",    element: "water", glyph: "\uD83D\uDCA7" },
+  director: { who: "Portia",    element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
+  advocate: { who: "Gem",       element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
+  analyst:  { who: "Cassandra", element: "fire",  glyph: "\uD83D\uDD25" }
+};
+
+function identity(entity) { return ROSTER[entity] || null; }
+
 function group(cases) {
   var units = [], byPair = {};
   cases.forEach(function (kase) {
@@ -945,7 +1103,19 @@ function buildMap(model) {
   state.cells = {};
   order.forEach(function (entity) {
     var row = el("div", "map-row");
-    row.appendChild(el("span", "ent-name", entity));
+    var name = el("span", "ent-name", null);
+    var id = identity(entity);
+    if (id) {
+      var g = el("span", "glyph", id.glyph);
+      g.setAttribute("aria-hidden", "true");
+      name.appendChild(g);
+    }
+    name.appendChild(document.createTextNode(entity));
+    var done = rows[entity].filter(function (k) { return k.label; }).length;
+    var tally = el("span", "tally", done + "/" + rows[entity].length);
+    tally.setAttribute("aria-label", done + " of " + rows[entity].length + " graded");
+    name.appendChild(tally);
+    row.appendChild(name);
     var cells = el("div", "cells");
     rows[entity].forEach(function (kase) {
       var cell = el("button", "cell");
@@ -1021,7 +1191,20 @@ function drawStream() {
     var next = unit.entity;
     if (next && next !== entity) {
       entity = next;
-      var head = el("h2", "chapter", next);
+      var head = el("h2", "chapter", null);
+      var id = identity(next);
+      if (id) {
+        var g = el("span", "glyph", id.glyph);
+        g.setAttribute("aria-hidden", "true");
+        head.appendChild(g);
+      }
+      head.appendChild(document.createTextNode(next));
+      if (id) {
+        var who = el("span", "who", null);
+        who.appendChild(el("b", null, id.who));
+        who.appendChild(document.createTextNode(" // " + id.element));
+        head.appendChild(who);
+      }
       head.id = "chapter-" + next;
       stream.appendChild(head);
     }

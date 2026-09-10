@@ -20,14 +20,15 @@ showing an empty block.
 
 ## Verdicts never rely on hue alone
 
-Each verdict carries a glyph, a word, and a colour, and the colour is the weakest of the three.
-Pass and fit take teal, fail and does-not-fit take rose, undecided takes amber, an ungraded slot
-takes a dashed outline.
+Each verdict carries a glyph, a word, and a colour, the colour weakest of the three. Pass and fit
+take teal, fail and does-not-fit rose, undecided amber, an ungraded slot a dashed outline. Measured
+live in the rendered page, every painted text role clears WCAG AA in both themes.
 
-Measured live in the rendered page, every painted text role clears WCAG AA in both themes. **Coral
-and the focus amber sit 21 degrees apart**, the one place the site's palette is weaker than an
-authored one: accepted because colour is the weakest of the three verdict signals and pass against
-fail is 130 degrees apart.
+The kit's registers retired the 21-degree coral/amber near-miss and **took amber off focus**: a
+focused card used to recolour its entity label to the hue meaning UNDECIDED. Focus and current-ness
+are structure and take purple, so amber only means undecided now. Each chapter carries its agent
+and an element glyph from `roster.yaml`, the glyph doing what a colour would: the kit holds no
+spare hue, the warm ones being verdict-locked and there being no blue at all.
 
 ## Scale and keyboard
 
