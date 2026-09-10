@@ -318,6 +318,14 @@ def _apply_queue(dataset_path: Path, entries: list[DatasetEntry]) -> list[Datase
 @click.option("--entity", "entities", multiple=True, help="grade only these entities")
 @click.option("--summary", is_flag=True, help="print results and exit without grading")
 @click.option("--grader", help="stamp who graded into the file, so a copy stays attributable")
+@click.option(
+    "--no-queue",
+    "use_queue",
+    is_flag=True,
+    default=True,
+    flag_value=False,
+    help="ignore annotation-queue.csv and keep the dataset's own order",
+)
 @click.pass_context
 def annotate(
     context: click.Context,
@@ -328,6 +336,7 @@ def annotate(
     entities: tuple[str, ...],
     summary: bool,
     grader: str | None,
+    use_queue: bool,
 ) -> None:
     """Grade a dataset by hand, one keystroke per decision."""
     intro(context)
@@ -344,7 +353,8 @@ def annotate(
     check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
     # After the pin, so a refused run says why instead of announcing an order
     # for a pass that is not going to start.
-    entries = _apply_queue(dataset_path, entries)
+    if use_queue:
+        entries = _apply_queue(dataset_path, entries)
 
     if not summary and not annotate_mod.annotate_session(
         entries, annotations, out, profile, roster_data, grader
@@ -598,6 +608,14 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
     "--grader",
     help="write annotations.<grader>.yaml, so two graders on one board do not overwrite each other",
 )
+@click.option(
+    "--no-queue",
+    "use_queue",
+    is_flag=True,
+    default=True,
+    flag_value=False,
+    help="ignore annotation-queue.csv and keep the entity-major order",
+)
 @click.option("--host", default="127.0.0.1", show_default=True)
 @click.option("--port", default=serve_mod.DEFAULT_PORT, show_default=True)
 @click.option(
@@ -613,6 +631,7 @@ def serve_command(
     roster: Path | None,
     static: Path | None,
     grader: str | None,
+    use_queue: bool,
     host: str,
     port: int,
     expose: bool,
@@ -625,7 +644,7 @@ def serve_command(
     # reason reaches the operator before any private text is in memory.
     try:
         serve_mod.check_bind(host, expose)
-        session = serve_mod.GradingSession.open(run_dir, profile, roster_data, grader)
+        session = serve_mod.GradingSession.open(run_dir, profile, roster_data, grader, use_queue)
     except (serve_mod.BindRefusedError, GraderNameRejectedError, FileNotFoundError) as refused:
         click.echo(f"housecast grade serve: {refused}", err=True)
         raise SystemExit(1) from refused

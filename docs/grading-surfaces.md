@@ -25,9 +25,9 @@ a copy or an export changes. `grade disagreement` takes `--annotations` once per
 grader reached: one nobody finished is incomplete rather than folded in, and nothing compared reports no rate rather than agreement. Required `--tester`
 declares the study's roster, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
 
-## The order annotate takes
+## The order a pass takes
 
-* `annotation-queue.csv` beside the dataset sets the order, found the way `pin.yaml` is and read after it. The ranking is a view, so `dataset.yaml` keeps derivation order, a queue naming a case it lacks refuses rather than ordering a subset, and unranked cases trail and are counted
+* `annotation-queue.csv` beside the dataset sets the order on both surfaces, found the way `pin.yaml` is. The ranking is a view, so `dataset.yaml` keeps derivation order, a queue naming a case it lacks refuses rather than ordering a subset, and unranked cases trail and are counted. It outranks the entity-major order `serve` otherwise uses, trading the charter locality `annotation_order` exists for against covering the least stable cases first, and `--no-queue` keeps entity-major on either surface
 
 ## annotate is not deleted
 
