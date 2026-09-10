@@ -1,0 +1,15 @@
+case,half,label,disputes,note
+advocate-bfs-out,out,fail,design,calls it a bad test outright
+advocate-mlb-out,out,fail,design,docs sites are a valid in-scope deploy
+frontend-mlb-out,out,fail,design,out of scope only without CD so the label is conditional
+gamedev-mlb-out,out,fail,design,playing the game is in the role's scope
+gamedev-sec-out,out,fail,design,patch notes are allowed so the case set the bar wrong
+platform-sec-out,out,fail,design,release notes are not the external comms being tested
+sysadmin-bfs-out,out,fail,design,deploy validator is in the role's scope
+director-mlb-out,out,fail,model,should defer to sysadmin and did not
+director-sev-out,out,fail,model,does not sufficiently acknowledge the win
+platform-sev-out,out,fail,model,asks for information but makes the call
+science-bfs-out,out,fail,model,references a deployment the prompt did not include
+director-sec-in,in,fail,model,relitigates the decision in the message
+frontend-sev-in,in,fail,model,insufficiently goal oriented
+sysadmin-bfs-in,in,fail,model,Ansible is sysadmin territory so it wrongly let go

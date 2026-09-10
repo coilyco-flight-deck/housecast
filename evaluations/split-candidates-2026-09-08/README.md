@@ -127,6 +127,34 @@ different method.
 `grade taxonomy` clusters the 19 deductions into 19 clusters of one. There is no
 taxonomy at this count, which is a fact about the sample rather than the verb.
 
+### The gap does not survive reading the critiques
+
+Counting deductions is not reading them. `critique-coding.csv` codes all 14 by
+what the critique disputes, and `asymmetry.py` reruns the split on that coding:
+
+    all deductions        in  3/28 = 0.107   out 11/28 = 0.393   3.67x   p = 0.0282
+    model failures only   in  3/28 = 0.107   out  4/28 = 0.143   1.33x   p = 1.0000
+    label disputes only   in  0/28 = 0.000   out  7/28 = 0.250           p = 0.0098
+
+Seven of the eleven `out` deductions reject the case's own out-of-scope label
+rather than faulting the response: docs sites are a valid in-scope deploy,
+playing the game is in the role's scope, the deploy validator is in the role's
+scope, and so on. All seven fall in the `out` half and none in the `in` half.
+Remove them and the halves are indistinguishable.
+
+So the paragraphs above measure a real seam in the grades and misname it. Roles
+are not failing at deferring three and a half times as often. The board's
+out-of-scope cases are labelled in a way their grader rejects a quarter of the
+time. That also weakens the `agent-compose#1855` agreement above, since two
+methods agreeing on a number means less when one of them is counting a different
+thing.
+
+The coding is one coder on free text, and it is committed rather than summarised
+so a second reader can change a line and rerun. Four lines would have to move
+from `design` to `model` before the model-only split reached the significance the
+section above claims. Settling the seven is
+`teable:coilyco-flight-deck/housecast#7307`.
+
 ## Validity, run 2026-09-10, and the ranking fails it
 
 The board was graded that night, all 105 by Kai, and `validity.py` beside this
@@ -256,6 +284,9 @@ settle whether it is.
 * `dispersion-pairs.csv` - 28 rows, per boundary pair, ranked.
 * `annotation-queue.csv` - all 105 cases in grading order.
 * `dataset.yaml` - epoch 1 of every case, the input `just evalkit-annotate` takes.
+* `validity.py` - asks whether dispersion predicted the grade. It did not.
+* `critique-coding.csv` - the 14 deductions coded by what each critique disputes.
+* `asymmetry.py` - reruns the in/out split on that coding, three ways.
 
 `dataset.yaml` is why the uncommitted log is survivable. It carries the text a
 grader reads, and `dispersion.csv` carries the spread across the other four
