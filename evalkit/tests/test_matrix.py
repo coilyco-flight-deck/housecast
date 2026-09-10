@@ -9,6 +9,7 @@ import yaml
 from evalkit.matrix import (
     BOUNDARY,
     GROUNDING,
+    GUARDRAIL,
     PERSONALITY,
     ROLE_FIT,
     abbreviate,
@@ -278,6 +279,57 @@ def test_the_two_grounding_halves_ask_for_opposite_things() -> None:
     assert "asserts" in halves[Half.IN]
     assert "inference" in halves[Half.OUT] and "declines" in halves[Half.OUT]
     assert halves[Half.IN] != halves[Half.OUT]
+
+
+def test_a_role_declaring_no_guardrail_derives_neither_half() -> None:
+    """Five of the seven are unwritten, so absence has to derive nothing rather than a stub."""
+    assert [c for c in derive(ROSTER) if c.test_type == GUARDRAIL] == []
+
+
+def test_the_detector_key_is_the_whole_declaration_of_the_kind() -> None:
+    """Presence of the key, not a kind string, so the label cannot drift from the content."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["platform"]["guardrail"] = {"card": "paste it", "body": "how"}
+    roster["roles"]["devrel"]["guardrail"] = {
+        "card": "lint it",
+        "body": "how",
+        "detector": "lint.py --strict",
+    }
+
+    kinds = {c.entity: c.attribute for c in derive(roster) if c.test_type == GUARDRAIL}
+    assert kinds == {"platform": "attested", "devrel": "reproducible"}
+
+
+def test_the_two_kinds_are_different_cases_rather_than_one_case_reworded() -> None:
+    """The acceptance condition. A shared target grades a formatting check and an
+    independent reproduction as the same evidence, which is the defect the split exists
+    to prevent, so the negative control is that no target survives changing the kind."""
+    attested = copy.deepcopy(ROSTER)
+    attested["roles"]["platform"]["guardrail"] = {"card": "c", "body": "b"}
+    reproducible = copy.deepcopy(attested)
+    reproducible["roles"]["platform"]["guardrail"]["detector"] = "lint.py --strict"
+
+    def targets(roster: dict[str, Any]) -> dict[Half | None, str]:
+        return {c.half: c.target or "" for c in derive(roster) if c.test_type == GUARDRAIL}
+
+    one, two = targets(attested), targets(reproducible)
+    assert one[Half.IN] != two[Half.IN]
+    assert one[Half.OUT] != two[Half.OUT]
+    assert "lint.py --strict" in two[Half.IN] and "lint.py --strict" in two[Half.OUT]
+    assert "MEASURED" in one[Half.IN] and "EXPECTED" in one[Half.OUT]
+
+
+def test_the_guardrail_out_half_catches_suppression_rather_than_fabrication() -> None:
+    """A seat that never makes a gated claim passes the in-half perfectly, so the
+    out-half is the only case standing between the guardrail and silence."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["platform"]["guardrail"] = {"card": "c", "body": "b"}
+
+    cases = [c for c in derive(roster) if c.test_type == GUARDRAIL]
+    assert [c.id for c in cases] == ["platform-grd-in", "platform-grd-out"]
+    assert all(c.pair_id == "platform-grd" for c in cases)
+    out = next(c.target or "" for c in cases if c.half is Half.OUT)
+    assert "rather than withholding" in out
 
 
 def test_an_archived_role_is_the_subject_of_no_challenge() -> None:

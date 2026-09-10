@@ -41,6 +41,28 @@ class Voice:
 
 
 @dataclass(frozen=True)
+class Guardrail:
+    """One strong course correction per role, standing beside the role body.
+
+    `detector` carries the whole reproducible-attested split. A guardrail naming
+    a detector can be re-run by a grader, so its evidence is independent of the
+    seat under test. One without a detector can only be checked for presence and
+    adjacency, because the evidence was produced by the seat being graded.
+
+    The kind is declared by the key's presence rather than by a `kind:` string,
+    so it cannot drift from the content it labels.
+    """
+
+    card: str
+    body: str
+    detector: str = ""
+
+    @property
+    def reproducible(self) -> bool:
+        return bool(self.detector)
+
+
+@dataclass(frozen=True)
 class Outro:
     """What a session says as it closes. Role only, and not melded.
 
@@ -146,6 +168,9 @@ class Role:
     # The class of fact this role's function depends on, per-role because the
     # evidence differs. See docs/grading-grounding.md.
     grounding: str = ""
+    # Optional while the seven are authored one at a time: `check_guardrails`
+    # enforces shape rather than presence, so an absent one derives no case.
+    guardrail: Guardrail | None = None
     outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
@@ -222,6 +247,16 @@ def _outro(spec: dict[str, Any] | None) -> Outro | None:
     return Outro(clean=str(spec.get("clean", "")), failure=str(spec.get("failure", "")))
 
 
+def _guardrail(spec: dict[str, Any] | None) -> Guardrail | None:
+    if not spec:
+        return None
+    return Guardrail(
+        card=str(spec.get("card", "")),
+        body=str(spec.get("body", "")),
+        detector=str(spec.get("detector", "")),
+    )
+
+
 def load(path: pathlib.Path | str = DATA) -> Roster:
     path = pathlib.Path(path)
     raw = path.read_bytes()
@@ -277,6 +312,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             creature=str(spec.get("creature", "")),
             element=str(spec.get("element", "")),
             grounding=str(spec.get("grounding", "")),
+            guardrail=_guardrail(spec.get("guardrail")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
             archived=bool(spec.get("archived", False)),
@@ -307,5 +343,6 @@ def validate(roster: Roster) -> None:
     rules.check_personality_colors(roster)
     rules.check_creature_names(roster)
     rules.check_grounding_lanes(roster)
+    rules.check_guardrails(roster)
     rules.check_skill_frontmatter(roster)
     rules.check_copy_contract(roster)

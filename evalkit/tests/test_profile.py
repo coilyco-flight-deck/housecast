@@ -17,7 +17,7 @@ def test_the_shipped_default_is_missing_the_types_this_board_derives() -> None:
     """The reason eval-annotate.sh hands a profile over. Measured on board-2026-09-01."""
     declared = {spec.name for spec in PROFILE.test_types}
     fallback = {spec.name for spec in AGENT_COMPOSE.test_types}
-    assert declared - fallback == {"voice", "grounding"}
+    assert declared - fallback == {"voice", "grounding", "guardrail"}
 
 
 def test_every_declared_type_carries_a_label_set_the_schema_knows() -> None:

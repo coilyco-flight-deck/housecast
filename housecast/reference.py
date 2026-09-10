@@ -29,6 +29,7 @@ ORDER = (
     roster.Voice,
     roster.Emblem,
     roster.Outro,
+    roster.Guardrail,
     roster.Seat,
     roster.Scoped,
     roster.Adjacent,

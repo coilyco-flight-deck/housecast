@@ -15,8 +15,8 @@ Coarse inventory of the major capabilities housecast ships.
   charter. A private overlay appends estate-only acts without redefining. See [`overlay.md`](overlay.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read,
   which is what removed Go from the eval path.
-* **evalkit, the board runner.** Derives the board from the roster across five test types (boundary, role-fit, personality, voice, and [grounding](grading-grounding.md), which pairs a fact inside the role's lane against one its evidence cannot settle), runs it through Inspect against
-  Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md), [`evaluation-workflow.md`](evaluation-workflow.md).
+* **evalkit, the board runner.** Derives the board across six test types (boundary, role-fit, personality, voice, [grounding](grading-grounding.md), pairing a lane fact against one the evidence cannot settle, and guardrail, a per-role course correction whose kind is set by whether it names a re-runnable detector), runs it
+  through Inspect against Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
   taxonomy, one-way export, `grade serve` on loopback, two graders on one board through `--grader`,
   and `grade pin`, which digests a grade's five inputs so a pass straddling a change to one refuses
