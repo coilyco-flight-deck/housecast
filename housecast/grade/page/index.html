@@ -537,7 +537,10 @@ button { font: inherit; color: inherit; }
    run name is in the rail already. */
 [data-view="deck"] .board-head { padding-block: .5rem; margin-bottom: .5rem; }
 [data-view="deck"] .crumbs { display: none; }
-[data-view="deck"] .run-name { font-size: var(--t-4); margin: 0; }
+/* margin-block, not margin: `.board-head > *` centres its children with
+   margin-inline auto, and the shorthand was resetting that, which put the
+   run name flush against the viewport edge. */
+[data-view="deck"] .run-name { font-size: var(--t-4); margin-block: 0; }
 
 /* The controls were 203px of a 503px slide, against 57px for the answer. */
 [data-view="deck"] .grade { margin-top: .6rem; padding-top: .6rem; gap: .35rem; }
@@ -578,6 +581,15 @@ button { font: inherit; color: inherit; }
    inside itself rather than pushing the verdict buttons off the slide. */
 [data-view="deck"] .output { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 [data-view="deck"] .prompt, [data-view="deck"] .target { font-size: var(--t-2); }
+/* The read-only critique and the box that edits it said the same words twice,
+   one above the other. Where the box is there, it is the critique. */
+[data-view="deck"] .grade ~ .critique,
+[data-view="deck"] .half:has(.grade) > .critique,
+[data-view="deck"] .half:has(.grade) > .note { display: none; }
+/* The answer takes what it needs rather than stretching, and the controls sit
+   at the foot of every slide, so the verdict buttons do not move between cards. */
+[data-view="deck"] .output { flex: 0 1 auto; }
+[data-view="deck"] .grade { margin-top: auto; }
 [data-view="deck"] .half-h { margin-bottom: .6rem; }
 /* 44px of trailing padding and 26px under each of the prompt and the target,
    which is 76 of the 401 the half had to spend. The answer was living on 57. */
