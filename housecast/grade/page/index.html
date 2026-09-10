@@ -441,6 +441,21 @@ button { font: inherit; color: inherit; }
   transition: width .25s ease;
 }
 
+/* Deck view. One card at a time over the same stream: the current unit is
+   already tracked for j/k, so this hides the rest rather than rebuilding. */
+[data-view="deck"] .unit:not([aria-current="true"]),
+[data-view="deck"] .chapter { display: none; }
+[data-view="deck"] .unit { border-top: 0; }
+[data-view="deck"] .stream { min-height: 100vh; }
+.place {
+  display: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--dim);
+  font-size: var(--t-2);
+  padding: .2rem 0 1rem;
+}
+[data-view="deck"] .place { display: block; }
+
 /* The map. Every case as one cell, entity-major, in annotation order. */
 .map { margin-top: 1.5rem; }
 .map-h {
@@ -785,18 +800,23 @@ mark.ev {
       <button class="ctl" id="zoom-out" aria-label="Smaller type">A&minus;</button>
       <button class="ctl" id="zoom-in"  aria-label="Larger type">A+</button>
       <button class="ctl" id="theme">light</button>
+      <button class="ctl" id="view" aria-pressed="false">deck</button>
     </div>
 
     <div class="keys">
       <kbd>j</kbd> <kbd>k</kbd> next // previous card<br>
       <kbd>g</kbd> <kbd>G</kbd> first // last<br>
       <kbd>+</kbd> <kbd>-</kbd> type size<br>
-      <kbd>t</kbd> theme &nbsp; <kbd>f</kbd> filter
+      <kbd>t</kbd> theme &nbsp; <kbd>f</kbd> filter<br>
+      <kbd>d</kbd> deck // one card at a time
     </div>
     </details>
   </aside>
 
-  <main class="stream" id="stream" tabindex="-1"></main>
+  <div class="col">
+    <p class="place" id="place"></p>
+    <main class="stream" id="stream" tabindex="-1"></main>
+  </div>
 </div>
 
 <footer class="site-footer">
@@ -1091,7 +1111,7 @@ function unitCard(unit, index) {
 }
 
 /* ------------------------------------------------------------ the board */
-var state = { model: null, units: [], filter: "all", current: 0, cells: {} };
+var state = { model: null, units: [], filter: "all", current: 0, cells: {}, view: "scroll" };
 
 function buildMap(model) {
   var map = document.getElementById("map");
@@ -1149,7 +1169,11 @@ function focusUnit(index, scroll) {
   });
   var target = document.getElementById("u-" + visible[index].key);
   if (!target) return;
-  if (scroll !== false) target.scrollIntoView({ block: "start", behavior: "smooth" });
+  drawPlace();
+  // In deck view every other card is display:none, so there is nothing to
+  // scroll past: the card replaces the one before it at the top.
+  if (state.view === "deck") window.scrollTo({ top: 0, behavior: "auto" });
+  else if (scroll !== false) target.scrollIntoView({ block: "start", behavior: "smooth" });
   target.focus({ preventScroll: true });
   Object.keys(state.cells).forEach(function (id) { state.cells[id].setAttribute("aria-current", "false"); });
   visible[index].cases.forEach(function (c) {
@@ -1287,6 +1311,24 @@ function setTheme(theme) {
   store("housecast.theme", theme);
 }
 
+function setView(mode) {
+  document.documentElement.setAttribute("data-view", mode);
+  document.getElementById("view").setAttribute("aria-pressed", String(mode === "deck"));
+  document.getElementById("view").textContent = mode === "deck" ? "scroll" : "deck";
+  store("housecast.view", mode);
+  state.view = mode;
+  focusUnit(state.current, false);
+}
+
+function drawPlace() {
+  var visible = visibleUnits();
+  var place = document.getElementById("place");
+  if (!visible.length) { place.textContent = ""; return; }
+  var unit = visible[Math.max(0, Math.min(state.current, visible.length - 1))];
+  var of = state.filter === "all" ? "" : " // filter: " + state.filter;
+  place.textContent = (state.current + 1) + " of " + visible.length + " // " + unit.entity + of;
+}
+
 function setFilter(next) {
   state.filter = next;
   ["all", "graded", "ungraded"].forEach(function (name) {
@@ -1318,11 +1360,15 @@ function wireControls() {
   if (isNaN(zoomIndex)) zoomIndex = 1;
   zoomIndex = setZoom(zoomIndex);
   setTheme(readStored("housecast.theme") === "light" ? "light" : "dark");
+  setView(readStored("housecast.view") === "deck" ? "deck" : "scroll");
 
   document.getElementById("zoom-in").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex + 1); });
   document.getElementById("zoom-out").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex - 1); });
   document.getElementById("theme").addEventListener("click", function () {
     setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+  });
+  document.getElementById("view").addEventListener("click", function () {
+    setView(state.view === "deck" ? "scroll" : "deck");
   });
   ["all", "graded", "ungraded"].forEach(function (name) {
     document.getElementById("f-" + name).addEventListener("click", function () { setFilter(name); });
@@ -1342,6 +1388,7 @@ function wireControls() {
       case "-": zoomIndex = setZoom(zoomIndex - 1); break;
       case "t": setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); break;
       case "f": setFilter(state.filter === "all" ? "graded" : state.filter === "graded" ? "ungraded" : "all"); break;
+      case "d": setView(state.view === "deck" ? "scroll" : "deck"); break;
       default: return;
     }
     event.preventDefault();
