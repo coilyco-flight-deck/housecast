@@ -8,3 +8,5 @@ wght = "wght"
 mis = "mis"
 unparseable = "unparseable"
 RTO = "RTO"
+# machine-kai-ser8 is a machine name that appears in preserved run output.
+ser = "ser"
