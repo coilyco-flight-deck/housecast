@@ -130,30 +130,43 @@ taxonomy at this count, which is a fact about the sample rather than the verb.
 ### The gap does not survive reading the critiques
 
 Counting deductions is not reading them. `critique-coding.csv` codes all 14 by
-what the critique disputes, and `asymmetry.py` reruns the split on that coding:
+what the critique disputes and carries the director seat's ruling on each, and
+`asymmetry.py` reruns the split:
 
-    all deductions        in  3/28 = 0.107   out 11/28 = 0.393   3.67x   p = 0.0282
-    model failures only   in  3/28 = 0.107   out  4/28 = 0.143   1.33x   p = 1.0000
-    label disputes only   in  0/28 = 0.000   out  7/28 = 0.250           p = 0.0098
+    all deductions          in  3/28 = 0.107   out 11/28 = 0.393   3.67x   p = 0.0282
+    ruled: void excluded    in  3/28 = 0.107   out  5/28 = 0.179   1.67x   p = 0.7035
+    ruled: pending counted  in  3/28 = 0.107   out  6/28 = 0.214   2.00x   p = 0.4675
 
-Seven of the eleven `out` deductions reject the case's own out-of-scope label
-rather than faulting the response: docs sites are a valid in-scope deploy,
-playing the game is in the role's scope, the deploy validator is in the role's
-scope, and so on. All seven fall in the `out` half and none in the `in` half.
-Remove them and the halves are indistinguishable.
+Seven of the eleven `out` deductions attack the case's own out-of-scope label
+rather than the response. The director seat ruled all seven against the charter
+text (`teable:coilyco-flight-deck/housecast#7307`) and **defended every one**,
+which is not what either obvious outcome predicted. Five are `void`: the label
+was right, the response complied with it, and the deduction recorded only an
+objection to the label. Those leave the count rather than moving into model
+failures. One is kept on other grounds, `advocate-bfs-out`, whose response
+answers with a run command where the target asks for a definition and an
+acceptance condition. One is `pending`, `frontend-mlb-out`, whose target names a
+sysadmin handover that `role-sysadmin` gives to platform under CD, so the case
+needs its target corrected and the response rescored
+(`teable:coilyco-flight-deck/housecast#7311`).
 
-So the paragraphs above measure a real seam in the grades and misname it. Roles
-are not failing at deferring three and a half times as often. The board's
-out-of-scope cases are labelled in a way their grader rejects a quarter of the
-time. That also weakens the `agent-compose#1855` agreement above, since two
-methods agreeing on a number means less when one of them is counting a different
-thing.
+So the paragraphs above measure a real seam and misname it. Roles are not
+failing at deferring three and a half times as often. Between 5 and 7 of the 11
+`out` deductions were never model failures, the recount lands at 1.67x to 2.00x
+with p between 0.47 and 0.70, and the effect this section was written to report
+is gone. That also removes the `agent-compose#1855` agreement, since two methods
+agreeing means nothing once one of them was counting label disagreement.
 
-The coding is one coder on free text, and it is committed rather than summarised
-so a second reader can change a line and rerun. Four lines would have to move
-from `design` to `model` before the model-only split reached the significance the
-section above claims. Settling the seven is
-`teable:coilyco-flight-deck/housecast#7307`.
+One case did move the charter rather than the board: `gamedev-mlb-out` exposed
+`role-gamedev` forbidding a seat from playing its own live game, filed as
+`teable:coilyco-flight-deck/agent-compose#7310`.
+
+**The coding has a limit its own file cannot show.** It was built from Kai's
+critiques, and a critique says why she deducted, never whether the deduction was
+right. Every ruling above needed the charter text, which no critique cites. So
+this file can be a faithful record of her reasoning and still misclassify, and a
+second coder reading the same critiques cannot catch that. Validating it takes a
+reader going to the charter, which is what the rulings were.
 
 ## Validity, run 2026-09-10, and the ranking fails it
 

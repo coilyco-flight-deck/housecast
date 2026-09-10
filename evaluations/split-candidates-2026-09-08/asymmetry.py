@@ -5,7 +5,8 @@ it did not. This asks the next question about the finding that replaced it: the
 README reports roles failing at deferring about three and a half times as often
 as at owning, and that number counts deductions without reading them.
 
-`critique-coding.csv` codes all 14 deductions by what the critique disputes.
+`critique-coding.csv` codes all 14 deductions by what the critique disputes, and
+carries the director seat's ruling on each disputed label.
 `design` means it rejects the case's own in/out label or calls the case a bad
 test, so the response may have been scored against a boundary its grader does
 not hold. `model` means it faults what the response did. That coding is one
@@ -53,11 +54,23 @@ def main() -> int:
                       ("model failures only", {"model"}),
                       ("label disputes only", {"design"})):
         bi, bo = split(coding, keep)
-        ri, ro = bi / HALF_N, bo / HALF_N
-        ratio = f"{ro / ri:.2f}x" if ri else "undefined"
-        print(f"{tag:22} in {bi:2}/{HALF_N} = {ri:.3f}   out {bo:2}/{HALF_N} = {ro:.3f}   "
-              f"ratio {ratio:>9}   p = {permute(bi, bo):.4f}")
+        report(tag, bi, bo)
+
+    # The rulings are the director seat's, case by case, against the charter
+    # text. See housecast#7307.
+    print()
+    for tag, keep in (("ruled: void excluded", {"keep"}),
+                      ("ruled: pending counted", {"keep", "pending"})):
+        rows = [r for r in coding if r["ruling"] in keep]
+        report(tag, sum(r["half"] == "in" for r in rows), sum(r["half"] == "out" for r in rows))
     return 0
+
+
+def report(tag: str, bad_in: int, bad_out: int) -> None:
+    ri, ro = bad_in / HALF_N, bad_out / HALF_N
+    ratio = f"{ro / ri:.2f}x" if ri else "undefined"
+    print(f"{tag:24} in {bad_in:2}/{HALF_N} = {ri:.3f}   out {bad_out:2}/{HALF_N} = {ro:.3f}   "
+          f"ratio {ratio:>9}   p = {permute(bad_in, bad_out):.4f}")
 
 
 if __name__ == "__main__":
