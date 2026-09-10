@@ -132,6 +132,10 @@ evalkit-annotate *ARGS:
 evalkit-profile *ARGS:
     @uv run --extra eval python -m evalkit.profile "$@"
 
+# Project the roster as entities.json, the --roster a grading surface takes.
+evalkit-entities *ARGS:
+    @sh scripts/eval-entities.sh "$@"
+
 # Pin or check the five grade inputs. `just grade-pin --dataset D --roster R`.
 grade-pin *ARGS:
     @uv run --extra eval housecast grade pin "$@"
