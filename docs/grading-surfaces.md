@@ -13,21 +13,21 @@ The same loop against the same committed YAML, each rule in one place per surfac
 
 ## What the browser changes
 
-One thing that matters. `annotate` asks the grader to retype the span and loops until it matches, because a
-retyped quote gets edited by the hand retyping it. A page anchors the span by selection, so that failure
-cannot occur and the verbatim check stops being a typo guard. It stays in place as the guard against a page
-sending a span from the wrong case. `serve` hands the page `housecast.grading.v1`, carrying the profile's
-own keystrokes so one-key grading survives the move.
+One thing that matters. `annotate` asks the grader to retype the span and loops until it matches, because a retyped quote gets edited by the hand retyping it. A page
+anchors the span by selection, so that failure cannot occur and the verbatim check stops being a typo guard. It stays in place as the guard against a page sending a
+span from the wrong case. `serve` hands the page `housecast.grading.v1`, carrying the profile's own keystrokes so one-key grading survives the move.
 
 ## Two graders on one board
 
-`--grader kai` writes `annotations.kai.yaml` rather than the shared `annotations.yaml`, so two testers stop
-overwriting each other. The name is validated as lowercase letters, digits and hyphens because it becomes a
-filename, and it is written into the file under a `grader` key because a filename is the first thing a copy
-or an export changes. `grade disagreement` takes `--annotations` once per grader, reads that key ahead of
-the filename, and rates only the cases every grader reached: one nobody finished is incomplete rather than
-folded in, and nothing compared reports no rate rather than agreement. Required `--tester` declares the
-study's roster, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
+`--grader kai` writes `annotations.kai.yaml` rather than the shared `annotations.yaml`, so two testers stop overwriting each other. The name is validated as
+lowercase letters, digits and hyphens because it becomes a filename, and it is written into the file under a `grader` key because a filename is the first thing
+a copy or an export changes. `grade disagreement` takes `--annotations` once per grader, reads that key ahead of the filename, and rates only the cases every
+grader reached: one nobody finished is incomplete rather than folded in, and nothing compared reports no rate rather than agreement. Required `--tester`
+declares the study's roster, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
+
+## The order annotate takes
+
+* `annotation-queue.csv` beside the dataset sets the order, found the way `pin.yaml` is and read after it. The ranking is a view, so `dataset.yaml` keeps derivation order, a queue naming a case it lacks refuses rather than ordering a subset, and unranked cases trail and are counted
 
 ## annotate is not deleted
 

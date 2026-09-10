@@ -25,6 +25,7 @@ from housecast.grade import dataset as dataset_mod
 from housecast.grade import deck as deck_mod
 from housecast.grade import pin as pin_mod
 from housecast.grade import present as present_mod
+from housecast.grade import queue as queue_mod
 from housecast.grade import seal as seal_mod
 from housecast.grade import serve as serve_mod
 from housecast.grade import taxonomy as taxonomy_mod
@@ -281,6 +282,28 @@ def pin_command(
     outro(f"housecast grade annotate --dataset {dataset_path} --out annotations.yaml")
 
 
+def _apply_queue(dataset_path: Path, entries: list[DatasetEntry]) -> list[DatasetEntry]:
+    """Grade in the ranking beside the dataset, when one is there.
+
+    Silence either way would be wrong: a grader who thinks they are working the
+    unstable cases first, and is not, reads a half-finished pass as covering
+    them.
+    """
+    ranked = queue_mod.queue_path(dataset_path)
+    if not ranked.exists():
+        return entries
+    try:
+        ordered, unranked = queue_mod.order_by_queue(
+            entries, queue_mod.load_queue(ranked), load_dataset(dataset_path)
+        )
+    except queue_mod.QueueMismatchError as mismatch:
+        click.echo(f"housecast grade annotate: {mismatch}", err=True)
+        raise SystemExit(1) from mismatch
+    trailing = f", {unranked} it does not rank last" if unranked else ""
+    click.echo(f"grading in {ranked.name} order{trailing}")
+    return ordered
+
+
 @main.command()
 @click.option(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
@@ -319,6 +342,9 @@ def annotate(
     # Checked against the full run rather than an --entity slice, before a
     # single case is shown. See housecast.grade.pin.
     check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
+    # After the pin, so a refused run says why instead of announcing an order
+    # for a pass that is not going to start.
+    entries = _apply_queue(dataset_path, entries)
 
     if not summary and not annotate_mod.annotate_session(
         entries, annotations, out, profile, roster_data, grader
