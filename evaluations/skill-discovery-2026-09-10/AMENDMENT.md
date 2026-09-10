@@ -116,6 +116,47 @@ at J = 0.40, and calling a cost curve a cliff was the wrong shape.
 Both misses ran the same direction, toward believing the drafts had broken more
 than they broke.
 
+## What may be published from this well, going forward
+
+The strip above was checked by the advocate seat rather than accepted on my
+word, at `2026-09-10T08:27Z`, against the merged record and the pull request
+body. It holds, and the reasoning that decides it is one I had not stated
+explicitly: **nothing any of the three recruiters wrote appears anywhere in this
+row.** Every published fragment is Kai's own drafted prose. Third-party identity
+outranks Kai's own private facts, and it is not implicated here because no
+counterparty is quoted. What is exposed is our own error in our own words.
+
+That reasoning generalises, and this well will be drawn from again, so the rule
+it implies is written here rather than left in a transcript:
+
+* Only Kai's own drafted clauses travel to a public repository.
+* A counterparty's words never do, and neither do the surrounding thread facts.
+* If a future item needs a counterparty's sentence to be the scientific
+  content, that item goes to a private repository and is referenced from here.
+  The self-contained record is the thing that gets given up, not the boundary.
+
+Ruled by the advocate seat, which owns the disclosure judgement. Recorded here
+because it binds this evaluation's data handling, which is mine, and because a
+boundary that lives only in a conversation gets re-decided under time pressure
+by whoever arrives next.
+
+## One calibration item has a reader, and the rest do not
+
+Form 3 is the only one of the three that was sent. It has a real recipient, and
+as of this writing no reply.
+
+So exactly one item in the calibration set has a behavioural outcome attached,
+and it is unobserved. This bounds what the set can establish. The judge is being
+calibrated on whether a sentence performs the move the rail names, which is a
+question about the text. Whether the move actually lands badly on a reader is a
+different question, this row does not measure it, and one pending reply would
+not settle it either.
+
+Worth stating because the rail's stated justification is about the reader, and a
+grader that never sees a reader is measuring the rule rather than the harm it
+exists to prevent. That gap is real and is not a defect in the design, as long
+as no result from this row is reported as evidence about readers.
+
 ## Files added
 
 * `attenuation.py` - the misclassification correction, five known answers, and
