@@ -12,7 +12,7 @@ decision. On a narrow screen the map and the controls fold behind one
 disclosure, so the first thing on a phone is a case.
 
 The rail carries the run name, how much is graded, and the board map: one cell
-per case, entity-major, in the order the cases appear beside it, so the map is
+per case, in whatever order the cases appear beside it, so the map is
 progress, navigation, and the result heatmap at once.
 
 ## The card is the pair, not the case

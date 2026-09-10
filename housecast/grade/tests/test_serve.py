@@ -291,3 +291,60 @@ def test_a_solo_file_carries_no_grader_key_at_all(run_dir: pathlib.Path) -> None
     client = TestClient(create_app(GradingSession.open(run_dir)))
     client.post("/api/annotations", json={"id": "live-in", "label": "pass"})
     assert read_grader(run_dir / "annotations.yaml") is None
+
+
+def queued_dataset() -> list[DatasetEntry]:
+    return [
+        DatasetEntry(
+            challenge=Challenge(
+                id=f"{entity}-per-{trait}",
+                entity=entity,
+                test_type="personality",
+                prompt="p",
+                target="t",
+                attribute=trait,
+            ),
+            output=OUTPUT,
+        )
+        for entity, trait in (("sysadmin", "protective"), ("science", "empirical"))
+    ]
+
+
+def write_queue(run_dir: pathlib.Path, *cases: str) -> None:
+    rows = "\n".join(f"{i + 1},{case},x,personality,,0.5" for i, case in enumerate(cases))
+    (run_dir / "annotation-queue.csv").write_text(
+        f"rank,case,entity,test_type,pair_id,divergence\n{rows}\n"
+    )
+
+
+# Entity-major with no roster falls back to sorted entity names, so the queue is
+# written reversed: an order that matched it could not tell the two apart.
+ENTITY_MAJOR = ["science-per-empirical", "sysadmin-per-protective"]
+QUEUED = list(reversed(ENTITY_MAJOR))
+
+
+def test_the_queue_beside_the_run_outranks_entity_major(tmp_path: pathlib.Path) -> None:
+    save_dataset(tmp_path / "dataset.yaml", queued_dataset())
+    write_queue(tmp_path, *QUEUED)
+    session = GradingSession.open(tmp_path)
+    assert [entry.id for entry in session.entries] == QUEUED
+
+
+def test_no_queue_keeps_the_entity_major_order(tmp_path: pathlib.Path) -> None:
+    save_dataset(tmp_path / "dataset.yaml", queued_dataset())
+    write_queue(tmp_path, *QUEUED)
+    session = GradingSession.open(tmp_path, use_queue=False)
+    assert [entry.id for entry in session.entries] == ENTITY_MAJOR
+
+
+def test_a_run_with_no_queue_is_the_ordinary_case(tmp_path: pathlib.Path) -> None:
+    save_dataset(tmp_path / "dataset.yaml", queued_dataset())
+    session = GradingSession.open(tmp_path)
+    assert len(session.entries) == 2
+
+
+def test_the_served_payload_follows_the_queue(tmp_path: pathlib.Path) -> None:
+    save_dataset(tmp_path / "dataset.yaml", queued_dataset())
+    write_queue(tmp_path, *QUEUED)
+    payload = TestClient(create_app(GradingSession.open(tmp_path))).get("/api/session").json()
+    assert [case["id"] for case in payload["cases"]] == QUEUED

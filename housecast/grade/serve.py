@@ -26,6 +26,7 @@ from housecast.grade.io import (
     load_dataset,
     save_annotations,
 )
+from housecast.grade.queue import load_queue, order_by_queue, queue_path
 from housecast.grade.schema import (
     AGENT_COMPOSE,
     DEDUCTIONS,
@@ -106,15 +107,22 @@ class GradingSession:
         profile: Profile = AGENT_COMPOSE,
         roster: dict[str, Any] | None = None,
         grader: str | None = None,
+        use_queue: bool = True,
     ) -> GradingSession:
         dataset_path = run_dir / "dataset.yaml"
         if not dataset_path.exists():
             raise FileNotFoundError(f"{run_dir} has no dataset.yaml, so there is nothing to grade")
         entity_order = list(roster.get("entity_order", [])) if roster else None
+        entries = annotation_order(load_dataset(dataset_path), profile, entity_order)
+        # Costs the charter locality annotation_order exists for, buys covering
+        # the least stable cases first. docs/grading-surfaces.md carries why.
+        ranked = queue_path(run_dir / "dataset.yaml")
+        if use_queue and ranked.exists():
+            entries, _ = order_by_queue(entries, load_queue(ranked))
         return cls(
             run_dir=run_dir,
             profile=profile,
-            entries=annotation_order(load_dataset(dataset_path), profile, entity_order),
+            entries=entries,
             annotations=load_annotations(run_dir / annotations_name(grader)),
             roster=roster,
             grader=grader,
