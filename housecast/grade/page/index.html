@@ -468,7 +468,9 @@ button { font: inherit; color: inherit; }
 .v:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .v[data-deduct="1"] { border-color: var(--deduct-wash); }
 .v[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-on-wash); }
-.v kbd { font-size: .9em; }
+/* 1em, not .9: the shortcut on a verdict button is the fastest way to grade
+   and it was the one thing on the slide under the 16px floor. */
+.v kbd { font-size: 1em; }
 .crit {
   font: inherit;
   font-size: var(--t-1);
@@ -493,6 +495,24 @@ button { font: inherit; color: inherit; }
    its own overflow, which is where the key legend goes when it does not fit. */
 [data-view="deck"] { overflow: hidden; }
 [data-view="deck"] body { overflow: hidden; }
+
+/* 16px is the floor on a slide. The scale is redefined here rather than at the
+   root because the export and the printed deck keep their own density: only the
+   thing being graded owes a reading size. --t-0 was 10.9px, --t-2 was 14.1. */
+[data-view="deck"] {
+  --t-0: 1rem;
+  --t-1: 1rem;
+  --t-2: 1rem;
+  --t-3: 1rem;
+}
+
+/* One card is on screen and the next replaces it, so the change needs to be
+   visible or a graded card and its successor look alike. */
+[data-view="deck"] .unit[aria-current="true"] { animation: slide-in .16s var(--ease, ease-out); }
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
 
 [data-view="deck"] .unit:not([aria-current="true"]),
 [data-view="deck"] .chapter { display: none; }
@@ -1161,7 +1181,9 @@ function halfPanel(kase) {
   if (kase.half) panel.dataset.half = kase.half;
 
   var head = el("div", "half-h");
-  head.appendChild(el("span", "half-tag", kase.half || kase.testType));
+  // Only for a pair, where it says which half. On a single it repeated the test
+  // type the card header already carries.
+  if (kase.half) head.appendChild(el("span", "half-tag", kase.half));
   head.appendChild(el("span", "case-id", kase.id));
   head.appendChild(verdictChip(kase.label));
   panel.appendChild(head);
@@ -1498,8 +1520,14 @@ function focusUnit(index, scroll) {
   if (!target) return;
   drawPlace();
   // In deck view every other card is display:none, so there is nothing to
-  // scroll past: the card replaces the one before it at the top.
-  if (state.view === "deck") window.scrollTo({ top: 0, behavior: "auto" });
+  // scroll past: the card replaces the one before it at the top. The animation
+  // is restarted by hand because the same node is reused for every slide.
+  if (state.view === "deck") {
+    window.scrollTo({ top: 0, behavior: "auto" });
+    target.style.animation = "none";
+    void target.offsetWidth;
+    target.style.animation = "";
+  }
   else if (scroll !== false) target.scrollIntoView({ block: "start", behavior: "smooth" });
   target.focus({ preventScroll: true });
   Object.keys(state.cells).forEach(function (id) { state.cells[id].setAttribute("aria-current", "false"); });
@@ -1642,6 +1670,9 @@ function setView(mode) {
   // "pending" means nobody has chosen: a grading session opens as a deck and an
   // export opens as the scroll it has always been. It never reaches the DOM.
   if (mode === "pending") return;
+  // A session that can grade has no scroll view. Two cards partly on screen is
+  // a way to read one and grade the other, so the shape is not a preference.
+  if (state.canWrite) mode = "deck";
   document.documentElement.setAttribute("data-view", mode);
   document.getElementById("view").setAttribute("aria-pressed", String(mode === "deck"));
   document.getElementById("view").textContent = mode === "deck" ? "scroll" : "deck";
@@ -1715,6 +1746,7 @@ function wireControls() {
   document.getElementById("view").addEventListener("click", function () {
     setView(state.view === "deck" ? "scroll" : "deck");
   });
+  document.getElementById("view").hidden = false;
   ["all", "graded", "ungraded"].forEach(function (name) {
     document.getElementById("f-" + name).addEventListener("click", function () { setFilter(name); });
   });
@@ -1737,7 +1769,7 @@ function wireControls() {
       case "-": zoomIndex = setZoom(zoomIndex - 1); break;
       case "t": setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); break;
       case "s": setFilter(state.filter === "all" ? "graded" : state.filter === "graded" ? "ungraded" : "all"); break;
-      case "d": setView(state.view === "deck" ? "scroll" : "deck"); break;
+      case "d": if (!state.canWrite) setView(state.view === "deck" ? "scroll" : "deck"); break;
       default: return;
     }
     event.preventDefault();
@@ -1750,7 +1782,10 @@ load().then(function (model) {
   if (!model) { drawNoData(); return; }
   state.model = model;
   state.canWrite = model.source === "serve";
-  if (readStored("housecast.view") === null) setView(state.canWrite ? "deck" : "scroll");
+  setView(state.canWrite ? "deck" : (readStored("housecast.view") || "scroll"));
+  // The control is meaningless where the shape is fixed, so it goes rather than
+  // sitting there doing nothing.
+  document.getElementById("view").hidden = state.canWrite;
   state.units = group(model.cases);
   drawRail(model);
   buildMap(model);
