@@ -577,19 +577,29 @@ button { font: inherit; color: inherit; }
   min-width: 0;
   min-height: 0;
 }
-/* The answer is the primary content, so it takes the room left over and scrolls
-   inside itself rather than pushing the verdict buttons off the slide. */
-[data-view="deck"] .output { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+/* The column is the scroll unit, not the quote block. A blockquote with its own
+   scrollbar clips mid-sentence and makes the wheel do different things depending
+   on which few hundred pixels the pointer is over. The half scrolls, and the
+   answer is simply whatever height it is. */
+[data-view="deck"] .half { overflow-y: auto; overscroll-behavior: contain; }
+[data-view="deck"] .output { flex: 0 0 auto; overflow: visible; }
 [data-view="deck"] .prompt, [data-view="deck"] .target { font-size: var(--t-2); }
 /* The read-only critique and the box that edits it said the same words twice,
    one above the other. Where the box is there, it is the critique. */
 [data-view="deck"] .grade ~ .critique,
 [data-view="deck"] .half:has(.grade) > .critique,
 [data-view="deck"] .half:has(.grade) > .note { display: none; }
-/* The answer takes what it needs rather than stretching, and the controls sit
-   at the foot of every slide, so the verdict buttons do not move between cards. */
-[data-view="deck"] .output { flex: 0 1 auto; }
-[data-view="deck"] .grade { margin-top: auto; }
+/* Pinned rather than scrolled away with the rest: the verdict is the one thing
+   that has to be reachable without scrolling back to find it. margin-top:auto
+   holds it at the foot when the column does not overflow, sticky holds it there
+   when it does. */
+[data-view="deck"] .grade {
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  background: var(--ground);
+  padding-bottom: .35rem;
+}
 [data-view="deck"] .half-h { margin-bottom: .6rem; }
 /* 44px of trailing padding and 26px under each of the prompt and the target,
    which is 76 of the 401 the half had to spend. The answer was living on 57. */
