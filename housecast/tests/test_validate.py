@@ -27,6 +27,7 @@ def test_the_shipped_roster_passes(loaded: Roster) -> None:
     validate.check_definition_set(loaded)
     validate.check_personality_colors(loaded)
     validate.check_grounding_lanes(loaded)
+    validate.check_guardrails(loaded)
     validate.check_skill_frontmatter(loaded)
     validate.check_copy_contract(loaded)
     validate.check_prose_floors(loaded)
@@ -37,6 +38,36 @@ def test_a_role_with_no_grounding_lane_is_rejected(loaded: Roster) -> None:
     loaded.roles["science"].grounding = ""
     with pytest.raises(roster.RosterError, match="has no grounding lane"):
         validate.check_grounding_lanes(loaded)
+
+
+def test_a_role_with_no_guardrail_is_accepted_while_five_are_unwritten(loaded: Roster) -> None:
+    """Presence cannot be required yet. Absence derives no case, which is correct."""
+    loaded.roles["science"].guardrail = None
+    validate.check_guardrails(loaded)
+
+
+def test_a_guardrail_with_no_card_half_is_rejected(loaded: Roster) -> None:
+    """A body with no card is a procedure no seat is ever told to follow."""
+    loaded.roles["science"].guardrail = roster.Guardrail(card="  ", body="the procedure")
+    with pytest.raises(roster.RosterError, match="no card half"):
+        validate.check_guardrails(loaded)
+
+
+def test_a_guardrail_with_no_body_half_is_rejected(loaded: Roster) -> None:
+    """A card with no body renders eagerly and has nothing behind it to load."""
+    loaded.roles["science"].guardrail = roster.Guardrail(card="the rail", body="")
+    with pytest.raises(roster.RosterError, match="no body half"):
+        validate.check_guardrails(loaded)
+
+
+def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Roster) -> None:
+    """Both kinds exist in the shipped roster, so neither branch is derived-but-never-run."""
+    kinds = {
+        name: role.guardrail.reproducible
+        for name, role in loaded.roles.items()
+        if role.guardrail is not None
+    }
+    assert kinds == {"science": False, "advocate": True}
 
 
 def test_owner_may_not_declare_the_boundary_it_owns(loaded: Roster) -> None:

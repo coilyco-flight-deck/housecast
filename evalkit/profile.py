@@ -29,6 +29,9 @@ PROFILE = Profile(
         # Paired for boundary's reason: the out-half is what stops hedging
         # scoring as grounding. See docs/grading-grounding.md.
         TestTypeSpec("grounding", "binary", 50, ("attribute", "half", "pair_id")),
+        # Binary because the label set carries no UNDECIDED, which is the door back
+        # to accuracy grading. Rationale in guardrail_challenges. Cap: housecast#7334.
+        TestTypeSpec("guardrail", "binary", 150, ("attribute", "half", "pair_id")),
     ),
     attribute_order=(
         "build-foundational-software",

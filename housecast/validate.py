@@ -155,6 +155,26 @@ def check_grounding_lanes(roster: Roster) -> None:
             raise _error(f"role {name!r} has no grounding lane")
 
 
+def check_guardrails(roster: Roster) -> None:
+    """Shape, not presence, while the seven are authored one at a time.
+
+    Presence cannot be required yet, because a role with no guardrail correctly
+    derives no case and five are still unwritten. Shape is required now, because
+    a guardrail carrying a card and no body renders eagerly and has nothing to
+    load, and one carrying a body and no card is a procedure no seat is told to
+    follow. Both fail loudly here rather than deriving a case that grades
+    something nobody wrote.
+    """
+    for name in roster.role_order:
+        guardrail = roster.roles[name].guardrail
+        if guardrail is None:
+            continue
+        if not guardrail.card.strip():
+            raise _error(f"role {name!r} declares a guardrail with no card half")
+        if not guardrail.body.strip():
+            raise _error(f"role {name!r} declares a guardrail with no body half")
+
+
 def check_skill_frontmatter(roster: Roster) -> None:
     """Every skill body declares its own name in frontmatter."""
     entries = [(r.skill, r.body) for r in roster.roles.values()]

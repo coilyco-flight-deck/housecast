@@ -54,6 +54,21 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "skill_source": role.skill_source,
             "stance": role.stance,
             "grounding": role.grounding,
+            **(
+                {
+                    "guardrail": {
+                        k: v
+                        for k, v in (
+                            ("card", g.card),
+                            ("body", g.body),
+                            ("detector", g.detector),
+                        )
+                        if v
+                    }
+                }
+                if (g := role.guardrail)
+                else {}
+            ),
             "supported_model_tiers": list(role.supported_model_tiers),
             "boundaries": list(role.defers),
             "scoped_boundaries": [{"name": s.name, "scope": s.scope} for s in role.scoped],
