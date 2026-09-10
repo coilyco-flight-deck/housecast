@@ -51,11 +51,19 @@ class Guardrail:
 
     The kind is declared by the key's presence rather than by a `kind:` string,
     so it cannot drift from the content it labels.
+
+    A reproducible guardrail derives both targets from the detector, because the
+    detector is the evidence. An attested one cannot: what counts as evidence
+    differs per role, so `attests` carries the two targets and the deriver has no
+    generic text to fall back on. Deriving them generically instead reads every
+    attested guardrail in whichever role's vocabulary was written first.
     """
 
     card: str
     body: str
     detector: str = ""
+    attests_in: str = ""
+    attests_out: str = ""
 
     @property
     def reproducible(self) -> bool:
@@ -250,10 +258,13 @@ def _outro(spec: dict[str, Any] | None) -> Outro | None:
 def _guardrail(spec: dict[str, Any] | None) -> Guardrail | None:
     if not spec:
         return None
+    attests = spec.get("attests") or {}
     return Guardrail(
         card=str(spec.get("card", "")),
         body=str(spec.get("body", "")),
         detector=str(spec.get("detector", "")),
+        attests_in=str(attests.get("in", "")),
+        attests_out=str(attests.get("out", "")),
     )
 
 

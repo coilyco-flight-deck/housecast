@@ -62,6 +62,12 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
                             ("card", g.card),
                             ("body", g.body),
                             ("detector", g.detector),
+                            (
+                                "attests",
+                                {"in": g.attests_in, "out": g.attests_out}
+                                if not g.reproducible
+                                else {},
+                            ),
                         )
                         if v
                     }
