@@ -102,7 +102,39 @@ rank 55.
 `pearson(divergence, length_cv) = +0.2603`, so the ordering is not simply short
 answers scoring high. That is the one negative control I could run.
 
-**The one I could not run is validity.** `just evalkit-coverage` reports 103
+## Validity, run 2026-09-10, and the ranking fails it
+
+The board was graded that night, all 105 by Kai, and `validity.py` beside this
+file asks the question the paragraph below said it could not. The ranking does
+not predict the grade.
+
+    binary (boundary, role-fit)   n=77, 16 deductions
+      pearson(divergence, deduction)  -0.1063
+      mean divergence, deducted        0.7347
+      mean divergence, kept            0.7502
+
+    fit (personality, voice)      n=28, 3 deductions
+      pearson(divergence, deduction)  +0.1610
+
+    worst-half prediction, the 12 pairs where exactly one half was deducted
+      dispersion named the deducted half   6 of 12
+
+Six of twelve is a coin flip, and on the binary cases the deducted responses
+were slightly *less* divergent than the kept ones, which is the wrong direction
+as well as a negligible size. The fit arm carries 3 deductions and settles
+nothing either way.
+
+This is one grader, so it is not the correlation `housecast#7158` asks for,
+which is dispersion against disagreement *between* graders. It is the weaker
+claim, and the weaker claim came back empty.
+
+What follows: `annotation-queue.csv` ordered this pass by divergence descending
+on the argument that it front-loads the unstable cases. It did not front-load
+the failures. The order cost nothing and bought nothing measurable. And
+`housecast#7009` selects its split-test pairs from this ranking, which is
+selecting on noise until a second grader says otherwise.
+
+**The one I could not run was validity.** `just evalkit-coverage` reports 103
 ungraded and 0 graded, and the 2026-09-01 dataset says "Nothing here is scored".
 There is no human-graded case anywhere in this repository, so I cannot show that
 lexical instability predicts grader disagreement. The link between them is an
