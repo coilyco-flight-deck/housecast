@@ -156,14 +156,16 @@ def check_grounding_lanes(roster: Roster) -> None:
 
 
 def check_guardrails(roster: Roster) -> None:
-    """Shape, not presence, while the seven are authored one at a time.
+    """Shape, not presence, because absence is now a decision rather than a gap.
 
-    Presence cannot be required yet, because a role with no guardrail correctly
-    derives no case and five are still unwritten. Shape is required now, because
-    a guardrail carrying a card and no body renders eagerly and has nothing to
-    load, and one carrying a body and no card is a procedure no seat is told to
-    follow. Both fail loudly here rather than deriving a case that grades
-    something nobody wrote.
+    Kai scoped the primitive to four roles on 2026-09-10: science, advocate,
+    director and sysadmin. Frontend, platform and gamedev are deliberately
+    without one, so presence stays unenforced and a role with no guardrail
+    correctly derives no case. Shape is required, because a guardrail carrying a
+    card and no body renders eagerly and has nothing to load, one carrying a body
+    and no card is a procedure no seat is told to follow, and an attested one
+    missing its targets derives a case in another role's vocabulary. All fail
+    loudly here rather than grading something nobody wrote.
     """
     for name in roster.role_order:
         guardrail = roster.roles[name].guardrail
@@ -173,6 +175,18 @@ def check_guardrails(roster: Roster) -> None:
             raise _error(f"role {name!r} declares a guardrail with no card half")
         if not guardrail.body.strip():
             raise _error(f"role {name!r} declares a guardrail with no body half")
+        authored = (guardrail.attests_in.strip(), guardrail.attests_out.strip())
+        if guardrail.reproducible:
+            if any(authored):
+                raise _error(
+                    f"role {name!r} names a detector and authors attests targets, "
+                    "which the deriver generates and would never read"
+                )
+        elif not all(authored):
+            raise _error(
+                f"role {name!r} declares an attested guardrail without both attests "
+                "targets, and there is no generic text to fall back on"
+            )
 
 
 def check_skill_frontmatter(roster: Roster) -> None:

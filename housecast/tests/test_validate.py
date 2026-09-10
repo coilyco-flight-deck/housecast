@@ -40,8 +40,11 @@ def test_a_role_with_no_grounding_lane_is_rejected(loaded: Roster) -> None:
         validate.check_grounding_lanes(loaded)
 
 
-def test_a_role_with_no_guardrail_is_accepted_while_five_are_unwritten(loaded: Roster) -> None:
-    """Presence cannot be required yet. Absence derives no case, which is correct."""
+def test_a_role_with_no_guardrail_is_accepted_because_absence_is_a_decision(
+    loaded: Roster,
+) -> None:
+    """Kai scoped the primitive to four roles. Frontend, platform and gamedev are
+    deliberately without one, so absence derives no case and that is correct."""
     loaded.roles["science"].guardrail = None
     validate.check_guardrails(loaded)
 
@@ -61,13 +64,61 @@ def test_a_guardrail_with_no_body_half_is_rejected(loaded: Roster) -> None:
 
 
 def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Roster) -> None:
-    """Both kinds exist in the shipped roster, so neither branch is derived-but-never-run."""
+    """Both kinds exist in the shipped roster, so neither branch is derived-but-never-run.
+
+    The four are Kai's, 2026-09-10. Frontend, platform and gamedev are deliberately
+    absent, so this is the scope decision written where a change to it has to pass.
+    """
     kinds = {
         name: role.guardrail.reproducible
         for name, role in loaded.roles.items()
         if role.guardrail is not None
     }
-    assert kinds == {"science": False, "advocate": True}
+    assert kinds == {
+        "sysadmin": False,
+        "science": False,
+        "director": False,
+        "advocate": True,
+    }
+
+
+def test_an_attested_guardrail_without_both_targets_is_rejected(loaded: Roster) -> None:
+    """There is no generic attested target. Without one authored here the deriver would
+    have to invent it, and every attested role would grade in one role's vocabulary."""
+    loaded.roles["science"].guardrail = roster.Guardrail(
+        card="the rail", body="the procedure", attests_in="pastes it"
+    )
+    with pytest.raises(roster.RosterError, match="without both attests targets"):
+        validate.check_guardrails(loaded)
+
+
+def test_a_reproducible_guardrail_authoring_attests_targets_is_rejected(
+    loaded: Roster,
+) -> None:
+    """The deriver generates both targets from the detector, so authored text beside one
+    is parsed and never read, which is the drift a kind enum would have introduced."""
+    loaded.roles["advocate"].guardrail = roster.Guardrail(
+        card="the rail",
+        body="the procedure",
+        detector="lint.py --strict",
+        attests_in="pastes it",
+        attests_out="says it did not",
+    )
+    with pytest.raises(roster.RosterError, match="would never read"):
+        validate.check_guardrails(loaded)
+
+
+def test_no_two_shipped_attested_guardrails_share_a_target(loaded: Roster) -> None:
+    """Science's MEASURED tag means nothing to a seat whose guardrail is reversibility.
+    A shared target is the tell that one role's vocabulary was applied to another."""
+    targets = [
+        half
+        for role in loaded.roles.values()
+        if role.guardrail is not None and not role.guardrail.reproducible
+        for half in (role.guardrail.attests_in, role.guardrail.attests_out)
+    ]
+    assert len(targets) == 6
+    assert len(set(targets)) == 6
 
 
 def test_owner_may_not_declare_the_boundary_it_owns(loaded: Roster) -> None:

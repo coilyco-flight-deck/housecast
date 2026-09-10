@@ -4,6 +4,7 @@ import copy
 from pathlib import Path
 from typing import Any
 
+import pytest
 import yaml
 
 from evalkit.matrix import (
@@ -289,7 +290,11 @@ def test_a_role_declaring_no_guardrail_derives_neither_half() -> None:
 def test_the_detector_key_is_the_whole_declaration_of_the_kind() -> None:
     """Presence of the key, not a kind string, so the label cannot drift from the content."""
     roster = copy.deepcopy(ROSTER)
-    roster["roles"]["platform"]["guardrail"] = {"card": "paste it", "body": "how"}
+    roster["roles"]["platform"]["guardrail"] = {
+        "card": "paste it",
+        "body": "how",
+        "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+    }
     roster["roles"]["devrel"]["guardrail"] = {
         "card": "lint it",
         "body": "how",
@@ -305,8 +310,13 @@ def test_the_two_kinds_are_different_cases_rather_than_one_case_reworded() -> No
     independent reproduction as the same evidence, which is the defect the split exists
     to prevent, so the negative control is that no target survives changing the kind."""
     attested = copy.deepcopy(ROSTER)
-    attested["roles"]["platform"]["guardrail"] = {"card": "c", "body": "b"}
+    attested["roles"]["platform"]["guardrail"] = {
+        "card": "c",
+        "body": "b",
+        "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+    }
     reproducible = copy.deepcopy(attested)
+    del reproducible["roles"]["platform"]["guardrail"]["attests"]
     reproducible["roles"]["platform"]["guardrail"]["detector"] = "lint.py --strict"
 
     def targets(roster: dict[str, Any]) -> dict[Half | None, str]:
@@ -316,20 +326,39 @@ def test_the_two_kinds_are_different_cases_rather_than_one_case_reworded() -> No
     assert one[Half.IN] != two[Half.IN]
     assert one[Half.OUT] != two[Half.OUT]
     assert "lint.py --strict" in two[Half.IN] and "lint.py --strict" in two[Half.OUT]
-    assert "MEASURED" in one[Half.IN] and "EXPECTED" in one[Half.OUT]
+    assert one[Half.IN] == "pastes the artifact" and one[Half.OUT] == "marks what it cannot show"
 
 
 def test_the_guardrail_out_half_catches_suppression_rather_than_fabrication() -> None:
     """A seat that never makes a gated claim passes the in-half perfectly, so the
     out-half is the only case standing between the guardrail and silence."""
     roster = copy.deepcopy(ROSTER)
-    roster["roles"]["platform"]["guardrail"] = {"card": "c", "body": "b"}
+    roster["roles"]["platform"]["guardrail"] = {
+        "card": "c",
+        "body": "b",
+        "attests": {"in": "pastes it", "out": "makes the claim rather than withholding it"},
+    }
 
     cases = [c for c in derive(roster) if c.test_type == GUARDRAIL]
     assert [c.id for c in cases] == ["platform-grd-in", "platform-grd-out"]
     assert all(c.pair_id == "platform-grd" for c in cases)
     out = next(c.target or "" for c in cases if c.half is Half.OUT)
     assert "rather than withholding" in out
+
+
+def test_an_attested_guardrail_missing_a_target_raises_rather_than_deriving() -> None:
+    """No generic attested text exists to fall back on. Falling back would grade every
+    attested role in whichever role's vocabulary was written first, so the deriver has
+    to refuse rather than quietly produce a case in the wrong register."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["platform"]["guardrail"] = {
+        "card": "c",
+        "body": "b",
+        "attests": {"in": "pastes it"},
+    }
+
+    with pytest.raises(ValueError, match="no out-half target"):
+        derive(roster)
 
 
 def test_an_archived_role_is_the_subject_of_no_challenge() -> None:
