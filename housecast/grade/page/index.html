@@ -848,7 +848,7 @@ mark.ev {
     </div>
 
     <div class="keys">
-      <kbd>j</kbd> <kbd>k</kbd> next // previous card<br>
+      <kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>j</kbd> <kbd>k</kbd> previous // next<br>
       <kbd>g</kbd> <kbd>G</kbd> first // last<br>
       <kbd>+</kbd> <kbd>-</kbd> type size<br>
       <kbd>p</kbd> <kbd>x</kbd> // <kbd>f</kbd> <kbd>u</kbd> <kbd>n</kbd> grade this case<br>
@@ -1567,6 +1567,9 @@ function setTheme(theme) {
 }
 
 function setView(mode) {
+  // "pending" means nobody has chosen: a grading session opens as a deck and an
+  // export opens as the scroll it has always been. It never reaches the DOM.
+  if (mode === "pending") return;
   document.documentElement.setAttribute("data-view", mode);
   document.getElementById("view").setAttribute("aria-pressed", String(mode === "deck"));
   document.getElementById("view").textContent = mode === "deck" ? "scroll" : "deck";
@@ -1615,7 +1618,8 @@ function wireControls() {
   if (isNaN(zoomIndex)) zoomIndex = 1;
   zoomIndex = setZoom(zoomIndex);
   setTheme(readStored("housecast.theme") === "light" ? "light" : "dark");
-  setView(readStored("housecast.view") === "deck" ? "deck" : "scroll");
+  var storedView = readStored("housecast.view");
+  setView(storedView === "deck" || storedView === "scroll" ? storedView : "pending");
 
   document.getElementById("zoom-in").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex + 1); });
   document.getElementById("zoom-out").addEventListener("click", function () { zoomIndex = setZoom(zoomIndex - 1); });
@@ -1639,8 +1643,8 @@ function wireControls() {
     if (isGradingKey(event.key)) { gradeByKey(event.key); event.preventDefault(); return; }
 
     switch (event.key) {
-      case "j": focusUnit(state.current + 1); break;
-      case "k": focusUnit(state.current - 1); break;
+      case "ArrowRight": case "j": focusUnit(state.current + 1); break;
+      case "ArrowLeft": case "k": focusUnit(state.current - 1); break;
       case "g": focusUnit(0); break;
       case "G": focusUnit(visibleUnits().length - 1); break;
       case "+": case "=": zoomIndex = setZoom(zoomIndex + 1); break;
@@ -1660,6 +1664,7 @@ load().then(function (model) {
   if (!model) { drawNoData(); return; }
   state.model = model;
   state.canWrite = model.source === "serve";
+  if (readStored("housecast.view") === null) setView(state.canWrite ? "deck" : "scroll");
   state.units = group(model.cases);
   drawRail(model);
   buildMap(model);
