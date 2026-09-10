@@ -251,8 +251,10 @@ def guardrail_challenges(roster: dict[str, Any]) -> list[Challenge]:
     independent reproduction as the same evidence.
     """
     challenges: list[Challenge] = []
+    declared = roster.get("guardrails") or {}
     for role in active_roles(roster):
-        spec = roster["roles"][role].get("guardrail") or {}
+        slug = str(roster["roles"][role].get("guardrail", ""))
+        spec = declared.get(slug) or {}
         if not str(spec.get("card", "")).strip():
             continue
         detector = str(spec.get("detector", "")).strip()

@@ -129,6 +129,9 @@ def _selected_bodies(roster: Roster, role_name: str) -> list[tuple[str, str]]:
     bodies += [
         (roster.personalities[n].skill, roster.personalities[n].body) for n in role.personalities
     ]
+    if role.guardrail:
+        guardrail = roster.guardrails[role.guardrail]
+        bodies.append((guardrail.skill, guardrail.body))
     return bodies
 
 
@@ -150,6 +153,11 @@ def manifest(
     for name in sorted(role.personalities):
         binding = roster.personalities[name]
         content.append({"id": f"{source}:skill:{binding.skill}", "digest": digest(binding.body)})
+    if role.guardrail:
+        guardrail = roster.guardrails[role.guardrail]
+        content.append(
+            {"id": f"{source}:skill:{guardrail.skill}", "digest": digest(guardrail.body)}
+        )
     return {
         "format": "agent-compose.bundle",
         "role": role_name,
@@ -159,6 +167,7 @@ def manifest(
         "model_tier": model_tier,
         "personalities": list(role.personalities),
         "boundaries": active,
+        **({"guardrail": role.guardrail} if role.guardrail else {}),
         "color": role.favorite_color,
         "identity": identity,
         "sources": [source],
@@ -308,6 +317,18 @@ def trace(roster: Roster, role_name: str, delivery: str = "native-skills") -> di
             }
         )
         context_bytes += len(boundary.body.encode())
+    if role.guardrail:
+        guardrail = roster.guardrails[role.guardrail]
+        decisions.append(
+            {
+                "subject": f"skill:{guardrail.skill}",
+                "kind": "skill",
+                "source": source,
+                "outcome": "selected",
+                "reason": f'role "{role_name}" names guardrail "{role.guardrail}"',
+            }
+        )
+        context_bytes += len(guardrail.body.encode())
     decisions.append(
         {
             "subject": "content/instructions.md",
@@ -335,7 +356,7 @@ def trace(roster: Roster, role_name: str, delivery: str = "native-skills") -> di
             }
         )
 
-    skills = 1 + len(active) + len(role.personalities)
+    skills = 1 + len(active) + len(role.personalities) + bool(role.guardrail)
     return {
         "format": "agent-compose.trace",
         "decisions": decisions,

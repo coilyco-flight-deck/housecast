@@ -156,37 +156,52 @@ def check_grounding_lanes(roster: Roster) -> None:
 
 
 def check_guardrails(roster: Roster) -> None:
-    """Shape, not presence, because absence is now a decision rather than a gap.
+    """Shape and binding, not presence, because absence is a decision.
 
     Kai scoped the primitive to four roles on 2026-09-10: science, advocate,
     director and sysadmin. Frontend, platform and gamedev are deliberately
     without one, so presence stays unenforced and a role with no guardrail
-    correctly derives no case. Shape is required, because a guardrail carrying a
-    card and no body renders eagerly and has nothing to load, one carrying a body
-    and no card is a procedure no seat is told to follow, and an attested one
-    missing its targets derives a case in another role's vocabulary. All fail
-    loudly here rather than grading something nobody wrote.
+    correctly derives no case.
+
+    The binding is checked in both directions. A guardrail is a first-class
+    element now, so the role names the slug and the guardrail names the role, and
+    a half-written binding leaves either an element that reaches no bundle or a
+    role pointing at nothing. Both used to be representable and neither was
+    caught.
     """
-    for name in roster.role_order:
-        guardrail = roster.roles[name].guardrail
-        if guardrail is None:
-            continue
+    if set(roster.guardrail_order) != set(roster.guardrails):
+        raise _error("guardrail_order and the guardrails map name different sets")
+
+    for name in roster.guardrail_order:
+        guardrail = roster.guardrails[name]
         if not guardrail.card.strip():
-            raise _error(f"role {name!r} declares a guardrail with no card half")
+            raise _error(f"guardrail {name!r} has no card half")
         if not guardrail.body.strip():
-            raise _error(f"role {name!r} declares a guardrail with no body half")
+            raise _error(f"guardrail {name!r} has no body half")
         authored = (guardrail.attests_in.strip(), guardrail.attests_out.strip())
         if guardrail.reproducible:
             if any(authored):
                 raise _error(
-                    f"role {name!r} names a detector and authors attests targets, "
+                    f"guardrail {name!r} names a detector and authors attests targets, "
                     "which the deriver generates and would never read"
                 )
         elif not all(authored):
             raise _error(
-                f"role {name!r} declares an attested guardrail without both attests "
-                "targets, and there is no generic text to fall back on"
+                f"guardrail {name!r} is attested without both attests targets, "
+                "and there is no generic text to fall back on"
             )
+        if guardrail.role not in roster.roles:
+            raise _error(f"guardrail {name!r} names unknown role {guardrail.role!r}")
+        if roster.roles[guardrail.role].guardrail != name:
+            raise _error(
+                f"guardrail {name!r} claims role {guardrail.role!r}, which does not "
+                "name it back, so one side of the binding is unreachable"
+            )
+
+    for name in roster.role_order:
+        slug = roster.roles[name].guardrail
+        if slug and slug not in roster.guardrails:
+            raise _error(f"role {name!r} names unknown guardrail {slug!r}")
 
 
 def check_skill_frontmatter(roster: Roster) -> None:
@@ -194,6 +209,7 @@ def check_skill_frontmatter(roster: Roster) -> None:
     entries = [(r.skill, r.body) for r in roster.roles.values()]
     entries += [(p.skill, p.body) for p in roster.personalities.values()]
     entries += [(b.skill, b.body) for b in roster.boundaries.values()]
+    entries += [(g.skill, g.body) for g in roster.guardrails.values()]
     for skill, body in entries:
         frontmatter, _ = split_frontmatter(body, skill)
         if f"\nname: {skill}\n" not in "\n" + frontmatter + "\n":

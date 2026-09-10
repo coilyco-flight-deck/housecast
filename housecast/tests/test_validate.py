@@ -40,25 +40,41 @@ def test_a_role_with_no_grounding_lane_is_rejected(loaded: Roster) -> None:
         validate.check_grounding_lanes(loaded)
 
 
+def _rail(**kw: object) -> roster.Guardrail:
+    """A guardrail with the binding already correct, so a test varies one thing."""
+    fields: dict[str, object] = {
+        "name": "provable-results",
+        "skill": "guardrail-provable-results",
+        "role": "science",
+        "card": "the rail",
+        "body": "the procedure",
+        "attests_in": "pastes it",
+        "attests_out": "marks what it cannot show",
+    }
+    fields.update(kw)
+    return roster.Guardrail(**fields)  # type: ignore[arg-type]
+
+
 def test_a_role_with_no_guardrail_is_accepted_because_absence_is_a_decision(
     loaded: Roster,
 ) -> None:
     """Kai scoped the primitive to four roles. Frontend, platform and gamedev are
     deliberately without one, so absence derives no case and that is correct."""
-    loaded.roles["science"].guardrail = None
+    assert [name for name, role in loaded.roles.items() if not role.guardrail]
     validate.check_guardrails(loaded)
 
 
 def test_a_guardrail_with_no_card_half_is_rejected(loaded: Roster) -> None:
-    """A body with no card is a procedure no seat is ever told to follow."""
-    loaded.roles["science"].guardrail = roster.Guardrail(card="  ", body="the procedure")
+    """A card with no text renders an empty eager section, and the correction that was
+    supposed to fire without being loaded fires not at all."""
+    loaded.guardrails["provable-results"] = _rail(card="  ")
     with pytest.raises(roster.RosterError, match="no card half"):
         validate.check_guardrails(loaded)
 
 
 def test_a_guardrail_with_no_body_half_is_rejected(loaded: Roster) -> None:
-    """A card with no body renders eagerly and has nothing behind it to load."""
-    loaded.roles["science"].guardrail = roster.Guardrail(card="the rail", body="")
+    """A card with no body points the seat at a skill that carries no procedure."""
+    loaded.guardrails["provable-results"] = _rail(body="")
     with pytest.raises(roster.RosterError, match="no body half"):
         validate.check_guardrails(loaded)
 
@@ -69,11 +85,7 @@ def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Rost
     The four are Kai's, 2026-09-10. Frontend, platform and gamedev are deliberately
     absent, so this is the scope decision written where a change to it has to pass.
     """
-    kinds = {
-        name: role.guardrail.reproducible
-        for name, role in loaded.roles.items()
-        if role.guardrail is not None
-    }
+    kinds = {g.role: g.reproducible for g in loaded.guardrails.values()}
     assert kinds == {
         "sysadmin": False,
         "science": False,
@@ -85,9 +97,7 @@ def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Rost
 def test_an_attested_guardrail_without_both_targets_is_rejected(loaded: Roster) -> None:
     """There is no generic attested target. Without one authored here the deriver would
     have to invent it, and every attested role would grade in one role's vocabulary."""
-    loaded.roles["science"].guardrail = roster.Guardrail(
-        card="the rail", body="the procedure", attests_in="pastes it"
-    )
+    loaded.guardrails["provable-results"] = _rail(attests_out="")
     with pytest.raises(roster.RosterError, match="without both attests targets"):
         validate.check_guardrails(loaded)
 
@@ -97,14 +107,23 @@ def test_a_reproducible_guardrail_authoring_attests_targets_is_rejected(
 ) -> None:
     """The deriver generates both targets from the detector, so authored text beside one
     is parsed and never read, which is the drift a kind enum would have introduced."""
-    loaded.roles["advocate"].guardrail = roster.Guardrail(
-        card="the rail",
-        body="the procedure",
-        detector="lint.py --strict",
-        attests_in="pastes it",
-        attests_out="says it did not",
-    )
+    loaded.guardrails["provable-results"] = _rail(detector="lint.py --strict")
     with pytest.raises(roster.RosterError, match="would never read"):
+        validate.check_guardrails(loaded)
+
+
+def test_a_guardrail_whose_role_does_not_name_it_back_is_rejected(loaded: Roster) -> None:
+    """Half a binding is the failure that made the primitive undeliverable: an element
+    the composer never reaches, or a role pointing at nothing. Both were representable."""
+    loaded.guardrails["provable-results"] = _rail(role="platform")
+    with pytest.raises(roster.RosterError, match="does not name it back"):
+        validate.check_guardrails(loaded)
+
+
+def test_a_role_naming_an_unknown_guardrail_is_rejected(loaded: Roster) -> None:
+    """The other half of the same binding."""
+    loaded.roles["platform"].guardrail = "no-such-rail"
+    with pytest.raises(roster.RosterError, match="unknown guardrail"):
         validate.check_guardrails(loaded)
 
 
@@ -113,9 +132,9 @@ def test_no_two_shipped_attested_guardrails_share_a_target(loaded: Roster) -> No
     A shared target is the tell that one role's vocabulary was applied to another."""
     targets = [
         half
-        for role in loaded.roles.values()
-        if role.guardrail is not None and not role.guardrail.reproducible
-        for half in (role.guardrail.attests_in, role.guardrail.attests_out)
+        for g in loaded.guardrails.values()
+        if not g.reproducible
+        for half in (g.attests_in, g.attests_out)
     ]
     assert len(targets) == 6
     assert len(set(targets)) == 6
