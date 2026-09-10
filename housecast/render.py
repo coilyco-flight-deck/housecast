@@ -57,11 +57,20 @@ def identity_card(roster: Roster, role_name: str) -> str:
         out.append("**Role methods // `" + "` // `".join(role.methods) + "`**\n")
     if boundary_skills:
         out.append("**Boundaries // `" + "` // `".join(boundary_skills) + "`**\n")
+    if role.guardrail:
+        out.append(f"**Guardrail // `{roster.guardrails[role.guardrail].skill}`**\n")
     out.append(f"**Favorite color // `{role.favorite_color}`**\n")
     out.append(f"**Agent // {role.identity_name} ({role.identity_pronouns})**\n")
     if role.seats:
         seats = "".join(f" // {seat.key or seat.harness}" for seat in role.seats)
         out.append("**Seats" + seats + "**\n")
+    # Ahead of the meld on purpose: a correction arriving after five kilobytes of
+    # register guidance competes with it rather than bounding it.
+    if role.guardrail:
+        guardrail = roster.guardrails[role.guardrail]
+        out.append(f"\n## Guardrail // {display_slug(role.guardrail)}\n\n")
+        out.append(f"{guardrail.card.strip()}\n\n")
+        out.append(f"The procedure is `{guardrail.skill}`. Load it before you rely on it.\n")
     out.append("\n## Personality meld\n\n")
     for name in role.personalities:
         binding = roster.personalities[name]
@@ -132,6 +141,8 @@ def identity_card(roster: Roster, role_name: str) -> str:
 
     named = [role.skill, *boundary_skills]
     named += [roster.personalities[name].skill for name in role.personalities]
+    if role.guardrail:
+        named.append(roster.guardrails[role.guardrail].skill)
     sizes = skill_body_sizes(roster, role_name, named)
     total = sum(sizes.values())
     out.append("## Active doctrine\n\n")
@@ -153,6 +164,7 @@ def skill_body_sizes(roster: Roster, role_name: str, named: list[str]) -> dict[s
     bodies = {roster.roles[role_name].skill: roster.roles[role_name].body}
     bodies.update({b.skill: b.body for b in roster.boundaries.values()})
     bodies.update({p.skill: p.body for p in roster.personalities.values()})
+    bodies.update({g.skill: g.body for g in roster.guardrails.values()})
     sizes: dict[str, int] = {}
     for skill in named:
         if skill in sizes or skill not in bodies:

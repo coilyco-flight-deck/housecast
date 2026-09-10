@@ -54,27 +54,7 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
             "skill_source": role.skill_source,
             "stance": role.stance,
             "grounding": role.grounding,
-            **(
-                {
-                    "guardrail": {
-                        k: v
-                        for k, v in (
-                            ("card", g.card),
-                            ("body", g.body),
-                            ("detector", g.detector),
-                            (
-                                "attests",
-                                {"in": g.attests_in, "out": g.attests_out}
-                                if not g.reproducible
-                                else {},
-                            ),
-                        )
-                        if v
-                    }
-                }
-                if (g := role.guardrail)
-                else {}
-            ),
+            **({"guardrail": role.guardrail} if role.guardrail else {}),
             "supported_model_tiers": list(role.supported_model_tiers),
             "boundaries": list(role.defers),
             "scoped_boundaries": [{"name": s.name, "scope": s.scope} for s in role.scoped],
@@ -123,6 +103,21 @@ def person_snapshot(roster: Roster) -> dict[str, Any]:
                 **({"voice": v} if (v := _voice(p.voice)) else {}),
             }
             for name, p in roster.personalities.items()
+        },
+        "guardrail_order": list(roster.guardrail_order),
+        "guardrails": {
+            name: {
+                "skill": g.skill,
+                "role": g.role,
+                "card": g.card,
+                **({"detector": g.detector} if g.reproducible else {}),
+                **(
+                    {}
+                    if g.reproducible
+                    else {"attests": {"in": g.attests_in, "out": g.attests_out}}
+                ),
+            }
+            for name, g in roster.guardrails.items()
         },
     }
 

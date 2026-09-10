@@ -102,3 +102,34 @@ def test_snapshot_round_trips_through_json(loaded: Roster) -> None:
 def test_favorite_colors_are_distinct(loaded: Roster) -> None:
     colors = [loaded.roles[n].favorite_color for n in loaded.role_order]
     assert len(set(colors)) == len(colors)
+
+
+def test_a_guardrail_reaches_the_bundle_both_eagerly_and_as_a_skill(tmp_path: pathlib.Path) -> None:
+    """The defect that made the primitive first-class. As a field on a role it derived
+    eight board cases and entered no bundle at all, so four seats were graded against an
+    instruction none of them was ever given. Nothing failed, because nothing looked."""
+    loaded = roster.load()
+    out = compose.compose(loaded, "science", "frontier", tmp_path / "bundle")
+
+    guardrail = loaded.guardrails[loaded.roles["science"].guardrail]
+    instructions = (out / "content" / "instructions.md").read_text()
+    assert guardrail.card.strip() in instructions
+    assert guardrail.skill in instructions
+    assert [p.parent.name for p in out.rglob("SKILL.md") if p.parent.name == guardrail.skill]
+
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["guardrail"] == "provable-results"
+    ids = [entry["id"] for entry in manifest["content"]]
+    assert f"{loaded.source}:skill:{guardrail.skill}" in ids
+
+
+def test_a_role_without_a_guardrail_renders_no_guardrail_section(tmp_path: pathlib.Path) -> None:
+    """The negative control. Three roles are deliberately without one, so the eager
+    section has to be absent rather than empty, and the skill must not be emitted."""
+    loaded = roster.load()
+    assert not loaded.roles["platform"].guardrail
+    out = compose.compose(loaded, "platform", "frontier", tmp_path / "bundle")
+
+    assert "## Guardrail" not in (out / "content" / "instructions.md").read_text()
+    assert not [p for p in out.rglob("SKILL.md") if p.parent.name.startswith("guardrail-")]
+    assert "guardrail" not in json.loads((out / "manifest.json").read_text())

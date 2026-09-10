@@ -42,7 +42,17 @@ class Voice:
 
 @dataclass(frozen=True)
 class Guardrail:
-    """One strong course correction per role, standing beside the role body.
+    """One strong course correction, a first-class element beside role and boundary.
+
+    It is an element rather than a field on a role because a rule the seat is
+    supposed to follow belongs on the same layer as the rules it sits among. As a
+    field it had no skill, no body in the composed tree, and reached no bundle at
+    all: the board derived cases against an instruction nobody was ever given.
+
+    `card` renders eager into the identity card, so the correction fires without
+    the seat choosing to load anything, and `body` is the lazy SKILL.md carrying
+    the procedure. A lazy-only guardrail is a guardrail that fires after the
+    mistake.
 
     `detector` carries the whole reproducible-attested split. A guardrail naming
     a detector can be re-run by a grader, so its evidence is independent of the
@@ -59,6 +69,9 @@ class Guardrail:
     attested guardrail in whichever role's vocabulary was written first.
     """
 
+    name: str
+    skill: str
+    role: str
     card: str
     body: str
     detector: str = ""
@@ -176,9 +189,9 @@ class Role:
     # The class of fact this role's function depends on, per-role because the
     # evidence differs. See docs/grading-grounding.md.
     grounding: str = ""
-    # Optional while the seven are authored one at a time: `check_guardrails`
-    # enforces shape rather than presence, so an absent one derives no case.
-    guardrail: Guardrail | None = None
+    # The slug of this role's guardrail, or empty. Four roles carry one by Kai's
+    # scope decision, so absence is a decision rather than a gap.
+    guardrail: str = ""
     outro: Outro | None = None
     voice: Voice | None = None
     acts: list[Act] = field(default_factory=list)
@@ -202,6 +215,8 @@ class Roster:
     boundary_order: list[str]
     boundaries: dict[str, Boundary]
     personalities: dict[str, Personality]
+    guardrail_order: list[str]
+    guardrails: dict[str, Guardrail]
     role_order: list[str]
     roles: dict[str, Role]
     raw: bytes = field(default=b"", repr=False)
@@ -255,11 +270,12 @@ def _outro(spec: dict[str, Any] | None) -> Outro | None:
     return Outro(clean=str(spec.get("clean", "")), failure=str(spec.get("failure", "")))
 
 
-def _guardrail(spec: dict[str, Any] | None) -> Guardrail | None:
-    if not spec:
-        return None
+def _guardrail(name: str, spec: dict[str, Any]) -> Guardrail:
     attests = spec.get("attests") or {}
     return Guardrail(
+        name=name,
+        skill=spec["skill"],
+        role=spec["role"],
         card=str(spec.get("card", "")),
         body=str(spec.get("body", "")),
         detector=str(spec.get("detector", "")),
@@ -297,6 +313,9 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
         )
         for name, spec in doc["personalities"].items()
     }
+    guardrails = {
+        name: _guardrail(name, spec) for name, spec in (doc.get("guardrails") or {}).items()
+    }
     roles = {}
     for name, spec in doc["roles"].items():
         roles[name] = Role(
@@ -323,7 +342,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             creature=str(spec.get("creature", "")),
             element=str(spec.get("element", "")),
             grounding=str(spec.get("grounding", "")),
-            guardrail=_guardrail(spec.get("guardrail")),
+            guardrail=str(spec.get("guardrail", "")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
             archived=bool(spec.get("archived", False)),
@@ -335,6 +354,8 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
         boundary_order=list(doc["boundary_order"]),
         boundaries=boundaries,
         personalities=personalities,
+        guardrail_order=list(doc.get("guardrail_order") or []),
+        guardrails=guardrails,
         role_order=list(doc["role_order"]),
         roles=roles,
         raw=raw,

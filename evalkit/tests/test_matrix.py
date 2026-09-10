@@ -290,16 +290,16 @@ def test_a_role_declaring_no_guardrail_derives_neither_half() -> None:
 def test_the_detector_key_is_the_whole_declaration_of_the_kind() -> None:
     """Presence of the key, not a kind string, so the label cannot drift from the content."""
     roster = copy.deepcopy(ROSTER)
-    roster["roles"]["platform"]["guardrail"] = {
-        "card": "paste it",
-        "body": "how",
-        "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+    roster["guardrails"] = {
+        "attested-rail": {
+            "role": "platform",
+            "card": "paste it",
+            "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+        },
+        "detector-rail": {"role": "devrel", "card": "lint it", "detector": "lint.py --strict"},
     }
-    roster["roles"]["devrel"]["guardrail"] = {
-        "card": "lint it",
-        "body": "how",
-        "detector": "lint.py --strict",
-    }
+    roster["roles"]["platform"]["guardrail"] = "attested-rail"
+    roster["roles"]["devrel"]["guardrail"] = "detector-rail"
 
     kinds = {c.entity: c.attribute for c in derive(roster) if c.test_type == GUARDRAIL}
     assert kinds == {"platform": "attested", "devrel": "reproducible"}
@@ -310,14 +310,17 @@ def test_the_two_kinds_are_different_cases_rather_than_one_case_reworded() -> No
     independent reproduction as the same evidence, which is the defect the split exists
     to prevent, so the negative control is that no target survives changing the kind."""
     attested = copy.deepcopy(ROSTER)
-    attested["roles"]["platform"]["guardrail"] = {
-        "card": "c",
-        "body": "b",
-        "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+    attested["guardrails"] = {
+        "rail": {
+            "role": "platform",
+            "card": "c",
+            "attests": {"in": "pastes the artifact", "out": "marks what it cannot show"},
+        }
     }
+    attested["roles"]["platform"]["guardrail"] = "rail"
     reproducible = copy.deepcopy(attested)
-    del reproducible["roles"]["platform"]["guardrail"]["attests"]
-    reproducible["roles"]["platform"]["guardrail"]["detector"] = "lint.py --strict"
+    del reproducible["guardrails"]["rail"]["attests"]
+    reproducible["guardrails"]["rail"]["detector"] = "lint.py --strict"
 
     def targets(roster: dict[str, Any]) -> dict[Half | None, str]:
         return {c.half: c.target or "" for c in derive(roster) if c.test_type == GUARDRAIL}
@@ -333,11 +336,14 @@ def test_the_guardrail_out_half_catches_suppression_rather_than_fabrication() ->
     """A seat that never makes a gated claim passes the in-half perfectly, so the
     out-half is the only case standing between the guardrail and silence."""
     roster = copy.deepcopy(ROSTER)
-    roster["roles"]["platform"]["guardrail"] = {
-        "card": "c",
-        "body": "b",
-        "attests": {"in": "pastes it", "out": "makes the claim rather than withholding it"},
+    roster["guardrails"] = {
+        "rail": {
+            "role": "platform",
+            "card": "c",
+            "attests": {"in": "pastes it", "out": "makes the claim rather than withholding it"},
+        }
     }
+    roster["roles"]["platform"]["guardrail"] = "rail"
 
     cases = [c for c in derive(roster) if c.test_type == GUARDRAIL]
     assert [c.id for c in cases] == ["platform-grd-in", "platform-grd-out"]
@@ -351,11 +357,10 @@ def test_an_attested_guardrail_missing_a_target_raises_rather_than_deriving() ->
     attested role in whichever role's vocabulary was written first, so the deriver has
     to refuse rather than quietly produce a case in the wrong register."""
     roster = copy.deepcopy(ROSTER)
-    roster["roles"]["platform"]["guardrail"] = {
-        "card": "c",
-        "body": "b",
-        "attests": {"in": "pastes it"},
+    roster["guardrails"] = {
+        "rail": {"role": "platform", "card": "c", "attests": {"in": "pastes it"}}
     }
+    roster["roles"]["platform"]["guardrail"] = "rail"
 
     with pytest.raises(ValueError, match="no out-half target"):
         derive(roster)

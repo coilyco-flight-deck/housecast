@@ -22,6 +22,10 @@ import yaml
 ROSTER = pathlib.Path(__file__).resolve().parent.parent / "housecast" / "data" / "roster.yaml"
 
 KINDS = {"role": "roles", "personality": "personalities", "boundary": "boundaries"}
+
+# The sections this script owns. Guardrails are outside it: agent-compose's
+# `internal/person` refuses a fourth entity prefix in the seed tree.
+VENDORED = "|".join(KINDS.values())
 SIDES = {"own", "scoped", "defer"}
 
 
@@ -67,6 +71,10 @@ def read_source(data: pathlib.Path) -> dict[str, dict[str, dict]]:
 
 
 def render_acts(acts: list[dict], indent: str) -> list[str]:
+    # A guardrail declares none, and a bare `acts:` key with nothing under it is
+    # a null the loader has to special-case. Emit nothing instead.
+    if not acts:
+        return []
     lines = [f"{indent}acts:"]
     for act in acts:
         lines.append(f'{indent}  - tool: "{act["tool"]}"')
@@ -84,8 +92,15 @@ def rewrite(text: str, source: dict[str, dict[str, dict]]) -> str:
     index = 0
     while index < len(lines):
         line = lines[index]
-        if re.fullmatch(r"(roles|personalities|boundaries):", line):
+        if re.fullmatch(rf"({VENDORED}):", line):
             section = line[:-1]
+            out.append(line)
+            index += 1
+            continue
+        if re.fullmatch(r"[a-z_]+:.*", line):
+            # Ends the owned section. Without it `guardrails:` inherited
+            # `personalities:` and looked its entities up in the wrong source map.
+            section = ""
             out.append(line)
             index += 1
             continue
