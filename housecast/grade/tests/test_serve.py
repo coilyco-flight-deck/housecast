@@ -3,6 +3,7 @@ import pathlib
 import pytest
 from fastapi.testclient import TestClient
 
+from housecast.grade import seal, serve
 from housecast.grade.export import build_run
 from housecast.grade.io import (
     GraderNameRejectedError,
@@ -348,3 +349,22 @@ def test_the_served_payload_follows_the_queue(tmp_path: pathlib.Path) -> None:
     write_queue(tmp_path, *QUEUED)
     payload = TestClient(create_app(GradingSession.open(tmp_path))).get("/api/session").json()
     assert [case["id"] for case in payload["cases"]] == QUEUED
+
+
+def test_the_shipped_page_is_mounted_by_default(run_dir: pathlib.Path) -> None:
+    """A session with no page mounted answers the API and shows a grader nothing.
+
+    That reads as a working server right up until someone opens it, which is how
+    a page that could already grade got recorded as a viewer.
+    """
+    app = serve.create_app(serve.GradingSession.open(run_dir), static=seal.PAGE.parent)
+    with TestClient(app) as client:
+        root = client.get("/")
+    assert root.status_code == 200
+    assert "housecast" in root.text.lower()
+
+
+def test_the_packaged_page_is_where_the_default_points() -> None:
+    assert seal.PAGE.name == "index.html"
+    assert seal.PAGE.parent.is_dir()
+    assert seal.PAGE.exists()

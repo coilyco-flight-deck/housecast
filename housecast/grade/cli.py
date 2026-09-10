@@ -602,7 +602,12 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
 @click.option(
     "--static",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
-    help="a built grading page to mount at /",
+    help="a grading page to mount at /, defaulting to the one this package ships",
+)
+@click.option(
+    "--no-page",
+    is_flag=True,
+    help="mount no page and serve the API alone",
 )
 @click.option(
     "--grader",
@@ -630,6 +635,7 @@ def serve_command(
     profile_path: Path | None,
     roster: Path | None,
     static: Path | None,
+    no_page: bool,
     grader: str | None,
     use_queue: bool,
     host: str,
@@ -638,6 +644,10 @@ def serve_command(
 ) -> None:
     """Hold one run open for grading in a browser."""
     intro(context)
+    # An unmounted page reads as a working session until a grader opens it.
+    # See docs/grading-surfaces.md.
+    if static is None and not no_page:
+        static = seal_mod.PAGE.parent
     profile = load_profile(profile_path)
     roster_data = load_roster(roster)
     # Checked before the run is loaded, so a refused bind costs nothing and the
