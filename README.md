@@ -2,8 +2,8 @@
 
 Agent context, cast from one roster
 
-The bundle an agent gets and the board that grades it come from the same file,
-so what ships is what was tested. housecast reads roster data authored
+Change what a role may do and the evaluation that checks it moves with it, in
+the same commit. housecast reads roster data authored
 as YAML (roles, personalities, boundaries, and the invariant), validates it,
 resolves each role's personality meld and boundary allocation, derives the
 identity primitives including each role's favorite color, and emits an

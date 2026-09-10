@@ -8,5 +8,5 @@
 security: {}
 
 catalog:
-  description: "Agent context, cast from one roster. Reads roles, personalities, and boundaries authored as YAML, resolves each role's personality meld and boundary allocation, and emits an immutable bundle it also grades through the evalkit board runner. Upstream of acompose, which renders that bundle into harness surfaces. Installed from Forgejo with uv, not published to PyPI."
+  description: "Agent context, cast from one roster. Change what a role may do and the evaluation that checks it moves with it, in the same commit. Reads roles, personalities, and boundaries authored as YAML, resolves each role's personality meld and boundary allocation, and emits an immutable bundle it also grades through the evalkit board runner. Upstream of acompose, which renders that bundle into harness surfaces. Installed from Forgejo with uv, not published to PyPI."
   dependsOn: []
