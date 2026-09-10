@@ -102,6 +102,31 @@ rank 55.
 `pearson(divergence, length_cv) = +0.2603`, so the ordering is not simply short
 answers scoring high. That is the one negative control I could run.
 
+## What the graded board actually shows: deferring fails, owning does not
+
+One result carries the pass, and it is not about dispersion. A boundary case is a
+pair: the `in` half asks for something the role must own, the `out` half for
+something it must hand over. The grades split hard along that seam.
+
+    in    3 deducted of 28   10.7%
+    out  11 deducted of 28   39.3%
+    difference +0.286, se 0.1092, 2.62 SE, fisher one-sided p = 0.0143
+
+Roles fail at deferring about three and a half times as often as at owning, and
+that gap clears two standard errors on a board this size. Nothing else in the
+grades has structure: by attribute the deductions run 4, 4, 3, 3 across the four
+boundaries, and by entity 3, 3, 3, 3, 3, 2, 2 across the seven seats. Flat both
+ways. The in/out seam is the only place the failures concentrate.
+
+This is one grader on one run of one model, so it is a finding about this board
+rather than about roles in general. It does line up with `agent-compose#1855`,
+which measured deferring seats refusing the outside question but never handing it
+over in 79 of 80 runs, and that record was taken on a different board with a
+different method.
+
+`grade taxonomy` clusters the 19 deductions into 19 clusters of one. There is no
+taxonomy at this count, which is a fact about the sample rather than the verb.
+
 ## Validity, run 2026-09-10, and the ranking fails it
 
 The board was graded that night, all 105 by Kai, and `validity.py` beside this
