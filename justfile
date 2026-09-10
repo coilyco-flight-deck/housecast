@@ -120,6 +120,10 @@ evalkit-export *ARGS:
 evalkit-filter *ARGS:
     @uv run --extra eval python -m evalkit.filter "$@"
 
+# Ask whether response dispersion predicted the grade. `just evalkit-validity RUN/annotations.kai.yaml`.
+evalkit-validity ANNOTATIONS:
+    @uv run --extra eval python evaluations/split-candidates-2026-09-08/validity.py "{{ANNOTATIONS}}"
+
 # Cluster annotation critiques into a ranked failure taxonomy.
 evalkit-taxonomy *ARGS:
     @uv run --extra eval housecast grade taxonomy "$@"
