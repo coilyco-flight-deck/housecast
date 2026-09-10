@@ -5,11 +5,10 @@
 
 ## What you see
 
-The board opens on the cases, not on a control panel. A run that has never been
-graded is the ordinary first load rather than an error, so 91 ungraded cases is
-what the page is designed around, and every slot reads as a slot waiting for a
-decision. On a narrow screen the map and the controls fold behind one
-disclosure, so the first thing on a phone is a case.
+The board opens on the cases, not on a control panel. A run that has never been graded is the ordinary first load rather than an error, so 91 ungraded
+cases is what the page is designed around, and every slot reads as a slot waiting for a decision. On a narrow screen the map and the controls fold
+behind one disclosure, so the first thing on a phone is a case. A card is addressable: `?card=7` is the seventh card, matching the counter and
+rewritten as you move, and `?case=<id>` takes a case or a pair id and survives a reorder that a position does not.
 
 The rail carries the run name, how much is graded, and the board map: one cell
 per case, grouped by entity with a tally each, so the map is

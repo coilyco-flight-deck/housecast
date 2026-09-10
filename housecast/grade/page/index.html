@@ -1706,6 +1706,53 @@ function sizeDeck() {
   });
 }
 
+/* A card is addressable. `?card=7` is the seventh card, which is what the counter
+   says, and `?case=<id>` names one outright. The numeric form is the one written
+   back, because it is the one a reader can check against the counter; the id form
+   is accepted because a position moves when the queue or the filter does and a
+   link built on it rots quietly. */
+function targetFromQuery() {
+  var params;
+  try { params = new URLSearchParams(location.search); } catch (err) { return null; }
+  var id = params.get("case");
+  if (id) return { kind: "case", value: id };
+  var card = parseInt(params.get("card"), 10);
+  return isNaN(card) ? null : { kind: "card", value: card };
+}
+
+function applyQueryTarget() {
+  var target = targetFromQuery();
+  if (!target || !state.units.length) return false;
+  if (target.kind === "case") {
+    // A card is a unit, so a pair's own id addresses one as surely as either
+    // half's does. Taking only the half id sent `?case=platform-sev` to card 1.
+    var kase = null;
+    state.model.cases.forEach(function (c) {
+      if (c.id === target.value || c.pairId === target.value) kase = kase || c;
+    });
+    if (!kase) return false;
+    jumpTo(kase);
+    return true;
+  }
+  var count = visibleUnits().length;
+  if (!count) return false;
+  focusUnit(Math.max(1, Math.min(target.value, count)) - 1, false);
+  return true;
+}
+
+/* replaceState rather than pushState: back should leave the board, not walk it
+   card by card through a history nobody built on purpose. A file:// export has
+   no history to write, which is what the catch is for. */
+function syncQuery() {
+  if (!visibleUnits().length) return;
+  try {
+    var url = new URL(location.href);
+    url.searchParams.set("card", String(state.current + 1));
+    url.searchParams.delete("case");
+    history.replaceState(null, "", url);
+  } catch (err) { /* file://, and an unaddressable card is not an error */ }
+}
+
 function drawPlace() {
   var visible = visibleUnits();
   var place = document.getElementById("place");
@@ -1713,6 +1760,7 @@ function drawPlace() {
   var unit = visible[Math.max(0, Math.min(state.current, visible.length - 1))];
   var of = state.filter === "all" ? "" : " // filter: " + state.filter;
   place.textContent = (state.current + 1) + " of " + visible.length + " // " + unit.entity + of;
+  syncQuery();
 }
 
 function setFilter(next) {
@@ -1803,6 +1851,6 @@ load().then(function (model) {
   buildMap(model);
   drawStream();
   sizeDeck();
-  focusUnit(0, false);
+  if (!applyQueryTarget()) focusUnit(0, false);
 });
 </script>
