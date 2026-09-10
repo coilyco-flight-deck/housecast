@@ -40,3 +40,26 @@ If 6 comes in under +0.10, then loading the skill barely changes the artifact,
 and H1 against H2 is a choice between two cosmetic fixes. That result would
 retire the question rather than answer it, and it is the outcome I am least
 confident about and most want to be wrong about cheaply.
+
+# Written before the attenuation grid ran
+
+Stamped `2026-09-10T08:22:56Z`, `date -u`, at housecast `919dba6`. The
+reporting seat returned the three real openers and one of them defeats the
+grader I pre-registered, so the primary outcome changes from a regex pair to a
+judge. A judge misclassifies, and misclassification attenuates a contrast
+toward zero. This is stamped before the new grid runs.
+
+7. **The attenuation factor.** With sensitivity `se` and specificity `sp`, I
+   expect the observed contrast to shrink by the Youden index `se + sp - 1`,
+   and I expect n to scale as its inverse square. At `se = sp = 0.90` that is a
+   factor of 0.80 and a 1.56x cost in n.
+8. **n per arm at 80% power, 25-point true effect, judge at se = sp = 0.90.** I
+   expect **180 to 200**, against the 120 the perfect-grader board assumed.
+9. **The floor.** Below some Youden index the design cannot be rescued by
+   sample size at any affordable board. I expect that floor to sit near
+   **J = 0.5**, meaning a judge agreeing with a human much worse than 0.75 on
+   each margin makes this unmeasurable rather than expensive.
+
+If 8 lands where I expect, the board Kai approved at 120 per arm is
+underpowered for the design the drafts forced, and the honest move is to say so
+before spending it rather than after.
