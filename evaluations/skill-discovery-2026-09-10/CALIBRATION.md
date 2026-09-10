@@ -10,8 +10,15 @@ known. This answers how many items it takes to know them at all.
 
 ## The measurement
 
-`calibration_size.py`, Wilson score interval, four known-answer checks against
-published values before it prints. Assuming the judge scores 0.90 on a margin,
+`calibration_size.py`, Wilson score interval, four known-answer checks gated at
+0.0005 before it prints.
+
+The first draft of that check carried 0.980 as the upper bound for 95 of 100,
+which is wrong by 0.0015, and a 0.002 tolerance passed it. A check loose enough
+to accept a wrong expected value gates nothing, so the expected values are now
+exact to four places and the tolerance is tighter than the error that slipped
+through. Recorded rather than quietly fixed, because it is the same shape as
+the defect this row exists to catch. Assuming the judge scores 0.90 on a margin,
 the 95% interval on that margin and what it does to the Youden index that
 drives board size as `1/J^2`:
 

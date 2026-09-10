@@ -20,18 +20,21 @@ def wilson(k, n, z=1.96):
     h = z*math.sqrt(p*(1-p)/n + z*z/(4*n*n)) / d
     return (max(0.0, c-h), min(1.0, c+h))
 
-# known answers: published Wilson 95% intervals
+# Known answers, to 4dp and gated at 0.0005. An earlier draft of this table
+# carried 0.980 for the 95/100 upper bound, which is wrong by 0.0015, and a
+# 0.002 tolerance passed it. A check loose enough to accept a wrong expected
+# value is not gating anything.
 checks = [
-    ("0/10  -> (0.000, 0.278)", wilson(0,10),  (0.000, 0.278)),
-    ("5/10  -> (0.237, 0.763)", wilson(5,10),  (0.237, 0.763)),
-    ("9/10  -> (0.596, 0.982)", wilson(9,10),  (0.596, 0.982)),
-    ("95/100-> (0.888, 0.980)", wilson(95,100),(0.888, 0.980)),
+    ("0/10   -> (0.0000, 0.2775)", wilson(0, 10),   (0.0000, 0.2775)),
+    ("5/10   -> (0.2366, 0.7634)", wilson(5, 10),   (0.2366, 0.7634)),
+    ("9/10   -> (0.5958, 0.9821)", wilson(9, 10),   (0.5958, 0.9821)),
+    ("95/100 -> (0.8882, 0.9785)", wilson(95, 100), (0.8882, 0.9785)),
 ]
 ok = True
 for lab, got, exp in checks:
-    good = abs(got[0]-exp[0]) < 0.002 and abs(got[1]-exp[1]) < 0.002
+    good = abs(got[0]-exp[0]) < 0.0005 and abs(got[1]-exp[1]) < 0.0005
     ok &= good
-    print(f"  {'ok  ' if good else 'FAIL'}  {lab}  got ({got[0]:.3f}, {got[1]:.3f})")
+    print(f"  {'ok  ' if good else 'FAIL'}  {lab}  got ({got[0]:.4f}, {got[1]:.4f})")
 if not ok:
     raise SystemExit("known-answer check failed, refusing to report")
 

@@ -1,10 +1,10 @@
-Thu Sep 10 19:51:49 UTC 2026
-housecast a46d2b3
+Thu Sep 10 19:53:53 UTC 2026
+housecast 5830acc
 
-  ok    0/10  -> (0.000, 0.278)  got (0.000, 0.278)
-  ok    5/10  -> (0.237, 0.763)  got (0.237, 0.763)
-  ok    9/10  -> (0.596, 0.982)  got (0.596, 0.982)
-  ok    95/100-> (0.888, 0.980)  got (0.888, 0.978)
+  ok    0/10   -> (0.0000, 0.2775)  got (0.0000, 0.2775)
+  ok    5/10   -> (0.2366, 0.7634)  got (0.2366, 0.7634)
+  ok    9/10   -> (0.5958, 0.9821)  got (0.5958, 0.9821)
+  ok    95/100 -> (0.8882, 0.9785)  got (0.8882, 0.9785)
 
 Interval half-width on ONE margin (se or sp), at true rate 0.90,
 assuming the judge scores exactly 0.90 on that margin.
