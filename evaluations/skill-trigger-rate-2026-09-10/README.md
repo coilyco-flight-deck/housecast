@@ -9,6 +9,12 @@ The advocate seat asked for a per-skill trigger rate so a prose refactor could
 be evidence-led rather than a reshuffle with no before-measurement. This is that
 rate for the two families where a denominator is machine-checkable.
 
+**Amended after running.** [`AMENDMENT.md`](AMENDMENT.md) supplies the missing
+denominator for the writing family, which this file could only report as a raw
+count. The advocate seat fixed the clause set and named its blind spot before
+any number existed. Against the strictest clause the family fires at 0.025,
+while the same sessions load some other skill at 0.741.
+
 ## The number this was built on does not have a source
 
 The request cited roughly 50% retrieval on the voice family, from the
