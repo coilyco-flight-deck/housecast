@@ -10,6 +10,12 @@ fixed rail in `writing-coilyco-voice`. That seat handed over two hypotheses and
 asked which one carries the effect, because they have different fixes in
 different repos and picking wrong costs a cycle while the failure stays live.
 
+**Amended before running.** [`AMENDMENT.md`](AMENDMENT.md) carries what the three
+real drafts changed. The primary outcome below, the held-out regex pair, is dead:
+one of the three real violations is reachable by no pattern, so the pair measures
+string avoidance rather than generalisation. Read the amendment before acting on
+the grading section.
+
 ## What I checked before designing anything
 
 The seat that reported this said plainly that it is the subject as well as the
