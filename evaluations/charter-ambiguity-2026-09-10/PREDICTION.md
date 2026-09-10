@@ -20,3 +20,18 @@ not a significance test. Three numbers decide whether it is worth running.
 
 If 1 lands where I expect, the gate as written retires or keeps by coin flip and
 needs replacing before the board is scored, not after.
+
+# Written before the n=77 rerun
+
+Stamped `2026-09-10T07:16:23Z`, `date -u`, after the director seat ruled personality and voice
+out of the criterion and before `power.py` ran again on what is left.
+
+The criterion set drops from 105 to 77. Grounding contributes nothing either
+way, because all 14 of its cases are derived and none is authored. At a 10%
+share of 2s that is `n2` about 8 against 10, and `n0` about 46 against 60.
+
+* Trend power at `p0 = 0.10` and a 3x lift: **0.48 to 0.55**, down from 0.603.
+* Trend power at the same base and a 2x lift: **0.22 to 0.26**, down from 0.287.
+
+If the second lands where I expect, a 2x effect is invisible on this board about
+three times in four, which is the number that turns the run into a pilot.

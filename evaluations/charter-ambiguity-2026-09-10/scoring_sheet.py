@@ -24,7 +24,26 @@ from evalkit.coverage import authored_ids
 from evalkit.matrix import derive
 
 HERE = pathlib.Path(__file__).parent
-COLUMNS = ("case", "entity", "test_type", "attribute", "half", "pair_id", "authored", "target")
+COLUMNS = (
+    "case",
+    "entity",
+    "test_type",
+    "attribute",
+    "half",
+    "pair_id",
+    "authored",
+    "in_criterion",
+    "target",
+)
+
+# Personality and voice are outside the criterion, ruled by the director seat
+# before any score existed. The rubric asks whether one charter sentence decides
+# the behaviour, and neither type has a sentence to read: a personality target
+# is "tenacious, composed alongside grounded", and a voice target is a literal
+# word list whose actual demand is a register judgement. Voice is the dangerous
+# one, because the word list is verbatim and would score 0 while plausibly
+# disagreeing most, putting the top-disagreement cases in the bottom bucket.
+EXCLUDED_TEST_TYPES = frozenset({"personality", "voice"})
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -52,6 +71,9 @@ def main(argv: list[str] | None = None) -> int:
                     case.half.value if case.half else "",
                     case.pair_id or "",
                     "yes" if case.id in written else "no",
+                    "yes"
+                    if case.id in written and case.test_type not in EXCLUDED_TEST_TYPES
+                    else "no",
                     (case.target or "").replace("\n", " "),
                     "",
                     "",
@@ -59,7 +81,11 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     reachable = sum(1 for case in board if case.id in written)
+    scored = sum(
+        1 for case in board if case.id in written and case.test_type not in EXCLUDED_TEST_TYPES
+    )
     print(f"wrote {args.out.name}: {len(board)} derived, {reachable} authored and reachable")
+    print(f"in the criterion: {scored}. The rest are unauthored, or personality or voice.")
     print("score column empty. The director seat fills 0, 1 or 2 per row, reading the charter.")
     return 0
 

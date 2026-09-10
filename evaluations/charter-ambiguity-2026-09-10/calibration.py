@@ -21,9 +21,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import validity
 
 HERE = pathlib.Path(__file__).parent
-# 60/37/8 over the 105 authored cases, a 10% share of 2s, and a disagreement
-# rate no one has measured yet. The shape rather than the truth.
-STRATA = (60, 37, 8)
+# 46/23/8 over the 77 cases in the criterion, a 10% share of 2s, and a
+# disagreement rate no one has measured yet. The shape rather than the truth.
+STRATA = (46, 23, 8)
 RATE = 0.15
 SEED = 4242
 
