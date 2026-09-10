@@ -21,10 +21,14 @@ import yaml
 
 ROSTER = pathlib.Path(__file__).resolve().parent.parent / "housecast" / "data" / "roster.yaml"
 
-KINDS = {"role": "roles", "personality": "personalities", "boundary": "boundaries"}
+KINDS = {
+    "role": "roles",
+    "personality": "personalities",
+    "boundary": "boundaries",
+    "guardrail": "guardrails",
+}
 
-# The sections this script owns. Guardrails are outside it: agent-compose's
-# `internal/person` refuses a fourth entity prefix in the seed tree.
+# The sections this script vendors from the seed.
 VENDORED = "|".join(KINDS.values())
 SIDES = {"own", "scoped", "defer"}
 
