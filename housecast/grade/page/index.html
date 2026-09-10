@@ -441,6 +441,50 @@ button { font: inherit; color: inherit; }
   transition: width .25s ease;
 }
 
+/* The grading controls. Only a live session renders these: a committed export
+   has nowhere to post, so the buttons would be a lie rather than a limitation. */
+.grade {
+  margin-top: 1rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.verdicts { display: flex; flex-wrap: wrap; gap: .4rem; }
+.v {
+  font: inherit;
+  font-size: var(--t-1);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  padding: .35rem .7rem;
+  cursor: pointer;
+}
+.v:hover { border-color: var(--accent-edge); color: var(--bright); }
+.v:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.v[data-deduct="1"] { border-color: var(--deduct-wash); }
+.v[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-on-wash); }
+.v kbd { font-size: .9em; }
+.crit {
+  font: inherit;
+  font-size: var(--t-1);
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  padding: .45rem .55rem;
+  width: 100%;
+  resize: vertical;
+}
+.crit:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.ev-row { display: flex; flex-wrap: wrap; gap: .4rem; align-items: baseline; }
+.ev-shown { font-size: var(--t-1); color: var(--ink-3); }
+.ev-shown[data-empty="1"] { font-style: italic; }
+.say { font-size: var(--t-1); color: var(--ink-3); margin: 0; min-height: 1.2em; }
+.say[data-tone="warn"] { color: var(--deduct); }
+
 /* Deck view. One card at a time over the same stream: the current unit is
    already tracked for j/k, so this hides the rest rather than rebuilding. */
 [data-view="deck"] .unit:not([aria-current="true"]),
@@ -807,7 +851,8 @@ mark.ev {
       <kbd>j</kbd> <kbd>k</kbd> next // previous card<br>
       <kbd>g</kbd> <kbd>G</kbd> first // last<br>
       <kbd>+</kbd> <kbd>-</kbd> type size<br>
-      <kbd>t</kbd> theme &nbsp; <kbd>f</kbd> filter<br>
+      <kbd>p</kbd> <kbd>x</kbd> // <kbd>f</kbd> <kbd>u</kbd> <kbd>n</kbd> grade this case<br>
+      <kbd>t</kbd> theme &nbsp; <kbd>s</kbd> filter<br>
       <kbd>d</kbd> deck // one card at a time
     </div>
     </details>
@@ -889,6 +934,9 @@ function adopt(payload, source) {
        only when it was built with --include-private, which is not the
        artifact that goes near a projector. */
     carriesPrivate: isGrading || payload.includes_private_fields === true,
+    /* An export carries no profile, which is why grading is offered on the
+       grading payload alone rather than on whatever a page happens to hold. */
+    profile: payload.profile || { test_types: [], label_sets: {} },
     cases: cases,
     counts: {
       cases: typeof counts.cases === "number" ? counts.cases : cases.length,
@@ -978,6 +1026,64 @@ function outputBlock(kase) {
   return { block: block, missed: kase.evidence !== "" && found < 0 };
 }
 
+/* The label set is the profile's, per test type, so a board that declares a new
+   type gets its buttons without this page learning the type. */
+function labelsFor(kase) {
+  var profile = state.model && state.model.profile;
+  if (!profile) return [];
+  var declared = null;
+  (profile.test_types || []).forEach(function (t) {
+    if (t.name === kase.testType) declared = t;
+  });
+  if (!declared) return [];
+  return (profile.label_sets || {})[declared.label_set] || [];
+}
+
+function gradeBlock(kase) {
+  var wrap = el("div", "grade");
+  wrap.dataset.for = kase.id;
+
+  var row = el("div", "verdicts");
+  labelsFor(kase).forEach(function (choice) {
+    var b = el("button", "v");
+    b.type = "button";
+    b.dataset.label = choice.value;
+    if (choice.deduction) b.dataset.deduct = "1";
+    b.setAttribute("aria-pressed", String(kase.label === choice.value));
+    b.appendChild(el("kbd", null, choice.key));
+    b.appendChild(document.createTextNode(" " + choice.value));
+    b.addEventListener("click", function () { submitDecision(kase, choice.value); });
+    row.appendChild(b);
+  });
+  wrap.appendChild(row);
+
+  var critId = "crit-" + kase.id;
+  var lab = el("label", "field-l", "why");
+  lab.setAttribute("for", critId);
+  wrap.appendChild(lab);
+  var crit = el("textarea", "crit");
+  crit.id = critId;
+  crit.rows = 2;
+  crit.value = kase.critique || "";
+  crit.placeholder = "a deduction needs one";
+  wrap.appendChild(crit);
+
+  var evRow = el("div", "ev-row");
+  var take = el("button", "ctl", "evidence from selection");
+  take.type = "button";
+  take.addEventListener("click", function () { takeSelection(kase); });
+  evRow.appendChild(take);
+  var clear = el("button", "ctl", "clear");
+  clear.type = "button";
+  clear.addEventListener("click", function () { state.evidence[kase.id] = ""; drawEvidence(kase); });
+  evRow.appendChild(clear);
+  evRow.appendChild(el("span", "ev-shown", null));
+  wrap.appendChild(evRow);
+
+  wrap.appendChild(el("p", "say", null));
+  return wrap;
+}
+
 function halfPanel(kase) {
   var panel = el("section", "half");
   if (kase.half) panel.dataset.half = kase.half;
@@ -1016,6 +1122,7 @@ function halfPanel(kase) {
     panel.appendChild(el("div", "note", "Graded with no critique recorded."));
   }
 
+  if (state.canWrite) panel.appendChild(gradeBlock(kase));
   return panel;
 }
 
@@ -1111,10 +1218,158 @@ function unitCard(unit, index) {
 }
 
 /* ------------------------------------------------------------ the board */
-var state = { model: null, units: [], filter: "all", current: 0, cells: {}, view: "scroll" };
+var state = { model: null, units: [], filter: "all", current: 0, cells: {}, view: "scroll",
+              canWrite: false, evidence: {}, sending: false };
+
+function sayOn(kase, message, tone) {
+  var block = document.querySelector('.grade[data-for="' + cssEscape(kase.id) + '"]');
+  if (!block) return;
+  var say = block.querySelector(".say");
+  say.textContent = message || "";
+  if (tone) say.dataset.tone = tone; else say.removeAttribute("data-tone");
+}
+
+function cssEscape(value) {
+  return window.CSS && CSS.escape ? CSS.escape(value) : value.replace(/["\\]/g, "\\$&");
+}
+
+/* The span is anchored by selection rather than retyped, which is the one thing
+   the browser changes about the loop. See docs/grading-surfaces.md. */
+function takeSelection(kase) {
+  var selection = window.getSelection();
+  var text = selection ? String(selection) : "";
+  if (!text.trim()) { sayOn(kase, "Select the span in the answer first.", "warn"); return; }
+  var panel = document.querySelector('.grade[data-for="' + cssEscape(kase.id) + '"]');
+  var output = panel && panel.parentNode.querySelector(".output");
+  if (output && selection.anchorNode && !output.contains(selection.anchorNode)) {
+    sayOn(kase, "That selection is not inside this answer.", "warn");
+    return;
+  }
+  if (kase.output.toLowerCase().indexOf(text.toLowerCase()) < 0) {
+    sayOn(kase, "That span is not verbatim in this answer.", "warn");
+    return;
+  }
+  state.evidence[kase.id] = text;
+  drawEvidence(kase);
+  sayOn(kase, "");
+}
+
+function drawEvidence(kase) {
+  var block = document.querySelector('.grade[data-for="' + cssEscape(kase.id) + '"]');
+  if (!block) return;
+  var held = state.evidence[kase.id] || kase.evidence || "";
+  var shown = block.querySelector(".ev-shown");
+  shown.textContent = held ? "\u201c" + held.slice(0, 90) + (held.length > 90 ? "\u2026" : "") + "\u201d" : "no span";
+  shown.dataset.empty = held ? "0" : "1";
+}
+
+function submitDecision(kase, label) {
+  if (state.sending) return;
+  var block = document.querySelector('.grade[data-for="' + cssEscape(kase.id) + '"]');
+  var critique = block ? block.querySelector(".crit").value : (kase.critique || "");
+  var evidence = state.evidence[kase.id];
+  if (evidence === undefined) evidence = kase.evidence || "";
+
+  state.sending = true;
+  sayOn(kase, "saving\u2026");
+  fetch("api/annotations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: kase.id, label: label, critique: critique, evidence: evidence })
+  }).then(function (response) {
+    return response.json().then(function (body) { return { ok: response.ok, body: body }; });
+  }).then(function (result) {
+    state.sending = false;
+    if (!result.ok) {
+      // The server owns the rules, so its refusal is the message rather than a
+      // second copy of them here.
+      sayOn(kase, result.body && result.body.detail ? result.body.detail : "refused", "warn");
+      return;
+    }
+    applySaved(kase, result.body);
+  }).catch(function () {
+    state.sending = false;
+    sayOn(kase, "the grading session did not answer, so nothing was recorded", "warn");
+  });
+}
+
+function applySaved(kase, body) {
+  var saved = body.saved || {};
+  kase.label = saved.label || "";
+  kase.critique = saved.critique || "";
+  kase.evidence = saved.evidence || "";
+  delete state.evidence[kase.id];
+  // The response also carries pairs, which nothing here reads: readPair derives
+  // a pair's verdict from the two cases it already holds.
+  if (body.counts) state.model.counts = body.counts;
+
+  var unit = null;
+  state.units.forEach(function (u) {
+    u.cases.forEach(function (c) { if (c.id === kase.id) unit = u; });
+  });
+  drawRail(state.model);
+  buildMap(state.model);
+  if (unit) redrawUnit(unit);
+  focusUnit(state.current, false);
+
+  var done = unit && unit.cases.every(function (c) { return c.label; });
+  if (done && state.view === "deck" && state.current < visibleUnits().length - 1) {
+    focusUnit(state.current + 1, false);
+  }
+}
+
+/* A key grades the half the reader is in: the focused one, else the first
+   ungraded half of the current card, so a pair does not need a pointer. */
+function isGradingKey(key) {
+  if (!state.canWrite) return false;
+  var sets = (state.model && state.model.profile && state.model.profile.label_sets) || {};
+  var hit = false;
+  Object.keys(sets).forEach(function (name) {
+    sets[name].forEach(function (choice) { if (choice.key === key) hit = true; });
+  });
+  return hit;
+}
+
+function gradeByKey(key) {
+  if (!state.canWrite) return false;
+  var visible = visibleUnits();
+  var unit = visible[state.current];
+  if (!unit) return false;
+
+  var active = document.activeElement;
+  var target = null;
+  unit.cases.forEach(function (c) {
+    var block = document.querySelector('.grade[data-for="' + cssEscape(c.id) + '"]');
+    if (block && active && block.parentNode.contains(active)) target = c;
+  });
+  if (!target) {
+    unit.cases.forEach(function (c) { if (!target && !c.label) target = c; });
+  }
+  if (!target) target = unit.cases[0];
+
+  var choice = null;
+  labelsFor(target).forEach(function (c) { if (c.key === key) choice = c; });
+  if (!choice) {
+    var offered = labelsFor(target).map(function (c) { return c.key + " " + c.value; }).join(", ");
+    sayOn(target, offered ? "this case takes " + offered : "this case declares no labels", "warn");
+    return false;
+  }
+  submitDecision(target, choice.value);
+  return true;
+}
+
+function redrawUnit(unit) {
+  var old = document.getElementById("u-" + unit.key);
+  if (!old) return;
+  var fresh = unitCard(unit, Number(old.dataset.index || 0));
+  old.parentNode.replaceChild(fresh, old);
+}
 
 function buildMap(model) {
   var map = document.getElementById("map");
+  // Rebuilt after every decision, so it clears first. Appending was safe only
+  // while this ran once at boot.
+  map.textContent = "";
   var order = [], rows = {};
   model.cases.forEach(function (kase) {
     if (!rows[kase.entity]) { rows[kase.entity] = []; order.push(kase.entity); }
@@ -1379,6 +1634,10 @@ function wireControls() {
     var tag = (event.target && event.target.tagName) || "";
     if (tag === "INPUT" || tag === "TEXTAREA" || (event.target && event.target.isContentEditable)) return;
 
+    // The profile owns the grading keys, so they are read before the view's.
+    // `fit` claims f, which is why the filter answers to s.
+    if (isGradingKey(event.key)) { gradeByKey(event.key); event.preventDefault(); return; }
+
     switch (event.key) {
       case "j": focusUnit(state.current + 1); break;
       case "k": focusUnit(state.current - 1); break;
@@ -1387,7 +1646,7 @@ function wireControls() {
       case "+": case "=": zoomIndex = setZoom(zoomIndex + 1); break;
       case "-": zoomIndex = setZoom(zoomIndex - 1); break;
       case "t": setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); break;
-      case "f": setFilter(state.filter === "all" ? "graded" : state.filter === "graded" ? "ungraded" : "all"); break;
+      case "s": setFilter(state.filter === "all" ? "graded" : state.filter === "graded" ? "ungraded" : "all"); break;
       case "d": setView(state.view === "deck" ? "scroll" : "deck"); break;
       default: return;
     }
@@ -1400,6 +1659,7 @@ wireControls();
 load().then(function (model) {
   if (!model) { drawNoData(); return; }
   state.model = model;
+  state.canWrite = model.source === "serve";
   state.units = group(model.cases);
   drawRail(model);
   buildMap(model);
