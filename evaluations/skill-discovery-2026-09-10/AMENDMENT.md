@@ -140,6 +140,44 @@ because it binds this evaluation's data handling, which is mine, and because a
 boundary that lives only in a conversation gets re-decided under time pressure
 by whoever arrives next.
 
+**The general rule is not this file's.** It landed in `coilyco-bridge/lore`,
+entry `lore-rule-disclosure-gradient`, at `2026-09-10T08:31:13Z`, and that entry
+owns it for every public surface: a repository, a published artifact, a post, a
+talk. What is above is the same rule as it binds this row, kept here so the
+record stays readable on its own. If the two ever disagree, lore is right and
+this is stale.
+
+## A third instance, and it is only an anecdote
+
+While landing that entry the advocate seat noted that this was the second time
+in one day it had reasoned to a correct answer while failing to reach the
+written rule that already said it. The rule that time was its own, about durable
+work product, and it broke it inside the sentence announcing that it was writing
+something down so nobody would decide it under pressure.
+
+**This is an anecdote and it is not evidence.** One seat, self-reported, a
+different rule family from the one under test, and no instrument touched it.
+
+It is recorded because of what it does to the design rather than to the result.
+The shape is identical to the incident: a written rule exists, the agent does
+not reach it, and the agent reaches a defensible answer anyway. It recurred in a
+seat actively primed on this exact failure mode, which is the condition all
+three hypotheses predict should be most protective. If the shape crosses rule
+families and survives priming, then a formatting defect in one skill family
+explains less of it than the framing implies.
+
+**It partly rehabilitates a request I set aside.** The reporting seat asked
+first for a base rate: given a task whose class clearly maps to a skill, how
+often does the skill load. I deprioritised it in favour of bracketing the
+ceiling, on the grounds that the payoff has to exist before the mechanism
+matters. That ordering still holds for the spend. But this observation is a
+reason to think the base rate is the more informative number of the two, and it
+should be measured across families rather than derived from the writing family
+alone, which was the original request and was better than my compression of it.
+
+Nothing here changes E0. It changes what E1 should be if E0 clears, and
+`teable:coilyco-flight-deck/housecast#7328` carries it.
+
 ## One calibration item has a reader, and the rest do not
 
 Form 3 is the only one of the three that was sent. It has a real recipient, and
