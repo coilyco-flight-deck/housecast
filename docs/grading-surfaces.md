@@ -14,9 +14,8 @@ The same loop against the same committed YAML, each rule in one place per surfac
 
 ## What the browser changes
 
-One thing that matters. `annotate` asks the grader to retype the span and loops until it matches, because a retyped quote gets edited by the hand retyping it. A page
-anchors the span by selection, so that failure cannot occur and the verbatim check stops being a typo guard. It stays in place as the guard against a page sending a span
-from the wrong case. `serve` hands the page `housecast.grading.v1`, carrying the profile's own keystrokes so one-key grading survives the move.
+One thing that matters. `annotate` asks the grader to retype the span and loops until it matches, because a retyped quote gets edited by the hand retyping it. A page anchors the span by selection, so that failure cannot occur and the verbatim check
+stops being a typo guard. It stays in place as the guard against a page sending a span from the wrong case. `serve` hands the page `housecast.grading.v1`, carrying the profile's own keystrokes so one-key grading survives the move.
 
 ## Two graders on one board
 
@@ -27,6 +26,7 @@ declares the study's roster, so a glob catching a calibrated grader refuses rath
 
 ## The order a pass takes
 
+* a grading session opens as a deck, one card, arrows or `j`/`k` to move, and `d` switches back to the scroll an export opens in
 * `annotation-queue.csv` beside the dataset sets the order on both surfaces, found the way `pin.yaml` is. The ranking is a view, so `dataset.yaml` keeps derivation order, a queue naming a case it lacks refuses rather than ordering a subset, and unranked cases trail and are counted. It outranks the entity-major order `serve` otherwise uses, trading the charter locality `annotation_order` exists for against covering the least stable cases first, and `--no-queue` keeps entity-major on either surface
 
 ## annotate is not deleted
