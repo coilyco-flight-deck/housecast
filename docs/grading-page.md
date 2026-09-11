@@ -35,5 +35,5 @@ no pair and render as single cards.
 
 ## See also
 
-* [`grading-page-treatment.md`](grading-page-treatment.md) - colour and type.
+* [`grading-page-treatment.md`](grading-page-treatment.md) - color and type.
 * [`grading-page-delivery.md`](grading-page-delivery.md) - payloads and the test.

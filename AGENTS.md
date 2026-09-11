@@ -22,13 +22,13 @@ Read before changing anything here:
 
 The engine and the eval runner both live here, moved out of agent-compose
 under `agent-compose#337`. The Go engine still exists in agent-compose and
-still composes; `agent-compose#339` deletes it, and until then that repository
+still composes. `agent-compose#339` deletes it, and until then that repository
 holds the differential test proving the two agree byte for byte.
 
 ## Project shape
 
 - **`housecast/`** - the engine: roster loading, validation, meld and boundary
-  resolution, the OKLab favorite-colour solve, bundle emission, and the roster
+  resolution, the OKLab favorite-color solve, bundle emission, and the roster
   projection downstream tools read.
 - **`housecast/data/roster.yaml`** - the roster, with its field ancestry
   documented in the file's own header.
@@ -110,13 +110,14 @@ with it. See [`docs/publishing.md`](docs/publishing.md).
 **Pin `housecast-v0.1.4` or later.** The four tags below it were cut during the
 migration and each is broken in some way: `v0.1.0` was force-moved, `v0.1.1`
 predates the grading-anchor check, `v0.1.2` fails mypy strict, and `v0.1.3`
-reports the wrong version. They are kept rather than deleted because the history
-is honest, and named here so nobody pins one by reaching for the lowest number.
+reports the wrong version. They are kept rather than deleted because deleting them
+would falsify the history, and named here so nobody pins one by reaching for
+the lowest number.
 
 The name claim landed under `agent-compose#347`: `housecast` is held on PyPI as
 a 0.0.1 placeholder. `house-cast` needs no defensive hold, since PyPI refuses it
 as too similar to `housecast`. The publish workflow is the packaging half of
-`agent-compose#329` scope A; the rest of that scope, growing the compositor's
+`agent-compose#329` scope A. The rest of that scope, growing the compositor's
 public API, is still open.
 
 Keep [`docs/FEATURES.md`](docs/FEATURES.md) current when a shipped capability
