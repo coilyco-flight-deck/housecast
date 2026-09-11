@@ -1,6 +1,6 @@
 # The grading page palette
 
-Where the colour and type come from, and where they deviate. The treatment using them is
+Where the color and type come from, and where they deviate. The treatment using them is
 [`grading-page-treatment.md`](grading-page-treatment.md).
 
 ## Vendored from the kit, never fetched
@@ -11,7 +11,7 @@ words: the site compiles that file, and a page elsewhere inlines the same text. 
 than fetches because a shipped tool never reaches up into another repo for its runtime config, and
 the absent build step is this page's safety property.
 
-**Three layers, and nothing skips one.** Primitives are the only literal colours here. Roles
+**Three layers, and nothing skips one.** Primitives are the only literal colors here. Roles
 (`--ground`, `--affirm`) are `var()` onto a primitive and are all a component rule may read. A rule
 may rebind a role from a primitive, as `.output` does, and may never paint one directly.
 `grade/tests/test_page_tokens.py` fails on each, and runs anywhere.
@@ -32,7 +32,7 @@ no website checkout**, so the layer tests carry CI. Moving a primitive moves eve
 ## Structure, and what is measured
 
 `--line` is the kit's quiet hairline and `--line-2` its `--k-edge`, both neutral, so the board takes
-`--k-line-quiet` over the accent-coloured `--k-line`: that edge would sit 21 degrees from the deduct
+`--k-line-quiet` over the accent-colored `--k-line`: that edge would sit 21 degrees from the deduct
 verdict at one lightness. The **frame does not flip** - nav and footer hold `--k-p-850` on both
 themes, the kit's rule 3, absent from the light block. Every painted role is measured live against the background it lands on, both themes, worst case
 rather than a list. `.ctl[aria-pressed]` paints brand on a 16% brand wash where brand itself lands

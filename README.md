@@ -36,8 +36,7 @@ by one house under one set of conventions, able to mount any role in its book.
 `house` is the authority noun. `cast` carries both casting a play and casting
 metal, and that second sense is the immutable bundle.
 
-Two other readings of the string are live. Neither one is this project, and
-both are named here rather than left to be discovered.
+Two other readings of the string are live, and neither one is this project.
 
 * **house plus forecast** - `housecast` also parses that way, and three of the
   four existing GitHub repositories under the string are dead housing-price
@@ -78,7 +77,7 @@ housecast = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast
 ```
 
 That is the same shape the estate already uses for `aos-eval`. Add the `eval`
-extra when the consumer needs the board runner rather than just the engine.
+extra when the consumer needs the board runner rather than the engine alone.
 Once a `housecast-v*` tag has run the train in
 [`docs/publishing.md`](docs/publishing.md), `pip install housecast` is the
 shorter path.
@@ -86,7 +85,7 @@ shorter path.
 ## Layout
 
 * `housecast/` - the engine. Roster loading, validation, meld and boundary
-  resolution, the OKLab favorite-colour solve, and bundle emission.
+  resolution, the OKLab favorite-color solve, and bundle emission.
 * `housecast/data/roster.yaml` - the roster the engine composes.
 * `evalkit/` - the board runner, which travels with the engine so the graded
   artifact and the shipped artifact stay identical.

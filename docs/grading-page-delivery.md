@@ -11,7 +11,7 @@ It reads whichever it finds, and the renderer never learns which it got.
 * `aos-eval.export.v1` embedded in the file, from `grade export` - the public
   half, unless built with `--include-private`.
 
-An adapter normalises each into one view model, because a path exercised in one
+An adapter normalizes each into one view model, because a path exercised in one
 delivery mode is untested in the others. The export drops empty fields, so
 `critique`, `evidence`, `label`, `half`, and `pair_id` arrive absent, and
 `pairs` holds only graded pairs, so cards group by key and an ungraded pair
