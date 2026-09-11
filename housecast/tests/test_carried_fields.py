@@ -59,29 +59,40 @@ def test_the_shipped_roster_renders_no_methods_line() -> None:
     assert "**Role methods //" not in render.identity_card(loaded, "science")
 
 
-def test_archived_defaults_false_and_survives_the_loader() -> None:
+@pytest.fixture(scope="module")
+def archived(tmp_path_factory: pytest.TempPathFactory) -> Roster:
+    """The shipped roster with one role archived.
+
+    These three tests used to read the flag off whichever shipped role happened
+    to carry it, which was analyst and only analyst. Un-archiving that role
+    deleted the coverage rather than failing it, so the fixture makes its own
+    archived role the way the rest of this file makes its own methods and
+    channel.
+    """
+    doc = yaml.safe_load(roster.DATA.read_bytes())
+    doc["roles"]["analyst"]["archived"] = True
+    path = tmp_path_factory.mktemp("archived") / "roster.yaml"
+    path.write_text(yaml.safe_dump(doc, sort_keys=False))
+    return roster.load(path)
+
+
+def test_archived_defaults_false_and_survives_the_loader(archived: Roster) -> None:
     """Absent means live, so every roster authored before the field still loads."""
-    shipped = roster.load()
-
-    assert shipped.roles["science"].archived is False
-    assert shipped.roles["analyst"].archived is True
+    assert roster.load().roles["analyst"].archived is False
+    assert archived.roles["analyst"].archived is True
 
 
-def test_the_projection_carries_archived() -> None:
+def test_the_projection_carries_archived(archived: Roster) -> None:
     """evalkit reads person.json rather than the YAML, so the flag has to cross."""
     from housecast import snapshot
 
-    projected = snapshot.person_snapshot(roster.load())["roles"]
-
-    assert projected["analyst"]["archived"] is True
-    assert projected["science"]["archived"] is False
+    assert snapshot.person_snapshot(archived)["roles"]["analyst"]["archived"] is True
+    assert snapshot.person_snapshot(roster.load())["roles"]["analyst"]["archived"] is False
 
 
-def test_compose_refuses_an_archived_role() -> None:
+def test_compose_refuses_an_archived_role(archived: Roster) -> None:
     """The Go resolver refuses too, and the two engines owe the same semantics."""
-    import pytest
-
     from housecast import compose as compose_module
 
     with pytest.raises(ValueError, match="archived"):
-        compose_module.compose(roster.load(), "analyst", "frontier", "/tmp/unused-bundle")
+        compose_module.compose(archived, "analyst", "frontier", "/tmp/unused-bundle")
