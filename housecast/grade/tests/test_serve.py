@@ -77,26 +77,21 @@ def test_slugs_travel_to_the_grader_even_though_the_audience_never_sees_them(
     assert case["word_cap"] == 50
 
 
-def test_the_seed_travels_on_loopback_because_the_grader_is_the_only_reader(
-    run_dir: pathlib.Path,
-) -> None:
-    session = GradingSession.open(run_dir)
-    assert session.case(session.entries[0])["seed"] == "2026-08-19T11:25:09Z"
-
-
-def test_an_exposed_bind_withholds_the_seed_because_it_can_key_back_to_the_source(
+def test_the_seed_never_reaches_the_payload_whatever_the_bind(
     run_dir: pathlib.Path,
 ) -> None:
     """A deriver may seed a case with whatever identifies the thing it was built
-    from, and `evaluations/self-report-2026-09-17` seeds each one with the source
-    message's timestamp. Beside a withheld prompt that is a key back to the text
-    somebody took out, so it goes the way `deck.WITHHELD` already sends it."""
+    from, and one board seeds each case with the source message's timestamp.
+    Beside a withheld prompt that is a key back to the text somebody removed.
+
+    Unconditional on purpose. Dropping it only under `--expose` looked safe and
+    was not: a container binding loopback behind a proxy never passes that flag
+    while being as reachable as anything else, which is how a deployed board
+    served the field after the first version of this fix. Nothing reads it on
+    the way out, so there is no bind on which sending it is right.
+    """
     session = GradingSession.open(run_dir)
-    session.exposed = True
-    case = session.case(session.entries[0])
-    assert "seed" not in case
-    assert case["entity"] == "sysadmin"
-    assert case["output"] == OUTPUT
+    assert "seed" not in session.case(session.entries[0])
 
 
 def test_a_decision_reaches_disk_before_the_response_returns(
