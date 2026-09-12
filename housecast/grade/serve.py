@@ -99,6 +99,9 @@ class GradingSession:
     annotations: dict[str, Annotation] = field(default_factory=dict)
     roster: dict[str, Any] | None = None
     grader: str | None = None
+    # Set when the bind went past loopback. The payload is the grader's, and one
+    # of its fields stops being safe once anyone but the grader can fetch it.
+    exposed: bool = False
 
     @classmethod
     def open(
@@ -176,8 +179,19 @@ class GradingSession:
 
         Slugs travel. They are suppressed on the audience surface rather than
         withheld here, because the grader navigates the board by them.
+
+        `seed` is the exception, and it is withheld rather than suppressed once
+        the bind is exposed. It is not a slug about the board: a deriver is free
+        to seed a case with whatever identifies the thing it was built from, and
+        `evaluations/self-report-2026-09-17` seeds each case with the source
+        message's timestamp. Beside a withheld prompt that is a key back to the
+        text somebody took out. Every audience surface this repository already
+        ships drops it, `deck.WITHHELD` by name and `export.ExportCase` by
+        omission, so this closes the one that stayed open.
         """
         payload = entry.challenge.model_dump(mode="json", exclude_none=True)
+        if self.exposed:
+            payload.pop("seed", None)
         annotation = self.annotations.get(entry.id)
         payload.update(
             output=entry.output,
@@ -327,4 +341,6 @@ def serve(
     import uvicorn
 
     check_bind(host, expose)
+    if expose:
+        session.exposed = True
     uvicorn.run(create_app(session, static), host=host, port=port, log_level="warning")
