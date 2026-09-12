@@ -33,18 +33,28 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--skill-spans", type=Path, help="skill-spans.json")
     args = parser.parse_args(argv)
 
     evidence = json.loads(args.evidence.read_text())
     records = sorted(json.loads(args.corpus.read_text()), key=lambda r: r["ts"])
+    spans = json.loads(args.skill_spans.read_text()) if args.skill_spans else []
+    # The skill evidence travels with the trace it belongs to. Rotating the trace
+    # and leaving the skill spans behind would hand a permuted cell its own book
+    # row back, which is the weakness this control exists to measure.
     cells = [
-        (index, record.get("disclosed") or [], evidence[str(record["reply_id"])]["calls"])
+        (
+            index,
+            record.get("disclosed") or [],
+            evidence[str(record["reply_id"])]["calls"],
+            [s for s in spans if str(s["trace"]) == str(evidence[str(record["reply_id"])]["trace"])],
+        )
         for index, record in enumerate(records, start=1)
         if (record.get("disclosed") or []) and str(record["reply_id"]) in evidence
     ]
-    traces = [calls for _, _, calls in cells]
+    traces = [(calls, skills) for _, _, calls, skills in cells]
 
-    aligned = sum(1 for _, disclosed, calls in cells if verdict(disclosed, calls) == "pass")
+    aligned = sum(1 for _, d, calls, skills in cells if verdict(d, calls, skills) == "pass")
     print(f"cells                          {len(cells)}")
     print(f"pass against their own trace   {aligned}")
     print()
@@ -55,8 +65,8 @@ def main(argv: list[str] | None = None) -> int:
     for offset in range(1, len(cells)):
         rotated = traces[offset:] + traces[:offset]
         passes = 0
-        for (ordinal, disclosed, _), calls in zip(cells, rotated, strict=True):
-            if verdict(disclosed, calls) == "pass":
+        for (ordinal, disclosed, _, _), (calls, skills) in zip(cells, rotated, strict=True):
+            if verdict(disclosed, calls, skills) == "pass":
                 passes += 1
                 signature = ", ".join(f"{k} x{v}" for k, v in sorted(calls.items()))
                 collisions.append((offset, ordinal, signature))

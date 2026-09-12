@@ -104,3 +104,16 @@ one.
 read the glyph rather than only the label, and `fidelity.txt` regenerated from
 it. Tracked, not done here: doing it at speed is how a fourth fault joins the
 three above.
+
+> **Done 2026-09-12, and not at speed.** [`REBUILD.md`](REBUILD.md) carries the
+> rebuild, its predictions written before it ran, and the two controls that now
+> cover the parse step. The rebuilt board is 14 pass and one failure at ordinal
+> 36, with footer runs 70 against 68 trace calls. This page stays as written: it
+> is the record of what was published and what was wrong with it.
+>
+> One thing on this page did not survive the rebuild either. Fault two is stated
+> as the matcher being unable to read a book row, with the remedy implied to be
+> reading the glyph. Reading the glyph is not enough and is not what was built.
+> `Detail` is set by `trackeradapter.go` as well as `skilltool.go`, so the glyph
+> says a call carried a display value and does not say which tool ran. The trace
+> carries that same value as `mcp.tool.skill`, and that is what places the row.
