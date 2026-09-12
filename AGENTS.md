@@ -1,6 +1,6 @@
 ---
 ward:
-  workflow: merge-remote-main
+  workflow: pull-request-and-merge
 ---
 # Agent instructions - housecast
 
@@ -93,9 +93,9 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 ## Release
 
-This file's frontmatter declares `workflow: merge-remote-main`. Canonical
-history lives on Forgejo, and the GitHub mirror is separate setup on a separate
-gate.
+This file's frontmatter declares `workflow: pull-request-and-merge`, the one
+lane the fleet runs. Canonical history lives on Forgejo, and the GitHub mirror
+is separate setup on a separate gate.
 
 No release is on PyPI yet. Consumers depend on this repository from Forgejo
 through `[tool.uv.sources]`, pinned by tag, which is the same shape the estate
@@ -128,7 +128,7 @@ changes, in the same commit that changes it.
 <!-- BEGIN managed by agentic-os/scripts/apply-git-workflow.py -->
 ### Git workflow
 
-**This repo runs the `merge-remote-main` lane**, declared as `ward.workflow` in this file's frontmatter. The agent commits, pushes straight to `main`, and closes the issue. Pushing `main` here is the expected path, not an escalation.
+**This repo runs the `pull-request-and-merge` lane**, declared as `ward.workflow` in this file's frontmatter. The agent commits to a task branch, pushes it, opens a Forgejo pull request, and **merges that pull request itself** once it is green. The author of the code is the one who merges it. Opening the pull request is a step, never the stopping point.
 
 The fleet runs two lanes, and both authorize the same core actions:
 
