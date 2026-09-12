@@ -429,7 +429,7 @@ button { font: inherit; color: inherit; }
 
 .progress { margin-top: 1.125rem; }
 .progress-nums {
-  display: flex; justify-content: space-between; align-items: baseline;
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
   font-size: var(--t-1); color: var(--ink-2);
 }
 .progress-nums b { font-size: var(--t-5); color: var(--bright); font-weight: 700; }
@@ -639,9 +639,17 @@ button { font: inherit; color: inherit; }
   transition: transform .1s var(--ease);
 }
 .cell:hover { transform: scale(1.18); }
+.progress-nums .scored {
+  flex-basis: 100%; margin-top: .25rem; color: var(--ink-3); font-size: var(--t-1);
+}
 .cell[data-v="pass"], .cell[data-v="fit"] { background: var(--affirm); border-color: var(--affirm); }
 .cell[data-v="fail"], .cell[data-v="does-not-fit"] { background: var(--deduct); border-color: var(--deduct); }
 .cell[data-v="undecided"] { background: var(--hold); border-color: var(--hold); }
+/* Solid rather than the dashed wash an ungraded cell carries: a non-score is a
+   decision, and a map that renders it as "not yet reached" hides finished work. */
+.cell[data-v="not-applicable"], .cell[data-v="unreachable"], .cell[data-v="no-record"] {
+  background: var(--idle); border-color: var(--idle); border-style: solid;
+}
 /* Exactly one cell is current, so the accent can mean "here" and nothing else. */
 .cell[aria-current="true"] {
   outline: 2px solid var(--accent); outline-offset: 2px;
@@ -653,6 +661,7 @@ button { font: inherit; color: inherit; }
 .swatch { width: .75rem; height: .75rem; border-radius: 2px; border: 1px solid var(--line-2); flex: none; }
 .swatch.affirm { background: var(--affirm); border-color: var(--affirm); }
 .swatch.deduct { background: var(--deduct); border-color: var(--deduct); }
+.swatch.void { background: var(--idle); border-color: var(--idle); }
 .swatch.hold   { background: var(--hold);   border-color: var(--hold); }
 .swatch.idle   { background: var(--idle-wash); border-style: dashed; border-color: var(--idle-edge); }
 
@@ -735,6 +744,7 @@ button { font: inherit; color: inherit; }
 .verdict[data-tone="deduct"] { color: var(--deduct); }
 .verdict[data-tone="hold"]   { color: var(--hold); }
 .verdict[data-tone="idle"]   { color: var(--idle); }
+.verdict[data-tone="void"]   { color: var(--idle); font-style: italic; }
 
 .field { margin-bottom: 1.6rem; }
 .field-l {
@@ -931,6 +941,7 @@ mark.ev {
       <div class="progress-nums">
         <span><b id="n-annotated">0</b> graded</span>
         <span id="n-cases">of 0 cases</span>
+        <span id="n-scored" class="scored" hidden></span>
       </div>
       <div class="bar" role="img" aria-labelledby="progress-label"><i id="bar-fill"></i></div>
       <span class="vh" id="progress-label">Grading progress</span>
@@ -947,6 +958,7 @@ mark.ev {
       <div><span class="swatch affirm"></span> <span aria-hidden="true">&#9679;</span> pass // fit</div>
       <div><span class="swatch deduct"></span> <span aria-hidden="true">&#9679;</span> fail // does not fit</div>
       <div><span class="swatch hold"></span> <span aria-hidden="true">&#9679;</span> undecided</div>
+      <div><span class="swatch void"></span> <span aria-hidden="true">&ndash;</span> non-score, out of the denominator</div>
       <div><span class="swatch idle"></span> <span aria-hidden="true">&#9675;</span> not yet graded</div>
     </div>
 
@@ -1005,9 +1017,19 @@ var VERDICTS = {
   "fit":          { tone: "affirm", glyph: "●", word: "fit" },
   "fail":         { tone: "deduct", glyph: "✕", word: "fail" },
   "does-not-fit": { tone: "deduct", glyph: "✕", word: "does not fit" },
-  "undecided":    { tone: "hold",   glyph: "◑", word: "undecided" }
+  "undecided":    { tone: "hold",   glyph: "◑", word: "undecided" },
+  /* Decided, and not a verdict. One tone for all three because the board map
+     only has to say "out of the denominator"; which of the three it was is on
+     the card, where the distinction can carry its reason. */
+  "not-applicable": { tone: "void", glyph: "–", word: "not applicable" },
+  "unreachable":    { tone: "void", glyph: "–", word: "unreachable" },
+  "no-record":      { tone: "void", glyph: "–", word: "no record" }
 };
 var UNGRADED = { tone: "idle", glyph: "○", word: "not graded" };
+
+/* Decided, and outside every denominator. Named once so the map tally and the
+   progress bar cannot drift apart on what counts as scored. */
+var NON_SCORES = { "not-applicable": true, "unreachable": true, "no-record": true };
 
 function verdictOf(label) {
   return (label && VERDICTS[label]) || UNGRADED;
@@ -1050,13 +1072,16 @@ function adopt(payload, source) {
     carriesPrivate: isGrading || payload.includes_private_fields === true,
     /* An export carries no profile, which is why grading is offered on the
        grading payload alone rather than on whatever a page happens to hold. */
-    profile: payload.profile || { test_types: [], label_sets: {} },
+    profile: payload.profile || { test_types: [], label_sets: {}, group_by: "entity" },
     cases: cases,
     counts: {
       cases: typeof counts.cases === "number" ? counts.cases : cases.length,
       annotated: typeof counts.annotated === "number"
         ? counts.annotated
-        : cases.filter(function (c) { return c.label; }).length
+        : cases.filter(function (c) { return c.label; }).length,
+      /* Absent on an export, which carries progress and not a denominator. */
+      scored: typeof counts.scored === "number" ? counts.scored : null,
+      nonScored: typeof counts.non_scored === "number" ? counts.non_scored : 0
     }
   };
 }
@@ -1489,9 +1514,15 @@ function buildMap(model) {
   // while this ran once at boot.
   map.textContent = "";
   var order = [], rows = {};
+  /* One subject over many cases renders as a single row of everything, which
+     is a bar rather than a map. The profile names the field to group by so an
+     observational board navigates by dimension instead. */
+  var GROUP_KEYS = { entity: "entity", test_type: "testType", attribute: "attribute" };
+  var groupBy = GROUP_KEYS[(model.profile && model.profile.group_by) || "entity"] || "entity";
   model.cases.forEach(function (kase) {
-    if (!rows[kase.entity]) { rows[kase.entity] = []; order.push(kase.entity); }
-    rows[kase.entity].push(kase);
+    var key = kase[groupBy] || kase.entity;
+    if (!rows[key]) { rows[key] = []; order.push(key); }
+    rows[key].push(kase);
   });
   state.cells = {};
   order.forEach(function (entity) {
@@ -1504,9 +1535,16 @@ function buildMap(model) {
       name.appendChild(g);
     }
     name.appendChild(document.createTextNode(entity));
-    var done = rows[entity].filter(function (k) { return k.label; }).length;
-    var tally = el("span", "tally", done + "/" + rows[entity].length);
-    tally.setAttribute("aria-label", done + " of " + rows[entity].length + " graded");
+    var group = rows[entity];
+    var out = group.filter(function (k) { return NON_SCORES[k.label]; }).length;
+    var scorable = group.length - out;
+    var done = group.filter(function (k) { return k.label && !NON_SCORES[k.label]; }).length;
+    var text = done + "/" + scorable + (out ? " +" + out : "");
+    var tally = el("span", "tally", text);
+    tally.setAttribute(
+      "aria-label",
+      done + " of " + scorable + " scored" + (out ? ", " + out + " non-score" : "")
+    );
     name.appendChild(tally);
     row.appendChild(name);
     var cells = el("div", "cells");
@@ -1625,9 +1663,24 @@ function drawRail(model) {
   meta.appendChild(el("li", "", model.format));
   if (!model.carriesPrivate) meta.appendChild(el("li", "", "public half only"));
 
-  document.getElementById("n-annotated").textContent = String(model.counts.annotated);
-  document.getElementById("n-cases").textContent = "of " + model.counts.cases + " cases";
-  var pct = model.counts.cases ? (model.counts.annotated / model.counts.cases) * 100 : 0;
+  /* Progress and denominator are two numbers. A board that seeds its
+     non-scores mechanically opens with a third of its cases decided, and a bar
+     reading 31 percent before a human has graded anything is the ceiling
+     artifact the non-scores exist to prevent, drawn as a progress bar. So the
+     headline, the bar and the map tally all count scored over scorable. */
+  var out = model.counts.nonScored;
+  var scored = model.counts.scored === null ? model.counts.annotated : model.counts.scored;
+  var scorable = model.counts.cases - out;
+  document.getElementById("n-annotated").textContent = String(scored);
+  document.getElementById("n-cases").textContent = "of " + scorable + " scorable";
+  var denom = document.getElementById("n-scored");
+  if (out > 0) {
+    denom.textContent = out + " non-score, outside the denominator";
+    denom.hidden = false;
+  } else {
+    denom.hidden = true;
+  }
+  var pct = scorable ? (scored / scorable) * 100 : 0;
   document.getElementById("bar-fill").style.width = pct + "%";
 }
 

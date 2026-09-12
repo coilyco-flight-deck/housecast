@@ -63,7 +63,7 @@ def test_the_session_carries_the_keystrokes_so_one_key_grading_survives(client: 
     assert payload["format"] == GRADING_FORMAT
     binary = {entry["key"]: entry["value"] for entry in payload["profile"]["label_sets"]["binary"]}
     assert binary == {"p": "pass", "x": "fail"}
-    assert payload["counts"] == {"cases": 2, "annotated": 0}
+    assert payload["counts"] == {"cases": 2, "annotated": 0, "scored": 0, "non_scored": 0}
 
 
 def test_slugs_travel_to_the_grader_even_though_the_audience_never_sees_them(
@@ -260,7 +260,7 @@ def test_a_second_session_reads_back_only_its_own_graders_work(run_dir: pathlib.
     first.post("/api/annotations", json={"id": "live-in", "label": "pass"})
 
     reopened = GradingSession.open(run_dir, grader="kai")
-    assert reopened.counts() == {"cases": 2, "annotated": 1}
+    assert reopened.counts() == {"cases": 2, "annotated": 1, "scored": 1, "non_scored": 0}
     assert GradingSession.open(run_dir, grader="mel").counts()["annotated"] == 0
 
 
