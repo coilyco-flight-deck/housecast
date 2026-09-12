@@ -22,10 +22,16 @@ distribution rather than a record.
 
     uv run --all-extras python evaluations/self-report-2026-09-17/derive.py \
       --corpus <dir>/deep-replies.json --traces <dir>/traced.json \
-      --out <dir>/board --grader kai --grader <second>
+      --out <dir>/board --grader kai
 
     uv run --extra eval housecast grade serve <dir>/board \
       --profile evaluations/self-report-2026-09-17/profile.yaml --grader kai
+
+One `--grader`, because this board is solo. Passing a second one here is what
+would make `grade disagreement` runnable against it, and on a board carrying
+seeded non-scores that verb currently reports a confident zero from cells no
+human touched: `teable:coilyco-flight-deck/housecast#7563`. The single-grader
+path is safe, because the verb refuses fewer than two annotation files.
 
 Then the measured dimension, which needs no board and no grader:
 
