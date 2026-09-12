@@ -123,6 +123,14 @@ total 68, and in-window trace calls total 68. They agree exactly, because the
 two failures differ in opposite directions by the same amount. A board reported
 only in total would have found nothing and called it fidelity.
 
+> **Superseded 2026-09-12. Do not quote the paragraph above.** It is an
+> artifact of two faults in this instrument: the corpus field loses a footer
+> line, and the matcher cannot read the row it loses. Corrected, ordinal 45 is
+> a pass, the only failure is ordinal 36, and footer runs are 70 against 68 —
+> so the aggregate does detect it. See [`CORRECTION.md`](CORRECTION.md). The
+> verdicts below and in `fidelity.txt` are the record of what ran and stay as
+> written until the pass is rebuilt and regenerated.
+
 ### The control that was missing
 
 `fidelity_control.py` validates the **comparator**: 8 synthetic cases, 4 of
