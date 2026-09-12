@@ -97,7 +97,10 @@ takes them by naming them at derive time.
 ## Dimension 01, measured
 
 `fidelity.py` runs the settled rule against the 15 cells, with its output in
-`fidelity.txt` and its controls in `fidelity_control.py`.
+`fidelity.txt`. Two controls sit beside it and they answer different
+questions: `fidelity_control.py` on whether the comparator classifies a pair
+correctly, and `fidelity_permutation.py` on whether the two inputs are
+independent. Each has its output committed.
 
     cells                15
       pass                 13
