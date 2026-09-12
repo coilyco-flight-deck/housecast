@@ -120,6 +120,40 @@ total 68, and in-window trace calls total 68. They agree exactly, because the
 two failures differ in opposite directions by the same amount. A board reported
 only in total would have found nothing and called it fidelity.
 
+### The control that was missing
+
+`fidelity_control.py` validates the **comparator**: 8 synthetic cases, 4 of
+them differences it must catch. That is not the control an exactly-agreeing
+aggregate calls for, and the Developer Advocate seat was right to refuse the
+68-against-68 and ask whether a positive control had run. The check that
+satisfied the question does not answer it: a comparator control is handed two
+inputs by construction, so it cannot see the thing worth worrying about, which
+is whether the two inputs are independent at all. If the trace evidence were
+somehow derived from the footer, every cell would agree and the comparator
+would be sound while measuring one number against itself.
+
+`fidelity_permutation.py` is that control. Each footer is compared against
+another reply's trace, over every cyclic offset, deterministically.
+
+    against their own trace        13 of 15 passed (86.7%)
+    across every offset             3 of 210 passed (1.4%)
+
+So the comparison is reading the pairing rather than reading one number against
+itself, and the exact aggregate agreement is a property of the data.
+
+**The residual 1.4% is explained rather than noise**, and it costs the result
+something. All three permuted passes are single-tool, low-count signatures:
+
+    offset  1  ord 35  matched: gbif/search_species x2
+    offset  3  ord 46  matched: exa/create_web_search x2
+    offset 12  ord  8  matched: exa/create_web_search x2
+
+A cell whose whole footer is one common tool at a low count matches any other
+cell of the same shape. So **3 of the 13 passes are weaker than the other 10**:
+ordinals 8, 35 and 46 would have passed against a trace that was not theirs.
+That is a real limit on what those three cells are worth and it should be said
+wherever the 13 is. The other 10 passed a trace only their own matched.
+
 ### Against the prediction
 
 `PREDICTION.md`, committed before any of this ran, said 11 to 15 passes and
@@ -204,3 +238,5 @@ Carried from the spec because every one is a sentence a room invites.
   failures found, but it does carry 6 of the 13 passes.
 * Two failures out of 15 is not a fidelity rate. It is two cases, and the
   honest framing is what grading found rather than what Deep scores.
+* Three of the 13 passes are signature collisions under permutation, so the
+  13 is not 13 equally strong cells. Quote the permuted rate beside it.
