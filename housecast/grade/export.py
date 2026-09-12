@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from housecast.grade.io import load_annotations, load_dataset, read_yaml
+from housecast.grade.io import annotations_name, load_annotations, load_dataset, read_yaml
 from housecast.grade.schema import Annotation, DatasetEntry, Provenance, pair_results
 
 # Wire format, not a package name. Consumers read it.
@@ -167,8 +167,18 @@ def build_run(
     return run
 
 
-def export_run_dir(run_dir: Path, include_private: bool = False) -> ExportRun:
-    """Read a committed run directory: dataset.yaml beside annotations.yaml."""
+def export_run_dir(
+    run_dir: Path, include_private: bool = False, grader: str | None = None
+) -> ExportRun:
+    """Read a committed run directory: dataset.yaml beside its annotations.
+
+    `grader` picks the same file `grade serve --grader` writes. Without it this
+    reads `annotations.yaml`, which is right for a solo run and silently empty
+    for a board graded under a name: `load_annotations` returns `{}` for a path
+    that does not exist, so a seal of a `--grader kai` board produced a page with
+    every annotation missing and said nothing. Observed on the 2026-09-17
+    fallback page, where all 58 seeded non-scores were absent.
+    """
     dataset_path = run_dir / "dataset.yaml"
     if not dataset_path.exists():
         raise ExportRefusedError(f"{run_dir} has no dataset.yaml, so there is nothing to display")
@@ -182,7 +192,7 @@ def export_run_dir(run_dir: Path, include_private: bool = False) -> ExportRun:
     return build_run(
         run_dir.name,
         load_dataset(dataset_path),
-        load_annotations(run_dir / "annotations.yaml"),
+        load_annotations(run_dir / annotations_name(grader)),
         include_private,
         provenance,
     )

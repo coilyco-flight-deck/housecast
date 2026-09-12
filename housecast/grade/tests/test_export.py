@@ -110,6 +110,25 @@ def test_a_run_directory_round_trips(tmp_path: pathlib.Path) -> None:
     assert run.counts()["cases"] == 2
 
 
+def test_a_named_grader_s_annotations_are_found_only_when_asked_for(
+    tmp_path: pathlib.Path,
+) -> None:
+    """`grade serve --grader kai` writes `annotations.kai.yaml`, and a seal of
+    that directory used to read `annotations.yaml`, find nothing, and say
+    nothing. `load_annotations` returns an empty mapping for a path that does
+    not exist, so the page rendered every case unannotated and the export
+    reported success. Observed on the 2026-09-17 fallback page, which lost all
+    58 of its seeded non-scores that way.
+    """
+    run_dir = tmp_path / "run1"
+    run_dir.mkdir()
+    save_dataset(run_dir / "dataset.yaml", pair_dataset())
+    save_annotations(run_dir / "annotations.kai.yaml", GRADED, "kai")
+
+    assert export_run_dir(run_dir).counts()["annotated"] == 0
+    assert export_run_dir(run_dir, grader="kai").counts()["annotated"] == len(GRADED)
+
+
 def test_a_directory_with_no_dataset_is_refused(tmp_path: pathlib.Path) -> None:
     with pytest.raises(ExportRefusedError, match="nothing to display"):
         export_run_dir(tmp_path)

@@ -32,6 +32,7 @@ from housecast.grade import taxonomy as taxonomy_mod
 from housecast.grade.export import ExportRefusedError, export_run_dir
 from housecast.grade.io import (
     GraderNameRejectedError,
+    annotations_name,
     dump_yaml,
     grader_from_path,
     load_annotations,
@@ -678,23 +679,41 @@ def serve_command(
 @click.argument("run_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--out", type=click.Path(path_type=Path), required=True, help="the sealed .html")
 @click.option(
+    "--grader",
+    default=None,
+    help="read annotations.<grader>.yaml, matching `grade serve --grader`",
+)
+@click.option(
     "--include-private",
     is_flag=True,
     help="seal the grader's critique and evidence too, which a public artifact must not carry",
 )
 @click.pass_context
-def seal_command(context: click.Context, run_dir: Path, out: Path, include_private: bool) -> None:
+def seal_command(
+    context: click.Context, run_dir: Path, out: Path, include_private: bool, grader: str | None
+) -> None:
     """Write a run's export into a copy of the grading page."""
     intro(context)
     try:
-        run = export_run_dir(run_dir, include_private)
+        run = export_run_dir(run_dir, include_private, grader)
         written = seal_mod.seal_to(out, run.to_dict())
     except ExportRefusedError as refusal:
         click.echo(f"housecast grade seal: {refusal}", err=True)
         raise SystemExit(1) from refusal
 
     counts = run.counts()
-    click.echo(f"wrote {written} with {counts['cases']} cases and {counts['pairs']} pairs")
+    click.echo(
+        f"wrote {written} with {counts['cases']} cases, "
+        f"{counts['annotated']} annotated and {counts['pairs']} pairs"
+    )
+    # A page with nothing on it printed the same success as a full one, and the
+    # 2026-09-17 fallback lost all 58 of its seeded non-scores that way.
+    if not counts["annotated"]:
+        click.echo(
+            f"housecast grade seal: no annotations in {run_dir / annotations_name(grader)}, "
+            "so the page carries none. Pass --grader if this board was graded under a name.",
+            err=True,
+        )
     if include_private:
         # The one artifact in this repository that must not reach a projector.
         click.echo("this artifact carries the grader's critique. Do not present it.", err=True)
