@@ -35,14 +35,46 @@ class Fit(StrEnum):
     NO_FIT = "does-not-fit"
 
 
+class NonScore(StrEnum):
+    """A cell that is not a verdict, and the three reasons are not interchangeable.
+
+    An observational board grades replies nobody wrote a challenge for, so a
+    dimension can simply fail to apply to a case. Collapsing that into a pass
+    inflates the board, and collapsing it into a fail blames the subject for
+    the instrument. Each of these keeps a case on the board and out of the
+    denominator. See docs/grading-non-scores.md.
+    """
+
+    # Nothing was claimed, so there is nothing to check.
+    NOT_APPLICABLE = "not-applicable"
+    # The answer exists and this instrument cannot reach it.
+    UNREACHABLE = "unreachable"
+    # The record exists and is empty, which is not evidence of success.
+    NO_RECORD = "no-record"
+
+
 # Phoenix configures its annotation rubric as data rather than hardcoding it.
 # Each entry binds a keystroke to a categorical label.
-LABEL_SETS: dict[str, dict[str, Verdict | Fit]] = {
+LABEL_SETS: dict[str, dict[str, Verdict | Fit | NonScore]] = {
     "binary": {"p": Verdict.PASS, "x": Verdict.FAIL},
     "fit": {"f": Fit.FIT, "u": Fit.UNDECIDED, "n": Fit.NO_FIT},
+    # Binary plus the three non-scores, for a board derived from observed
+    # replies rather than from challenges written to be answerable.
+    "observed": {
+        "p": Verdict.PASS,
+        "x": Verdict.FAIL,
+        "a": NonScore.NOT_APPLICABLE,
+        "r": NonScore.UNREACHABLE,
+        "z": NonScore.NO_RECORD,
+    },
 }
 
-DEDUCTIONS: frozenset[Verdict | Fit] = frozenset({Verdict.FAIL, Fit.NO_FIT, Fit.UNDECIDED})
+DEDUCTIONS: frozenset[Verdict | Fit | NonScore] = frozenset(
+    {Verdict.FAIL, Fit.NO_FIT, Fit.UNDECIDED}
+)
+
+# Separate from DEDUCTIONS: no critique is owed, and no rate may divide by one.
+NON_SCORES: frozenset[NonScore] = frozenset(NonScore)
 
 DEFAULT_WORD_CAP = 100
 
@@ -75,6 +107,9 @@ class Profile:
     test_types: tuple[TestTypeSpec, ...]
     entity_order: tuple[str, ...] = ()
     attribute_order: tuple[str, ...] = ()
+    # Which challenge field the board map groups rows by. One subject over many
+    # cases is a single row unless a board says otherwise. A view, not an order.
+    group_by: str = "entity"
 
     def spec(self, test_type: str) -> TestTypeSpec:
         for candidate in self.test_types:
@@ -101,6 +136,7 @@ class Profile:
             ),
             entity_order=tuple(str(e) for e in raw.get("entity_order", ())),
             attribute_order=tuple(str(a) for a in raw.get("attribute_order", ())),
+            group_by=str(raw.get("group_by", "entity")),
         )
 
 
@@ -294,13 +330,17 @@ class Annotation(BaseModel):
     """
 
     id: str
-    label: Verdict | Fit
+    label: Verdict | Fit | NonScore
     critique: str = ""
     evidence: str = ""
 
     @property
     def is_deduction(self) -> bool:
         return self.label in DEDUCTIONS
+
+    @property
+    def is_non_score(self) -> bool:
+        return self.label in NON_SCORES
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {"id": self.id, "label": self.label.value}
@@ -329,11 +369,18 @@ class PairResult:
         return self.complete and all(v is Verdict.PASS for v in self.halves.values())
 
 
-def decode_label(value: str) -> Verdict | Fit:
-    try:
-        return Verdict(value)
-    except ValueError:
-        return Fit(value)
+def decode_label(value: str) -> Verdict | Fit | NonScore:
+    """Tried in declaration order. A value in no enum raises, which is the point.
+
+    `Fit` is tried before `NonScore` only because it is older; the two share no
+    member value, so the order carries no meaning beyond that.
+    """
+    for enum in (Verdict, Fit, NonScore):
+        try:
+            return enum(value)
+        except ValueError:
+            continue
+    raise ValueError(f"{value!r} is not a label")
 
 
 def annotation_order(

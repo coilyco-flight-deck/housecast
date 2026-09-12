@@ -43,7 +43,7 @@ if TYPE_CHECKING:  # fastapi rides the eval extra and is imported lazily
     from fastapi import FastAPI
 
 # A new wire format takes this package's name rather than another `aos-eval.*`
-# id. See docs/grading-schema.md.
+# id. See docs/grading.md.
 GRADING_FORMAT = "housecast.grading.v1"
 
 DEFAULT_PORT = 8765
@@ -194,6 +194,7 @@ class GradingSession:
         """Keystrokes travel, so one-key grading survives the move to a browser."""
         return {
             "name": self.profile.name,
+            "group_by": self.profile.group_by,
             "test_types": [
                 {
                     "name": spec.name,
@@ -213,10 +214,20 @@ class GradingSession:
         }
 
     def counts(self) -> dict[str, int]:
+        """`annotated` is progress. `scored` is the denominator a rate may use.
+
+        A non-score is a decision, so it advances progress, and it is not a
+        verdict, so it never enters a rate. Reporting one number for both is
+        how an instrument's blind spots get published as the subject's passes.
+        """
         ids = {entry.id for entry in self.entries}
+        mine = [self.annotations[key] for key in self.annotations if key in ids]
+        non_scored = sum(1 for annotation in mine if annotation.is_non_score)
         return {
             "cases": len(self.entries),
-            "annotated": sum(1 for key in self.annotations if key in ids),
+            "annotated": len(mine),
+            "scored": len(mine) - non_scored,
+            "non_scored": non_scored,
         }
 
     def pairs(self) -> list[dict[str, Any]]:
