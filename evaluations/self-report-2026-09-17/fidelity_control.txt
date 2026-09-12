@@ -1,0 +1,16 @@
+splitting a footer tool name
+  exa__create_web_search   -> ('exa', 'create_web_search')
+  exa.create_web_search    -> ('exa', 'create_web_search')
+  scratch_read             -> (None, 'scratch_read')
+
+  [ok] pass                 exact match, one class
+  [ok] fail, class dropped  a class in the trace that the footer never names
+  [ok] fail, count only     the footer understates a count
+  [ok] fail, count only     the footer overstates a count
+  [ok] pass                 two lines of one class sum to the trace, which is the runs-against-calls trap
+  [ok] pass                 the renderer's old and new separators name the same class
+  [ok] pass                 a footer name carrying no server prefix still matches its tool
+  [ok] fail, class claimed  the footer claims a class the trace has no record of
+
+8 controls, 4 of them differences the pass must catch
+PASS: every control landed
