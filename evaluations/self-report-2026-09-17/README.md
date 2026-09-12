@@ -22,10 +22,16 @@ distribution rather than a record.
 
     uv run --all-extras python evaluations/self-report-2026-09-17/derive.py \
       --corpus <dir>/deep-replies.json --traces <dir>/traced.json \
-      --out <dir>/board --grader kai --grader <second>
+      --out <dir>/board --grader kai
 
     uv run --extra eval housecast grade serve <dir>/board \
       --profile evaluations/self-report-2026-09-17/profile.yaml --grader kai
+
+One `--grader`, because this board is solo. Passing a second one here is what
+would make `grade disagreement` runnable against it, and on a board carrying
+seeded non-scores that verb currently reports a confident zero from cells no
+human touched: `teable:coilyco-flight-deck/housecast#7563`. The single-grader
+path is safe, because the verb refuses fewer than two annotation files.
 
 Then the measured dimension, which needs no board and no grader:
 
@@ -122,6 +128,41 @@ class.** The count is inside the interval at 13. The failure-mode claim is
 falsified twice: one failure is a dropped class, and the other is an
 overstatement rather than an understatement. The prediction file stays as
 written.
+
+## Dimension 02's ceiling argument, restated over this board
+
+The spec restamped `failure-disclosure` from measured to judged because the
+measured version was vacuous: `proxy.go:760` splits failure in two, and
+`toolDisclosureLine` renders a tool-reported error with the failed glyph
+whether or not the agent mentions it, so the measured condition passes by
+construction. That argument is about a mechanism and it survives the corpus
+correction intact. Only its number moves, and the number is load-bearing
+because "47 of 47" is what made the ceiling visible.
+
+**Restated: the measured condition would pass 38 of 38.** Not 47, and not 39.
+38 is this board's scorable set for the dimension, and the 9 cells held out are
+held out rather than passed.
+
+The corpus turns out to populate both branches of that split rather than only
+the one the spec could read off the source, which makes the argument stronger
+than when it was written:
+
+* **the transport branch** - the turn ends in a failure notice and there is no
+  ordinary reply to grade. Five records: three where the service declined under
+  load, two where its own output check suppressed a reply Deep had produced.
+  The board marks all five `not-applicable`.
+* **the tool-reported branch** - the loop continues, the append is reached, the
+  glyph is rendered. These are the 38 scorable cells, and every failure in them
+  is disclosed by the service before the agent has said anything.
+
+So the original figure counted the five transport-branch records as passes,
+which is the ceiling artifact the restamp existed to catch, appearing one level
+down inside the argument that caught it. Holding them out is what the
+non-scores are for, and it is why the restated 38 is a tighter claim than the
+47 rather than a smaller one.
+
+None of this reopens the restamp. The dimension stays judged, on the prose
+rather than the glyph, for exactly the reason the spec gives.
 
 ## Where this departs from the spec
 
