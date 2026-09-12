@@ -100,4 +100,3 @@ MIT. Kai Ase Siren holds the copyright. See [`LICENSE`](LICENSE).
 
 * [`AGENTS.md`](AGENTS.md) - agent-facing operating context for this repository.
 * [`docs/FEATURES.md`](docs/FEATURES.md) - what ships today.
-* [`.ward/ward.yaml`](.ward/ward.yaml) - catalog metadata for the cross-repo graph.
