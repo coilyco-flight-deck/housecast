@@ -162,8 +162,15 @@ defect this data demonstrates.
 
 ## What is still owed
 
-* `teable:coilyco-flight-deck/housecast#7571` - the corpus build has no
-  committed script, so only its disclosure fields are re-derivable.
 * `teable:coilyco-gaming/sirens-echo#7448` - the borrowed window. Unchanged by
   this rebuild, and it still carries none of the result: ordinal 36 is among the
   9 cells where the window excluded nothing.
+
+## What is settled rather than owed
+
+The corpus has no committed build script, so only its disclosure fields are
+re-derivable. Kai declined a fix on 2026-09-12: the Discord pull does not get
+repeated, the corpus lives where it lives, and losing the copy is fine. So the
+S3 prefix holds the only copy by decision, and if it goes the board's provenance
+goes with it. `teable:coilyco-flight-deck/housecast#7571`, closed as declined,
+and noted here so nobody files it again as an oversight.
