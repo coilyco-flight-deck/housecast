@@ -13,8 +13,12 @@ fields be re-derived from the raw pull without reimplementing the rest of the
 corpus build, which has no committed script: prompt pairing, `prompt_author`,
 `channel` and `embeds` are carried through from the existing file untouched.
 
-That missing build script is a real gap and not this script's to close. Tracked
-as `teable:coilyco-flight-deck/housecast#7571`.
+Those four are not re-derivable at all, and that is settled rather than owed.
+Kai declined a committed pull script on 2026-09-12: the Discord pull does not get
+repeated, the corpus lives where it lives, and losing the copy is an accepted
+outcome. So the bucket holds the only copy, the Echo channel grant does not need
+reinstating, and a defect in a field this script does not touch stays. Recorded
+on `teable:coilyco-flight-deck/housecast#7571`, closed as declined.
 
     uv run --all-extras python evaluations/self-report-2026-09-17/extract.py \
       --raw <dir>/all-raw.json --corpus <dir>/deep-replies.json --out <dir>
