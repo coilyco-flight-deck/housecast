@@ -67,6 +67,30 @@ path = "housecast/__init__.py"
 # import-untyped error. Both packages are strict-clean here.
 packages = ["housecast", "evalkit"]
 
+# The wheel was scoped and the sdist was not, so the sdist took everything
+# tracked: 239 files and 3.2 MB, of which `evaluations/` alone was 101 files and
+# 55% of the bytes. That directory is committed run evidence quoting subject
+# output verbatim, and PyPI accepts a version once and never lets it be
+# replaced, so an unscoped sdist publishes a permanent copy of every board this
+# repository has ever recorded. An allowlist rather than an exclude list,
+# because the failure is a new directory nobody remembered to exclude.
+[tool.hatch.build.targets.sdist]
+# Every pattern is rooted. These are gitignore-style, so a bare `README.md`
+# matches at any depth: the first version of this list shipped nine of them,
+# one per evaluation directory, which is the exact content it was written to
+# keep out.
+include = [
+    "/housecast",
+    "/evalkit",
+    "/docs",
+    # evalkit resolves it from the repository root, and one coverage test reads
+    # the real file rather than a fixture.
+    "/challenges.yaml",
+    "/README.md",
+    "/LICENSE",
+    "/LICENSE-FONTS",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
