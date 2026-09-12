@@ -183,13 +183,20 @@ class GradingSession:
         each case with the source message's timestamp. Beside a withheld prompt
         that is a key back to the text somebody took out.
 
-        Unconditional, and the conditional version is why. It first dropped the
-        field only when `--expose` was passed, which reads as the safe default
-        and is not one: a container binding loopback behind a proxy never passes
-        that flag while being as public as anything else. The signal was the
-        wrong one. Nothing reads this field on the way out, the page never
-        renders it and `attributes.py` takes it from the dataset rather than the
-        payload, so there is no case for sending it at all.
+        Unconditional, because nothing reads this field on the way out. The page
+        never renders it, `attributes.py` takes it from the dataset rather than
+        the payload, `deck.WITHHELD` names it and `export.ExportCase` omits it.
+        Four surfaces already agree it is not for display, so there is no bind on
+        which sending it is right and no condition left to get wrong.
+
+        The version before this one dropped it only under `--expose`, and the
+        stated reason for replacing that was wrong. It said a container binds
+        loopback behind a proxy and so never passes the flag. The deployment
+        that exists passes `--host 0.0.0.0 --expose` explicitly, so the
+        conditional would have fired; the container observed serving the field
+        was built from a ref predating the fix. That remains a hazard for a
+        deployment nobody has built rather than something that happened, and the
+        argument above never needed it.
         """
         payload = entry.challenge.model_dump(mode="json", exclude_none=True)
         payload.pop("seed", None)

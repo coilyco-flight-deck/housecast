@@ -84,11 +84,10 @@ def test_the_seed_never_reaches_the_payload_whatever_the_bind(
     from, and one board seeds each case with the source message's timestamp.
     Beside a withheld prompt that is a key back to the text somebody removed.
 
-    Unconditional on purpose. Dropping it only under `--expose` looked safe and
-    was not: a container binding loopback behind a proxy never passes that flag
-    while being as reachable as anything else, which is how a deployed board
-    served the field after the first version of this fix. Nothing reads it on
-    the way out, so there is no bind on which sending it is right.
+    Unconditional because nothing reads it on the way out, so there is no bind
+    on which sending it is right. The earlier version dropped it only under
+    `--expose`; a flag is a proxy for who can reach the payload rather than the
+    thing itself, and a condition that can be got wrong is worse than none.
     """
     session = GradingSession.open(run_dir)
     assert "seed" not in session.case(session.entries[0])
