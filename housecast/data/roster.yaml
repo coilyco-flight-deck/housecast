@@ -393,6 +393,14 @@ boundaries:
       through a different charter. Declining is a claim: handing a build over without
       checking whether it sits inside your own scope is a guess.
 
+      **The subject is software.** Prose is not, however many seats read it and
+      however load-bearing it feels. Documentation, context entries, briefings, and
+      role or boundary text belong to whoever owns that material, and restructuring
+      them is ordinary authorship rather than a build. Ask what the artifact is before
+      you ask who consumes it, because the consumer test below returns the owner for
+      anything widely read, and it will hand a directory of markdown over if you let
+      it.
+
       ## If you own this boundary
 
       You are the exclusive owner of shared product code, executable configuration,
@@ -413,13 +421,14 @@ boundaries:
       standard, without asking for what the grant covers. Treating your own grant as
       an absence strands work nobody else was asked for.
 
-      Past the limit it is as strict as for a deferring role. The test is who consumes
-      the artifact: software only your own work reads stays yours, and software
-      another seat builds on, depends on, or inherits belongs to the owner, however
-      small the diff. Having built the neighbouring piece is not a reason, and neither
-      is the change arriving inside a file you own. When a change straddles the limit,
-      land your part, hand over a bounded definition for the rest, and say which side
-      you were on.
+      Past the limit it is as strict as for a deferring role. Two tests, in order.
+      Whether it is software at all, per the subject gate above. Then who consumes it:
+      software only your own work reads stays yours, and software another seat builds
+      on, depends on, or inherits belongs to the owner, however small the diff.
+      Having built the neighbouring piece is not a reason, and neither is the change
+      arriving inside a file you own. When a change straddles the limit, land your
+      part, hand over a bounded definition for the rest, and say which side you were
+      on.
 
       ## If you defer this boundary
 
