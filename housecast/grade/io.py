@@ -109,8 +109,31 @@ def load_annotations(path: Path) -> dict[str, Annotation]:
     }
 
 
+class GraderNotPermittedError(ValueError):
+    """A name that is not on the board's roster of graders."""
+
+
+def require_permitted_grader(profile: Profile | None, grader: str | None, path: Path) -> None:
+    """Refuse a label from anyone the board has not named as a grader.
+
+    Separate from `annotations_name`, which asks whether a name can be a
+    filename. This asks whether it can be an author, and the two fail for
+    different reasons a reader needs kept apart.
+    """
+    if profile is None or profile.permits(grader):
+        return
+    named = ", ".join(profile.graders)
+    raise GraderNotPermittedError(
+        f"{grader!r} may not grade {profile.name}: {path} would carry labels from a name "
+        f"that is not on its roster ({named}). The scorer is a human."
+    )
+
+
 def save_annotations(
-    path: Path, annotations: dict[str, Annotation], grader: str | None = None
+    path: Path,
+    annotations: dict[str, Annotation],
+    grader: str | None = None,
+    profile: Profile | None = None,
 ) -> None:
     """Rewritten whole after every single decision, by both grading surfaces.
 
@@ -120,7 +143,12 @@ def save_annotations(
 
     `grader` is written into the file rather than left to the filename, so two
     testers stay attributable through a copy, a rename, or an export.
+
+    Pass `profile` to have the roster enforced here. Omitted, it is not, because
+    a caller holding no profile is not thereby claiming everyone may grade.
+    `evalkit.coverage` enforces at the counting end regardless.
     """
+    require_permitted_grader(profile, grader, path)
     payload: dict[str, Any] = {}
     if grader is not None:
         payload["grader"] = grader

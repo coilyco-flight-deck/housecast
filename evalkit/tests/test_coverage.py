@@ -6,11 +6,13 @@ name every one of them rather than asserting on a count.
 
 from __future__ import annotations
 
+import dataclasses
 import pathlib
 
 import yaml
 
 from evalkit import coverage
+from evalkit.profile import PROFILE
 from housecast import roster as roster_module
 
 MINIMAL = roster_module.DATA.parent / "minimal-roster.yaml"
@@ -30,7 +32,9 @@ def _graded(tmp_path: pathlib.Path, run: str, ids: list[str]) -> pathlib.Path:
     root = tmp_path / "evaluations"
     (root / run).mkdir(parents=True, exist_ok=True)
     (root / run / "annotations.yaml").write_text(
-        yaml.safe_dump({"annotations": [{"id": case, "label": "pass"} for case in ids]}),
+        yaml.safe_dump(
+            {"grader": "kai", "annotations": [{"id": case, "label": "pass"} for case in ids]}
+        ),
         encoding="utf-8",
     )
     return root
@@ -160,15 +164,69 @@ def test_a_grader_named_annotations_file_counts_as_graded(tmp_path: pathlib.Path
 
 
 def test_two_graders_on_one_run_union_rather_than_overwrite(tmp_path: pathlib.Path) -> None:
-    """Either label is a label on record, and this report is about presence."""
+    """Either label is a label on record, and this report is about presence.
+
+    Supplies its own profile rather than the board's, whose roster names one
+    person. A test that needed a second grader on this board would have to
+    invent one.
+    """
+    two = dataclasses.replace(PROFILE, graders=("kai", "quinn"))
     root = tmp_path / "evaluations"
     (root / "run").mkdir(parents=True)
-    for grader, case in (("kai", "reader-gnd-in"), ("evie", "reader-gnd-out")):
+    for grader, case in (("kai", "reader-gnd-in"), ("quinn", "reader-gnd-out")):
         (root / "run" / f"annotations.{grader}.yaml").write_text(
             yaml.safe_dump({"grader": grader, "annotations": [{"id": case, "label": "pass"}]}),
             encoding="utf-8",
         )
 
     challenges = _challenges(tmp_path, ["reader-gnd-in", "reader-gnd-out"])
-    report = coverage.build(MINIMAL, challenges, root)
+    report = coverage.build(MINIMAL, challenges, root, profile=two)
     assert not report.ungraded
+
+
+def _annotated(tmp_path: pathlib.Path, grader: str | None, ids: list[str]) -> pathlib.Path:
+    root = tmp_path / "evaluations"
+    (root / "run").mkdir(parents=True, exist_ok=True)
+    payload: dict[str, object] = {}
+    if grader is not None:
+        payload["grader"] = grader
+    payload["annotations"] = [{"id": case, "label": "pass"} for case in ids]
+    name = "annotations.yaml" if grader is None else f"annotations.{grader}.yaml"
+    (root / "run" / name).write_text(yaml.safe_dump(payload), encoding="utf-8")
+    return root
+
+
+def test_a_grader_the_board_does_not_permit_contributes_no_labels(
+    tmp_path: pathlib.Path,
+) -> None:
+    """The scorer is a human, and on 2026-09-15 an agent wrote a board's labels."""
+    root = _annotated(tmp_path, "evie", ["reader-gnd-in"])
+
+    report = coverage.build(MINIMAL, _challenges(tmp_path, ["reader-gnd-in"]), root)
+    assert "reader-gnd-in" in report.ungraded
+
+
+def test_a_refused_file_is_named_rather_than_skipped_quietly(tmp_path: pathlib.Path) -> None:
+    """A label this report drops in silence is how one ends up counted."""
+    root = _annotated(tmp_path, "evie", ["reader-gnd-in"])
+
+    report = coverage.build(MINIMAL, _challenges(tmp_path, ["reader-gnd-in"]), root)
+    assert report.rejected == {"evaluations/run/annotations.evie.yaml": "evie"}
+    assert not report.clean
+
+
+def test_the_same_file_under_a_permitted_grader_counts(tmp_path: pathlib.Path) -> None:
+    """The positive control. Without it the check could refuse everything and pass."""
+    root = _annotated(tmp_path, "kai", ["reader-gnd-in"])
+
+    report = coverage.build(MINIMAL, _challenges(tmp_path, ["reader-gnd-in"]), root)
+    assert "reader-gnd-in" not in report.ungraded
+    assert not report.rejected
+
+
+def test_an_unattributed_file_does_not_pass_a_named_roster(tmp_path: pathlib.Path) -> None:
+    """A label whose author is unknown is the case the roster exists to stop."""
+    root = _annotated(tmp_path, None, ["reader-gnd-in"])
+
+    report = coverage.build(MINIMAL, _challenges(tmp_path, ["reader-gnd-in"]), root)
+    assert report.rejected == {"evaluations/run/annotations.yaml": "unattributed"}

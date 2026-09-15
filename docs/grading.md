@@ -17,12 +17,12 @@ absent. `test_no_runner_reaches_the_dependency_set` pins the half that matters: 
 
 ## The profile is the deployment's
 
-`Profile` exists so a deployment declares its own test types without this schema growing a branch per
-consumer. `evalkit/profile.py` is agent-compose's, carrying `boundary`, `role-fit`, `personality`,
-`voice`, and [`grounding`](grading-grounding.md). sirens-echo declares its own. Adding one is a
-profile edit plus a deriver, never a schema edit: `evalkit/matrix.py` unpacks the test types by
-arity, so a new one fails loudly rather than deriving nothing. A profile also names the field the
-board map groups by, because one subject over many cases is otherwise a single row.
+`Profile` lets a deployment declare its own test types without this schema growing a branch per
+consumer, and adding one is a profile edit plus a deriver rather than a schema edit:
+`evalkit/matrix.py` unpacks them by arity, so a new type fails loudly. A profile also names the
+board map's grouping field, and `graders`, the people who may carry a label. An agent that wrote a
+board's prompts and targets emits labels indistinguishable from grades, and one did on 2026-09-15.
+Empty permits anyone; a named roster is closed and `coverage` names what it refused.
 
 ## Schema ids are a wire format
 

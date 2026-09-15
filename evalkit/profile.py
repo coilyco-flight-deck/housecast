@@ -42,6 +42,9 @@ PROFILE = Profile(
         "suggest-external-comms",
         "seek-external-validation",
     ),
+    # The scorer is a human. Named here rather than assumed, because an agent
+    # that authored the prompts can produce labels that look exactly like grades.
+    graders=("kai",),
 )
 
 
@@ -67,6 +70,7 @@ def to_dict(profile: Profile = PROFILE) -> dict[str, Any]:
         ],
         "entity_order": list(profile.entity_order),
         "attribute_order": list(profile.attribute_order),
+        "graders": list(profile.graders),
     }
 
 

@@ -23,8 +23,10 @@ from typing import Any
 import yaml
 
 from evalkit.matrix import derive
+from evalkit.profile import PROFILE
 from housecast import roster as roster_module
 from housecast import snapshot as snapshot_module
+from housecast.grade.schema import Profile
 
 ROOT = Path(__file__).resolve().parent.parent
 CHALLENGES = ROOT / "challenges.yaml"
@@ -46,10 +48,15 @@ class Report:
     stale: set[str]
     ungraded: set[str]
     orphaned: dict[str, set[str]] = field(default_factory=dict)
+    # Files whose grader is not on the profile roster. Reported rather than
+    # skipped: a label the report drops silently is how one gets counted.
+    rejected: dict[str, str] = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
-        return not (self.unauthored or self.stale or self.ungraded or self.orphaned)
+        return not (
+            self.unauthored or self.stale or self.ungraded or self.orphaned or self.rejected
+        )
 
 
 def load_config(pyproject: Path | None = None) -> Config:
@@ -74,7 +81,9 @@ def authored_ids(path: Path) -> set[str]:
     return {str(entry["id"]) for entry in document.get("challenges", [])}
 
 
-def graded_runs(root: Path, retired: tuple[str, ...] = ()) -> dict[str, set[str]]:
+def graded_runs(
+    root: Path, retired: tuple[str, ...] = (), profile: Profile = PROFILE
+) -> tuple[dict[str, set[str]], dict[str, str]]:
     """Every run directory holding annotations, keyed the way a reader would type it.
 
     Relative to the tree's own parent rather than to ROOT, so a caller pointing
@@ -85,17 +94,27 @@ def graded_runs(root: Path, retired: tuple[str, ...] = ()) -> dict[str, set[str]
     119 ungraded cases where 103 already carried a label in
     `annotations.kai.yaml`. Two graders on one run union, because either one is
     a label on record and this report is about presence, not agreement.
+
+    A file whose `grader` the profile does not permit contributes nothing and is
+    returned separately, so the caller reports it rather than dropping it. A
+    label this report ignores quietly is how one ends up counted.
     """
     base = root.resolve().parent
     runs: dict[str, set[str]] = {}
+    rejected: dict[str, str] = {}
     for record in sorted(root.rglob("annotations*.yaml")):
         rel = record.parent.resolve().relative_to(base).as_posix()
         if any(rel == entry or rel.startswith(f"{entry}/") for entry in retired):
             continue
         document = yaml.safe_load(record.read_text(encoding="utf-8")) or {}
+        named = document.get("grader")
+        grader = None if named is None else str(named)
+        if not profile.permits(grader):
+            rejected[record.resolve().relative_to(base).as_posix()] = grader or "unattributed"
+            continue
         ids = {str(entry["id"]) for entry in document.get("annotations", [])}
         runs.setdefault(rel, set()).update(ids)
-    return runs
+    return runs, rejected
 
 
 def build(
@@ -103,11 +122,16 @@ def build(
     challenges: Path = CHALLENGES,
     evaluations: Path = EVALUATIONS,
     config: Config | None = None,
+    profile: Profile = PROFILE,
 ) -> Report:
     settings = config or Config()
     derived = {challenge.id for challenge in derive(project(roster_path))}
     authored = authored_ids(challenges)
-    runs = graded_runs(evaluations, settings.retired_runs) if evaluations.is_dir() else {}
+    runs, rejected = (
+        graded_runs(evaluations, settings.retired_runs, profile)
+        if evaluations.is_dir()
+        else ({}, {})
+    )
     everything_graded: set[str] = set().union(*runs.values()) if runs else set()
     return Report(
         derived=derived,
@@ -116,6 +140,7 @@ def build(
         stale=authored - derived,
         ungraded=(authored & derived) - everything_graded,
         orphaned={run: ids - derived for run, ids in runs.items() if ids - derived},
+        rejected=rejected,
     )
 
 
@@ -137,6 +162,9 @@ def render(report: Report, config: Config) -> str:
     for run, ids in sorted(report.orphaned.items()):
         lines.append(f"  {run}: {len(ids)}")
         lines += [f"    {case}" for case in sorted(ids)]
+    lines.append(f"rejected - a grader this board does not permit: {len(report.rejected)}")
+    for record, grader in sorted(report.rejected.items()):
+        lines.append(f"  {record}: grader {grader}")
     lines.append("")
     where = "pyproject.toml [tool.evalkit.coverage]"
     if config.blocking:

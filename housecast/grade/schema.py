@@ -110,6 +110,31 @@ class Profile:
     # Which challenge field the board map groups rows by. One subject over many
     # cases is a single row unless a board says otherwise. A view, not an order.
     group_by: str = "entity"
+    # The people who may grade this board. Empty leaves it unenforced, for a
+    # consumer that has not named its graders yet. See `permits`.
+    graders: tuple[str, ...] = ()
+
+    def permits(self, grader: str | None) -> bool:
+        """Whether this name may carry a label on this board.
+
+        The scorer is a human. `evalkit/task.py` runs the board unscored for that
+        reason, and this is the same rule stated where a label is written rather
+        than where a response is produced.
+
+        An agent that authored a board's prompts and targets can produce labels
+        against them that look exactly like grades, and on 2026-09-15 one did:
+        `evaluations/autonomy-2026-09-15` carried `annotations.evie.yaml` until
+        Kai deleted it. Nothing refused it, because the roster of who may grade
+        was not written down anywhere a check could read.
+
+        An empty roster permits everyone, because a deployment that has not
+        named its graders should not have its boards silently emptied. A named
+        roster is a closed list, and `None` never passes one: a label whose
+        author is unattributable is the case this exists to stop.
+        """
+        if not self.graders:
+            return True
+        return grader is not None and grader in self.graders
 
     def spec(self, test_type: str) -> TestTypeSpec:
         for candidate in self.test_types:
@@ -137,6 +162,7 @@ class Profile:
             entity_order=tuple(str(e) for e in raw.get("entity_order", ())),
             attribute_order=tuple(str(a) for a in raw.get("attribute_order", ())),
             group_by=str(raw.get("group_by", "entity")),
+            graders=tuple(str(g) for g in raw.get("graders", ())),
         )
 
 
