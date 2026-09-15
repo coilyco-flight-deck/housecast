@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from typing import Any
 
 import yaml
 from inspect_ai.log import read_eval_log
@@ -17,7 +18,7 @@ from inspect_ai.log import read_eval_log
 from evalkit.profile import PROFILE
 from housecast.grade.dataset import DatasetReport, build, validate
 from housecast.grade.io import save_dataset
-from housecast.grade.schema import Challenge, Response
+from housecast.grade.schema import Challenge, Response, ToolCall
 
 
 def load_responses(path: Path) -> list[Response]:
@@ -36,6 +37,7 @@ def load_responses(path: Path) -> list[Response]:
                 text=(sample.output.completion or "").strip(),
                 finish_reason=str(getattr(message, "stop_reason", "") or "stop"),
                 reasoning=_reasoning(message),
+                calls=_calls(message, getattr(sample, "messages", None)),
             )
         )
     return responses
@@ -58,6 +60,35 @@ def load_challenges(path: Path) -> list[Challenge]:
 
 def run(written: list[Challenge], responses: list[Response]) -> DatasetReport:
     return build(written, responses)
+
+
+def _calls(message: Any, messages: Any) -> tuple[ToolCall, ...]:
+    """Pair each call the subject made with the tool message that answered it.
+
+    Inspect splits the two: the assistant message carries `tool_calls`, and the
+    result and any error come back as separate messages keyed by `tool_call_id`.
+    A call with no answering message is kept, because a call that got nothing
+    back is exactly the observation a shape-shaped attribute is looking for.
+    """
+    raw = getattr(message, "tool_calls", None) or []
+    answers = {
+        str(getattr(m, "tool_call_id", "")): m
+        for m in (messages or [])
+        if getattr(m, "role", "") == "tool"
+    }
+    calls = []
+    for call in raw:
+        answer = answers.get(str(getattr(call, "id", "")))
+        error = getattr(answer, "error", None)
+        calls.append(
+            ToolCall(
+                name=str(getattr(call, "function", "")),
+                arguments=dict(getattr(call, "arguments", None) or {}),
+                result=str(getattr(answer, "text", "") or "") if answer is not None else "",
+                error=str(getattr(error, "message", "") or "") if error is not None else "",
+            )
+        )
+    return tuple(calls)
 
 
 def _reasoning(message: object) -> str:

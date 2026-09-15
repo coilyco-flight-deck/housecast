@@ -21,6 +21,9 @@ METADATA_FIELDS = (
     "attribute",
     "half",
     "pair_id",
+    # The runner reads this back off the sample to check the answer's shape, so
+    # a field that does not ride here is a shape expectation nothing enforces.
+    "required_tool",
 )
 
 
@@ -31,7 +34,9 @@ def to_inspect(challenge: Challenge) -> InspectSample:
     metadata = {
         key: (value.value if isinstance(value, StrEnum) else value)
         for key, value in ((name, getattr(challenge, name)) for name in METADATA_FIELDS)
-        if value is not None
+        # An empty string is an absent expectation rather than an empty one, and
+        # carrying it would put `required_tool: ""` on every sample.
+        if value is not None and value != ""
     }
     return InspectSample(
         id=challenge.id,

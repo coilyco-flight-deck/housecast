@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class Half(StrEnum):
@@ -259,6 +259,23 @@ class Challenge(BaseModel):
         return profile.spec(self.test_type).word_cap
 
 
+class ToolCall(BaseModel):
+    """One call the subject made, with what came back.
+
+    A subject whose answer is a call rather than prose is graded on the call, so
+    the arguments and the error are evidence rather than telemetry. `error` is
+    the tool refusing, which for a schema-shaped attribute is the passing case
+    rather than the failing one.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    name: str
+    arguments: dict[str, Any] = Field(default_factory=dict)
+    result: str = ""
+    error: str = ""
+
+
 class Response(BaseModel):
     """One run of one challenge. Inspect calls the repetition an epoch."""
 
@@ -273,11 +290,19 @@ class Response(BaseModel):
     reasoning: str = ""
     model: str = ""
     outcome: str = ""
-    tools: tuple[str, ...] = ()
+    calls: tuple[ToolCall, ...] = ()
 
     @property
     def words(self) -> int:
         return len(self.text.split())
+
+    @property
+    def tools(self) -> tuple[str, ...]:
+        """Call names alone, for a check that does not care about arguments."""
+        return tuple(call.name for call in self.calls)
+
+    def called(self, name: str) -> bool:
+        return name in self.tools
 
 
 class RunRecord(BaseModel):
@@ -326,6 +351,9 @@ class DatasetEntry(BaseModel):
 
     challenge: Challenge
     output: str
+    # What the runner observed about the answer's shape rather than its prose.
+    # Empty where no expectation reached, so an older dataset reads back unchanged.
+    note: str = ""
 
     @model_validator(mode="after")
     def _check_written(self) -> DatasetEntry:
@@ -341,11 +369,17 @@ class DatasetEntry(BaseModel):
         """Flattened so a dataset file reads as one record per challenge."""
         payload = self.challenge.model_dump(mode="json", exclude_none=True)
         payload["output"] = self.output
+        if self.note:
+            payload["note"] = self.note
         return payload
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> DatasetEntry:
-        return cls(challenge=Challenge.model_validate(raw), output=str(raw["output"]))
+        return cls(
+            challenge=Challenge.model_validate(raw),
+            output=str(raw["output"]),
+            note=str(raw.get("note", "")),
+        )
 
 
 class Annotation(BaseModel):
