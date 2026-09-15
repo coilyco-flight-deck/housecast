@@ -32,6 +32,9 @@ PROFILE = Profile(
         # Binary because the label set carries no UNDECIDED, which is the door back
         # to accuracy grading. Rationale in guardrail_challenges. Cap: housecast#7334.
         TestTypeSpec("guardrail", "binary", 150, ("attribute", "half", "pair_id")),
+        # The only type whose label reads off the response without judging degree:
+        # the seat either carried the work or handed the decision back.
+        TestTypeSpec("autonomy", "binary", 50, ("attribute", "half", "pair_id")),
     ),
     attribute_order=(
         "build-foundational-software",

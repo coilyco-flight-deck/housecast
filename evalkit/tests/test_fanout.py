@@ -54,11 +54,14 @@ def test_a_summary_edit_reaches_every_role_carrying_that_boundary() -> None:
 
 
 def test_a_purpose_edit_skips_the_role_s_own_scoped_pairs() -> None:
+    """The autonomy pair does move: it renders from the purpose, which is the price
+    of deriving autonomy without a roster field of its own.
+    """
     # A scoped pair renders from the grant, not the purpose, so it does not
     # move. housecast#7173 over-counts these by every boundary the role touches.
     reached = fanout(ROSTER, "role.gamedev.purpose")
 
-    assert reached == ["gamedev-bfs"]
+    assert reached == ["gamedev-bfs", "gamedev-aut"]
     assert "gamedev-sec" not in reached
 
 

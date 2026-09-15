@@ -61,6 +61,8 @@ def test_the_minimal_roster_derives_a_board_small_enough_to_name(
         "reader-per-personality-grounded",
         "reader-gnd-in",
         "reader-gnd-out",
+        "reader-aut-in",
+        "reader-aut-out",
     }
 
 

@@ -8,6 +8,7 @@ import pytest
 import yaml
 
 from evalkit.matrix import (
+    AUTONOMY,
     BOUNDARY,
     GROUNDING,
     GUARDRAIL,
@@ -393,3 +394,38 @@ def test_an_archived_role_still_answers_adjacency_edges_pointed_at_it() -> None:
     archived["roles"]["sysadmin"]["archived"] = True
 
     assert "platform-fit-sysadmin" in {c.id for c in derive(archived)}
+
+
+def test_autonomy_derives_one_pair_per_active_role_from_its_purpose() -> None:
+    """Every seat has a purpose, so unlike grounding this type derives for all of them."""
+    autonomy = [c for c in derive(ROSTER) if c.test_type == AUTONOMY]
+
+    active = [r for r in ROSTER["role_order"] if not ROSTER["roles"][r].get("archived", False)]
+    assert [c.id for c in autonomy] == [f"{r}-aut-{h}" for r in active for h in ("in", "out")]
+    assert all(c.pair_id and c.half for c in autonomy)
+
+
+def test_an_archived_role_derives_no_autonomy_pair() -> None:
+    """A seat nobody can launch would report a coverage gap no prompt closes."""
+    roster = copy.deepcopy(ROSTER)
+    roster["roles"]["devrel"]["archived"] = True
+
+    assert not [c for c in derive(roster) if c.test_type == AUTONOMY and c.entity == "devrel"]
+
+
+def test_the_two_autonomy_halves_ask_for_opposite_things() -> None:
+    """Same target on both halves is how the pair stops catching a seat that always asks."""
+    halves = {c.half: c.target or "" for c in derive(ROSTER) if c.test_type == AUTONOMY}
+
+    assert "does the work" in halves[Half.IN]
+    assert "puts the decision back" in halves[Half.OUT]
+    assert halves[Half.IN] != halves[Half.OUT]
+
+
+def test_both_autonomy_halves_carry_the_role_purpose() -> None:
+    """The lane is the purpose, so a purpose edit has to reach the pair. See test_fanout."""
+    purpose = "operate the real hosted systems"
+    sysadmin = [c for c in derive(ROSTER) if c.test_type == AUTONOMY and c.entity == "sysadmin"]
+
+    assert len(sysadmin) == 2
+    assert all(purpose in (c.target or "") for c in sysadmin)

@@ -8,10 +8,10 @@ it through Inspect against Agent Proxy, and hands datasets to the annotator.
 ## The board is derived, not maintained
 
 `evalkit/matrix.py` builds it through `derive()`. Boundary allocations, role fit,
-personality, and voice each produce their own challenge shapes. Adding a boundary
-or changing an adjacency changes the output, which is what stops the board
-falling behind the roster it tests. A human writes the prompt into each derived
-challenge, and `challenges.yaml` is where those land.
+personality, voice, grounding, guardrail and autonomy each produce their own challenge
+shapes. Adding a boundary or changing an adjacency changes the output, which is what
+stops the board falling behind the roster it tests. A human writes the prompt into
+each derived challenge, and `challenges.yaml` is where those land.
 
 ## Coverage
 

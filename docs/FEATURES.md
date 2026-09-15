@@ -12,9 +12,9 @@ Coarse inventory of the major capabilities housecast ships.
 * **Attribute acts, and the overlay that extends them.** Every role, personality and boundary side
   names three runnable things, and a private overlay appends estate-only acts. See [`overlay.md`](overlay.md).
 * **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read.
-* **evalkit, the board runner.** Derives the board across six test types (boundary, role-fit,
-  personality, voice, [grounding](grading-grounding.md), and guardrail), runs it through Inspect
-  against Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md).
+* **evalkit, the board runner.** Derives the board across seven test types (boundary, role-fit,
+  personality, voice, [grounding](grading-grounding.md), guardrail, and autonomy), runs it through
+  Inspect against Agent Proxy, and reports the coverage gap. See [`evaluation.md`](evaluation.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
   taxonomy, one-way export, `grade serve` on loopback, two graders through `--grader`, and `grade
   pin`, which digests a grade's five inputs so a pass straddling a change refuses rather than
