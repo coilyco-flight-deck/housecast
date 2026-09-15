@@ -82,10 +82,10 @@ def test_a_guardrail_with_no_body_half_is_rejected(loaded: Roster) -> None:
 def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Roster) -> None:
     """Both kinds exist in the shipped roster, so neither branch is derived-but-never-run.
 
-    The seven are Kai's, analyst added 2026-09-11, psych 2026-09-11, reporter
-    2026-09-11. Frontend, platform and gamedev are
-    deliberately absent, so this is the scope decision written where a change to it
-    has to pass.
+    The four are Kai's. Frontend, platform and gamedev are deliberately absent.
+    The analyst, psych and reporter guardrails went with those seats' deprecation
+    on 2026-09-15, so this is the scope decision written where a change to it has
+    to pass.
     """
     kinds = {g.role: g.reproducible for g in loaded.guardrails.values()}
     assert kinds == {
@@ -93,9 +93,6 @@ def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Rost
         "science": False,
         "director": False,
         "advocate": True,
-        "analyst": False,
-        "psych": False,
-        "reporter": False,
     }
 
 
@@ -141,8 +138,8 @@ def test_no_two_shipped_attested_guardrails_share_a_target(loaded: Roster) -> No
         if not g.reproducible
         for half in (g.attests_in, g.attests_out)
     ]
-    assert len(targets) == 12
-    assert len(set(targets)) == 12
+    assert len(targets) == 6
+    assert len(set(targets)) == 6
 
 
 def test_owner_may_not_declare_the_boundary_it_owns(loaded: Roster) -> None:
