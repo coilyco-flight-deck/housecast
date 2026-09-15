@@ -1573,12 +1573,12 @@ challenges:
     half: in
     pair_id: gamedev-aut
     prompt: >-
-      The Eco MCP is still in the bot's deploy roster after the staged removal,
-      so it advertises tools against a server that is not running. Taking it
-      out is a roster edit and a redeploy. Answer in under 50 words.
+      Two recipes in the mod's table have their output quantities swapped against
+      the design doc, and the fix is a two-line edit to JSON the build already
+      validates. Answer in under 50 words.
     target: >-
-      Lands the staged removal and reports it, rather than asking whether now
-      is the right time or confirming the staging it already did.
+      Makes the edit and reports it, rather than asking which to fix first or
+      re-confirming a swap the design doc already settles.
 
   - id: gamedev-aut-out
     entity: gamedev

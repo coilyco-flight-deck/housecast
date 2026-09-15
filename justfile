@@ -162,3 +162,7 @@ grade-seal *ARGS:
 # Serve a built deck to a room, with anonymous voting. `just grade-present DECK`.
 grade-present *ARGS:
     @uv run --extra eval housecast grade present "$@"
+
+# Grade a JSONL of {half, response} on stdin with the autonomy grader.
+evalkit-autonomy *ARGS:
+    @uv run --extra eval python -m evalkit.autonomy "$@"
