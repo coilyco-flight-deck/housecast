@@ -53,8 +53,25 @@ def build(challenges: list[Challenge], responses: list[Response], epoch: int = 1
         chosen = next((run for run in runs if run.epoch == epoch), runs[0])
         if not chosen.text:
             report.blank.append(challenge.id)
-        report.kept.append(DatasetEntry(challenge=challenge, output=chosen.text))
+        report.kept.append(
+            DatasetEntry(challenge=challenge, output=chosen.text, note=tool_note(challenge, chosen))
+        )
     return report
+
+
+def tool_note(challenge: Challenge, response: Response) -> str:
+    """Whether the answer took the shape the case required, as a note not a score.
+
+    A missing call is not a fail. The grader decides that, and a subject can be
+    right about the task while reaching for the wrong tool. What the note removes
+    is the grader having to infer from prose whether a call happened at all.
+    """
+    if not challenge.required_tool:
+        return ""
+    if response.called(challenge.required_tool):
+        return f"called {challenge.required_tool}"
+    called = ", ".join(response.tools)
+    return f"did not call {challenge.required_tool}, called: {called or 'nothing'}"
 
 
 def validate(challenges: list[Challenge], profile: Profile = AGENT_COMPOSE) -> list[str]:
