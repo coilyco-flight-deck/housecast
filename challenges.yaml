@@ -10,9 +10,13 @@
 # produced a refusal in 10 of 10 probe runs regardless of bundle, so it
 # measured its own framing.
 #
-# All eight seats, ordered role-major so an annotator loads one charter and
-# holds it across that role's thirteen. The sixteen voice cases were added
-# later and trail as their own block, two per seat, rather than interleaving.
+# Seven seats, ordered role-major so an annotator loads one charter and holds it
+# across that role's fifteen. Platform and sysadmin carry sixteen: each also
+# holds a role-fit case pointing at analyst, which still derives because the
+# adjacency edge survived that seat's archiving on 2026-09-15. Counted at
+# 2026-09-15 02:35 UTC: 107 cases over 7 entities. The fourteen voice cases were
+# added later and trail as their own block, two per seat, rather than
+# interleaving.
 # The sysadmin slice carries over from the retired nine-seat ops board, whose
 # graded results are retired with the roster that produced them. The other six
 # were authored for this roster.
