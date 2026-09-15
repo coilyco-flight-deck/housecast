@@ -137,3 +137,38 @@ def test_the_shipped_default_is_report(tmp_path: pathlib.Path) -> None:
     assert coverage.load_config().blocking is False
     argv = ["--roster", str(MINIMAL), "--challenges", str(CHALLENGES)]
     assert coverage.main([*argv, "--evaluations", str(tmp_path / "none")]) == 0
+
+
+def test_a_grader_named_annotations_file_counts_as_graded(tmp_path: pathlib.Path) -> None:
+    """Matching only `annotations.yaml` read a whole graded board as ungraded.
+
+    Observed 2026-09-15: 119 cases reported ungraded where 103 carried a label in
+    `annotations.kai.yaml`, which is the number the autonomy grader was built to
+    reduce and had already been reduced by a human.
+    """
+    root = tmp_path / "evaluations"
+    (root / "run").mkdir(parents=True)
+    (root / "run" / "annotations.kai.yaml").write_text(
+        yaml.safe_dump(
+            {"grader": "kai", "annotations": [{"id": "reader-gnd-in", "label": "pass"}]}
+        ),
+        encoding="utf-8",
+    )
+
+    report = coverage.build(MINIMAL, _challenges(tmp_path, ["reader-gnd-in"]), root)
+    assert "reader-gnd-in" not in report.ungraded
+
+
+def test_two_graders_on_one_run_union_rather_than_overwrite(tmp_path: pathlib.Path) -> None:
+    """Either label is a label on record, and this report is about presence."""
+    root = tmp_path / "evaluations"
+    (root / "run").mkdir(parents=True)
+    for grader, case in (("kai", "reader-gnd-in"), ("evie", "reader-gnd-out")):
+        (root / "run" / f"annotations.{grader}.yaml").write_text(
+            yaml.safe_dump({"grader": grader, "annotations": [{"id": case, "label": "pass"}]}),
+            encoding="utf-8",
+        )
+
+    challenges = _challenges(tmp_path, ["reader-gnd-in", "reader-gnd-out"])
+    report = coverage.build(MINIMAL, challenges, root)
+    assert not report.ungraded

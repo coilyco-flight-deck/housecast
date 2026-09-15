@@ -79,15 +79,22 @@ def graded_runs(root: Path, retired: tuple[str, ...] = ()) -> dict[str, set[str]
 
     Relative to the tree's own parent rather than to ROOT, so a caller pointing
     at a fixture gets the same `evaluations/<run>` shape the default produces.
+
+    `annotations.<grader>.yaml` counts. Matching only the bare name read a board
+    graded by one named grader as entirely ungraded: on 2026-09-15 this reported
+    119 ungraded cases where 103 already carried a label in
+    `annotations.kai.yaml`. Two graders on one run union, because either one is
+    a label on record and this report is about presence, not agreement.
     """
     base = root.resolve().parent
     runs: dict[str, set[str]] = {}
-    for record in sorted(root.rglob("annotations.yaml")):
+    for record in sorted(root.rglob("annotations*.yaml")):
         rel = record.parent.resolve().relative_to(base).as_posix()
         if any(rel == entry or rel.startswith(f"{entry}/") for entry in retired):
             continue
         document = yaml.safe_load(record.read_text(encoding="utf-8")) or {}
-        runs[rel] = {str(entry["id"]) for entry in document.get("annotations", [])}
+        ids = {str(entry["id"]) for entry in document.get("annotations", [])}
+        runs.setdefault(rel, set()).update(ids)
     return runs
 
 
