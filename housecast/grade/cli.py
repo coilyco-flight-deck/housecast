@@ -688,14 +688,26 @@ def serve_command(
     is_flag=True,
     help="seal the grader's critique and evidence too, which a public artifact must not carry",
 )
+@click.option(
+    "--profile",
+    "profile_path",
+    type=click.Path(exists=True, path_type=Path),
+    help="a profile YAML. Without one the built-in agent-compose taxonomy applies, "
+    "which reads every pair in boundary words.",
+)
 @click.pass_context
 def seal_command(
-    context: click.Context, run_dir: Path, out: Path, include_private: bool, grader: str | None
+    context: click.Context,
+    run_dir: Path,
+    out: Path,
+    include_private: bool,
+    grader: str | None,
+    profile_path: Path | None,
 ) -> None:
     """Write a run's export into a copy of the grading page."""
     intro(context)
     try:
-        run = export_run_dir(run_dir, include_private, grader)
+        run = export_run_dir(run_dir, include_private, grader, load_profile(profile_path))
         written = seal_mod.seal_to(out, run.to_dict())
     except ExportRefusedError as refusal:
         click.echo(f"housecast grade seal: {refusal}", err=True)
@@ -792,6 +804,19 @@ def present(
     help="also export critique and evidence, written for the grader rather than an audience",
 )
 @click.option("--format", "output_format", type=click.Choice(("json", "yaml")), default="json")
+@click.option(
+    "--grader",
+    default=None,
+    help="read annotations.<grader>.yaml, matching `grade serve --grader`. Without it a "
+    "board graded under a name exports zero annotations and says nothing.",
+)
+@click.option(
+    "--profile",
+    "profile_path",
+    type=click.Path(exists=True, path_type=Path),
+    help="a profile YAML. Without one the built-in agent-compose taxonomy applies, "
+    "which reads every pair in boundary words.",
+)
 @click.pass_context
 def export(
     context: click.Context,
@@ -799,11 +824,13 @@ def export(
     out: Path | None,
     include_private: bool,
     output_format: str,
+    grader: str | None,
+    profile_path: Path | None,
 ) -> None:
     """Project a committed run into a display payload. One way, never back."""
     intro(context)
     try:
-        run = export_run_dir(run_dir, include_private)
+        run = export_run_dir(run_dir, include_private, grader, load_profile(profile_path))
     except ExportRefusedError as refusal:
         click.echo(f"housecast grade export: {refusal}", err=True)
         raise SystemExit(1) from refusal

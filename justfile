@@ -59,6 +59,12 @@ fields *ARGS:
 sync-roster *ARGS:
     @uv run python scripts/sync-roster.py "$@"
 
+# Seal an MCP tool board into a standalone page. `just mcp-board RUN out.html kai`.
+mcp-board RUN OUT GRADER="":
+    @uv run --extra eval --extra mcp python -m housecast grade seal "{{RUN}}" \
+      --out "{{OUT}}" --profile housecast/data/mcp-tools-profile.yaml \
+      {{ if GRADER != "" { "--grader " + GRADER } else { "" } }}
+
 # Re-vendor the coilyco kit's primitives into the grading page. `just sync-kit ../website`.
 sync-kit *ARGS:
     @uv run python scripts/sync_kit.py "$@"

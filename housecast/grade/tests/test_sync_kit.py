@@ -31,7 +31,7 @@ def vendored() -> dict[str, str]:
 
 
 def fake_site(root: Path, tokens: dict[str, str]) -> Path:
-    kit = root / "src/sass"
+    kit = root / "packages/kit/src"
     kit.mkdir(parents=True)
     body = "\n".join(f"  {name}: {value};" for name, value in tokens.items())
     (kit / "_kit.scss").write_text(":root {\n" + body + "\n}\n", encoding="utf-8")
@@ -74,16 +74,31 @@ def test_a_primitive_the_kit_dropped_is_reported(tmp_path: Path) -> None:
     assert "--k-b-400" in result.stdout
 
 
-@pytest.mark.parametrize("args", [("--check",), ("--check", "/nonexistent/website")])
-def test_no_checkout_skips_rather_than_passing_quietly(args: tuple[str, ...]) -> None:
+def test_no_checkout_given_skips_and_says_so() -> None:
     """The skip is deliberate - housecast builds without a website - but it is
     the check's weakest moment, so it says so in words rather than exiting 0
     silently. The fleet validator that replaces this must fail loudly instead:
     teable:coilyco-flight-deck/agentic-os#7259.
     """
-    result = run(*args)
+    result = run("--check")
     assert result.returncode == 0
     assert "skipped" in result.stdout
+
+
+@pytest.mark.parametrize("path", ["/nonexistent/website", "/tmp"])
+def test_a_checkout_without_the_kit_fails_rather_than_skipping(path: str) -> None:
+    """The case that turned drift detection off for months.
+
+    A path that carries no kit used to take the same skip as no path at all,
+    print "no website checkout to compare against", and exit 0. The kit had
+    moved to packages/kit/src at website#213, so every check since was green
+    against nothing. Conflating "not asked" with "asked and could not look" is
+    what made it invisible.
+    """
+    result = run("--check", path)
+    assert result.returncode != 0
+    assert "carries no" in result.stderr
+    assert "skipped" not in result.stdout
 
 
 def test_a_write_run_refuses_without_a_checkout() -> None:

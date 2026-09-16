@@ -1,0 +1,54 @@
+# The MCP tool board's taxonomy, as `housecast grade --profile` takes it.
+# Generated from housecast/mcp/profile.py by `just sync-mcp-profile`.
+# Edit the Python, not this file.
+name: mcp-tools
+group_by: entity
+test_types:
+- name: selectable
+  label_set: binary
+  word_cap: 50
+  requires:
+  - attribute
+  - half
+  - pair_id
+  readings:
+    pass/pass: reachable for its own task, and no other
+    fail/pass: not reachable for the task it is for
+    pass/fail: fires on its neighbour's task
+    fail/fail: selectable for nothing, and for everything
+- name: description-grounded
+  label_set: binary
+  word_cap: 50
+  requires:
+  - attribute
+  - half
+  - pair_id
+  readings:
+    pass/pass: claims what it does, and does what it claims
+    fail/pass: claims a capability the schema cannot reach
+    pass/fail: does more than it admits to
+    fail/fail: describes a different tool entirely
+- name: schema-honest
+  label_set: binary
+  word_cap: 50
+  requires:
+  - attribute
+  - half
+  - pair_id
+  readings:
+    pass/pass: the schema refuses what the handler would have to
+    fail/pass: rejects a call the schema declares valid
+    pass/fail: accepts a call only the handler refuses
+    fail/fail: constrains nothing in either direction
+- name: bounded-failure
+  label_set: binary
+  word_cap: 50
+  requires:
+  - attribute
+  - half
+  - pair_id
+  readings:
+    pass/pass: an error a model can act on, both ways
+    fail/pass: a valid call errors
+    pass/fail: an invalid call returns a silent empty or a stack trace
+    fail/fail: fails unreadably both ways

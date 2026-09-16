@@ -161,6 +161,7 @@ class Profile:
                     label_set=str(entry.get("label_set", "binary")),
                     word_cap=int(entry.get("word_cap", DEFAULT_WORD_CAP)),
                     requires=tuple(str(f) for f in entry.get("requires", ())),
+                    readings={str(k): str(v) for k, v in (entry.get("readings") or {}).items()},
                 )
                 for entry in raw.get("test_types", [])
             ),

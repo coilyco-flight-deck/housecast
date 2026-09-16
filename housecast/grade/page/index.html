@@ -54,7 +54,7 @@
   reaches up into another repo for its own runtime config, and because the
   absent build step is this page's safety property.
 
-  Vendored from coilyco-bridge/website@ba90beb, src/sass/_kit.scss.
+  Vendored from coilyco-bridge/website@ba90beb, packages/kit/src/_kit.scss.
   Re-vendor with `just sync-kit ../website`, which also checks for drift.
 
   Where this board deliberately parts from the kit, and why:
@@ -1323,7 +1323,7 @@ function readPair(unit) {
   if (!a || !b)  return { tone: "idle", text: "one half graded" };
   var said = readingFor(unit.testType, a + "/" + b);
   var tone = (a === "pass" && b === "pass") ? "affirm" : "deduct";
-  return { tone: tone, text: said || (a + " in, " + b + " out") };
+  return { tone: tone, text: said || ("no reading for " + a + "/" + b) };
 }
 
 /* The wording is the profile's, not this page's. Four boundary sentences lived

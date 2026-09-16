@@ -12,7 +12,14 @@ from pathlib import Path
 from typing import Any
 
 from housecast.grade.io import annotations_name, load_annotations, load_dataset, read_yaml
-from housecast.grade.schema import Annotation, DatasetEntry, Provenance, pair_results
+from housecast.grade.schema import (
+    AGENT_COMPOSE,
+    Annotation,
+    DatasetEntry,
+    Profile,
+    Provenance,
+    pair_results,
+)
 
 # Wire format, not a package name. Consumers read it.
 EXPORT_FORMAT = "aos-eval.export.v1"
@@ -75,6 +82,9 @@ class ExportRun:
     pairs: list[dict[str, Any]] = field(default_factory=list)
     includes_private: bool = False
     provenance: dict[str, Any] = field(default_factory=dict)
+    # Readings only. Grading is gated on the format string, so this cannot turn
+    # an export into a grading surface. See docs/grading-surfaces.md.
+    readings: dict[str, dict[str, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -83,6 +93,14 @@ class ExportRun:
             "includes_private_fields": self.includes_private,
             "provenance": self.provenance,
             "counts": self.counts(),
+            "profile": {
+                "test_types": [
+                    {"name": name, "readings": readings}
+                    for name, readings in sorted(self.readings.items())
+                ],
+                "label_sets": {},
+                "group_by": "entity",
+            },
             "pairs": self.pairs,
             "cases": [case.to_dict() for case in self.cases],
         }
@@ -107,12 +125,14 @@ def build_run(
     annotations: dict[str, Annotation],
     include_private: bool = False,
     provenance: Provenance | None = None,
+    profile: Profile = AGENT_COMPOSE,
 ) -> ExportRun:
     """Join a dataset to its annotations, refusing anything unsafe to display."""
     run = ExportRun(
         name=name,
         includes_private=include_private,
         provenance=provenance.model_dump(mode="json") if provenance else {},
+        readings={spec.name: dict(spec.readings) for spec in profile.test_types if spec.readings},
     )
     problems: list[str] = []
 
@@ -168,7 +188,10 @@ def build_run(
 
 
 def export_run_dir(
-    run_dir: Path, include_private: bool = False, grader: str | None = None
+    run_dir: Path,
+    include_private: bool = False,
+    grader: str | None = None,
+    profile: Profile = AGENT_COMPOSE,
 ) -> ExportRun:
     """Read a committed run directory: dataset.yaml beside its annotations.
 
@@ -195,4 +218,5 @@ def export_run_dir(
         load_annotations(run_dir / annotations_name(grader)),
         include_private,
         provenance,
+        profile,
     )
