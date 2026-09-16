@@ -804,6 +804,7 @@ eval = [
     { name = "uvicorn" },
 ]
 mcp = [
+    { name = "httpx" },
     { name = "mcp" },
 ]
 
@@ -820,6 +821,7 @@ dev = [
 requires-dist = [
     { name = "click", marker = "extra == 'eval'", specifier = ">=8.1" },
     { name = "fastapi", marker = "extra == 'eval'", specifier = ">=0.115" },
+    { name = "httpx", marker = "extra == 'mcp'", specifier = ">=0.27" },
     { name = "inspect-ai", marker = "extra == 'eval'", specifier = ">=0.3.255" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.2" },
     { name = "openai", marker = "extra == 'eval'", specifier = ">=2.53.0" },

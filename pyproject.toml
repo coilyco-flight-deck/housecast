@@ -34,6 +34,7 @@ eval = [
     "uvicorn>=0.30",
 ]
 mcp = [
+    "httpx>=0.27",
     "mcp>=1.2",
 ]
 
