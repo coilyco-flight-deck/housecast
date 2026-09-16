@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 import time
@@ -34,6 +35,7 @@ class Clock:
     def __init__(self) -> None:
         self.start = time.monotonic()
         self.waits: list[tuple[float, float]] = []
+        self.end: float | None = None
 
     def now(self) -> float:
         return time.monotonic() - self.start
@@ -56,6 +58,20 @@ def run_and_wait(page: Page, clock: Clock, click: str) -> None:
             timeout=RUN_TIMEOUT_MS,
         )
     )
+    meta = page.text_content("#run-meta") or ""
+    # A shed or refused call scores as a prose defect, so a demo of one is a false demo.
+    if not re.search(r"(?<!\d)0 transport-errored", meta):
+        raise SystemExit(f"run had transport errors, not recording a false demo: {meta}")
+
+
+def cap_concurrency(page: Page, concurrency: int) -> None:
+    # The page asks for 8, which Agent Proxy's admission limit on ser8 sheds.
+    def rewrite(route) -> None:
+        body = json.loads(route.request.post_data or "{}")
+        body["concurrency"] = concurrency
+        route.continue_(post_data=json.dumps(body))
+
+    page.route("**/api/run", rewrite)
 
 
 def drive(page: Page, url: str, clock: Clock, pause: float) -> None:
@@ -131,8 +147,9 @@ def main() -> None:
     parser.add_argument("--width", type=int, default=1280)
     parser.add_argument("--height", type=int, default=800)
     parser.add_argument("--pause", type=float, default=1.2, help="seconds held on each beat")
-    parser.add_argument("--wait-speed", type=float, default=8.0)
+    parser.add_argument("--wait-speed", type=float, default=16.0)
     parser.add_argument("--headed", action="store_true")
+    parser.add_argument("--concurrency", type=int, default=1, help="overrides the page's 8")
     parser.add_argument("--channel", default="chrome", help="installed browser, so no Playwright download")
     args = parser.parse_args()
 
@@ -145,11 +162,14 @@ def main() -> None:
         browser = pw.chromium.launch(channel=args.channel or None, headless=not args.headed)
         context = browser.new_context(viewport=size, record_video_dir=str(raw_dir), record_video_size=size)
         page = context.new_page()
+        cap_concurrency(page, args.concurrency)
         clock = Clock()
         try:
             drive(page, args.url, clock, args.pause)
         finally:
-            page.screenshot(path=str(args.out / "final.png"), full_page=True)
+            # A full_page screenshot resizes the viewport while the video still records.
+            clock.end = clock.now()
+            page.screenshot(path=str(args.out / "final.png"))
             video = pathlib.Path(page.video.path())
             context.close()
             browser.close()
@@ -157,7 +177,7 @@ def main() -> None:
     raw = args.out / "raw.webm"
     video.replace(raw)
     shutil.rmtree(raw_dir, ignore_errors=True)
-    duration = probe_duration(raw)
+    duration = min(probe_duration(raw), clock.end or float("inf"))
     (args.out / "waits.json").write_text(json.dumps({"duration": duration, "waits": clock.waits}, indent=2))
 
     mp4 = args.out / "demo.mp4"
