@@ -139,6 +139,10 @@ mcpeval-compare *ARGS:
 mcpeval-serve *ARGS:
     @uv run --extra eval --extra mcp housecast mcpeval serve "$@"
 
+# Record the loop page as a demo video against a running mcpeval-serve. `just mcpeval-demo --out DIR`.
+mcpeval-demo *ARGS:
+    @uv run --with playwright python scripts/record_mcpeval_demo.py "$@"
+
 # Ask whether response dispersion predicted the grade. `just evalkit-validity RUN/annotations.kai.yaml`.
 evalkit-validity ANNOTATIONS:
     @uv run --extra eval python evaluations/split-candidates-2026-09-08/validity.py "{{ANNOTATIONS}}"
