@@ -7,12 +7,12 @@ differ on any summary containing an ampersand.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import pathlib
 from typing import TYPE_CHECKING, Any
 
 from housecast import render, voiceprofile
+from housecast.digest import digest
 
 if TYPE_CHECKING:
     from housecast.roster import Role, Roster, Seat
@@ -26,12 +26,6 @@ def source_segment(value: str) -> str:
         char = chr(octet)
         out.append(char if char in SOURCE_SAFE else f"%{octet:02X}")
     return "".join(out)
-
-
-def digest(raw: bytes | str) -> str:
-    if isinstance(raw, str):
-        raw = raw.encode()
-    return "sha256:" + hashlib.sha256(raw).hexdigest()
 
 
 def _escape(text: str) -> str:
