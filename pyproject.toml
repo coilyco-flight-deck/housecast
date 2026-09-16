@@ -123,7 +123,13 @@ retired_runs = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["housecast/tests", "housecast/grade/tests", "housecast/mcp/tests", "evalkit/tests"]
+testpaths = [
+    "housecast/tests",
+    "housecast/grade/tests",
+    "housecast/mcp/tests",
+    "housecast/mcpeval/tests",
+    "evalkit/tests",
+]
 
 [tool.agentic-os.repo-pointer-skills]
 org = "coilyco-flight-deck"

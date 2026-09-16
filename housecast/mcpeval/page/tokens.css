@@ -1,0 +1,112 @@
+/* Every visual value in the product. No colour, font, space, radius, weight or
+   duration is written anywhere else, so a rebrand is this file and nothing else.
+   The rule is checked by `test_no_literals.py`, which reads app.css and fails on
+   a raw hex, px, rem or font stack outside this file.
+
+   This is a customer product and not the internal annotator, so it shares no
+   value with `housecast/grade/page`: that surface is a dark purple Roboto
+   workbench for someone grading all day, and this is a light, narrow, one-task
+   flow for someone who has an hour. */
+
+:root {
+  color-scheme: light;
+
+  /* ground and ink */
+  --ink-0: #10171c;
+  --ink-1: #3d4c56;
+  --ink-2: #6b7c86;
+  --ground: #f4f6f6;
+  --panel: #ffffff;
+  --sunk: #eceff0;
+  --rule: #dde2e4;
+  --rule-strong: #c3ccd0;
+
+  /* one accent, used for the thing the person is doing now */
+  --accent: #0f7b6c;
+  --accent-ink: #ffffff;
+  --accent-wash: #e3f2ef;
+  --accent-edge: #9fd3c9;
+
+  /* verdicts */
+  --good: #1d7a3e;
+  --good-wash: #e4f3e8;
+  --bad: #ab2f26;
+  --bad-wash: #fbe8e6;
+  --flat: #7b7b7b;
+  --flat-wash: #eeeeee;
+  --warn: #9a6508;
+  --warn-wash: #fbf0dc;
+
+  /* type */
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --size-0: 0.72rem;
+  --size-1: 0.8rem;
+  --size-2: 0.9rem;
+  --size-3: 1rem;
+  --size-4: 1.25rem;
+  --size-5: 1.6rem;
+  --size-6: 2.1rem;
+  --weight-normal: 400;
+  --weight-medium: 550;
+  --weight-bold: 680;
+  --leading-tight: 1.2;
+  --leading-body: 1.5;
+  --tracking-eyebrow: 0.09em;
+
+  /* space */
+  --space-0: 0.25rem;
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --measure: 68ch;
+  --frame: 74rem;
+
+  /* shape */
+  --radius-1: 3px;
+  --radius-2: 6px;
+  --radius-3: 10px;
+  --border: 1px;
+  --border-thick: 2px;
+  --shadow-1: 0 1px 2px rgba(16, 23, 28, 0.06);
+  --shadow-2: 0 6px 20px -12px rgba(16, 23, 28, 0.35);
+
+  /* motion */
+  --fast: 120ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.3, 1);
+
+  /* the delta strip */
+  --strip-height: 2.5rem;
+  --strip-gap: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ink-0: #e9eef0;
+    --ink-1: #aebac1;
+    --ink-2: #7d8d95;
+    --ground: #0d1316;
+    --panel: #141d21;
+    --sunk: #101a1e;
+    --rule: #222f35;
+    --rule-strong: #35474f;
+    --accent: #3fb8a5;
+    --accent-ink: #06231f;
+    --accent-wash: #12302c;
+    --accent-edge: #2a6a60;
+    --good: #58c07c;
+    --good-wash: #14301d;
+    --bad: #e2786e;
+    --bad-wash: #351917;
+    --flat: #8a8a8a;
+    --flat-wash: #22282a;
+    --warn: #d69a3a;
+    --warn-wash: #33280f;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-2: 0 8px 24px -14px rgba(0, 0, 0, 0.8);
+  }
+}

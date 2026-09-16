@@ -15,3 +15,4 @@ build/
 
 # One-off experiment scratch, promoted into evaluations/ when it produces a record.
 .exp/
+.mcpeval/
