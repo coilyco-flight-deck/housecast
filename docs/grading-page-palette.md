@@ -6,7 +6,7 @@ Where the color and type come from, and where they deviate. The treatment using 
 ## Vendored from the kit, never fetched
 
 The page carries the coilyco kit's **primitive ramps**, verbatim from `src/sass/_kit.scss` on
-`coilyco-flight-deck/website`. The kit is authored as custom properties for this reason, in its own
+`coilyco-bridge/website`. The kit is authored as custom properties for this reason, in its own
 words: the site compiles that file, and a page elsewhere inlines the same text. It vendors rather
 than fetches because a shipped tool never reaches up into another repo for its runtime config, and
 the absent build step is this page's safety property.
