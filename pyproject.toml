@@ -33,6 +33,9 @@ eval = [
     "fastapi>=0.115",
     "uvicorn>=0.30",
 ]
+mcp = [
+    "mcp>=1.2",
+]
 
 [project.scripts]
 housecast = "housecast.__main__:main"
@@ -119,7 +122,7 @@ retired_runs = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["housecast/tests", "housecast/grade/tests", "evalkit/tests"]
+testpaths = ["housecast/tests", "housecast/grade/tests", "housecast/mcp/tests", "evalkit/tests"]
 
 [tool.agentic-os.repo-pointer-skills]
 org = "coilyco-flight-deck"
