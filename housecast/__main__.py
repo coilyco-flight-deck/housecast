@@ -40,6 +40,24 @@ def _grade(argv: list[str]) -> int:
         return refused.exit_code
 
 
+def _mcpeval(argv: list[str]) -> int:
+    """Forward to the click group, exactly as `grade` does."""
+    try:
+        import click
+
+        from housecast.mcpeval.cli import mcpeval as group
+    except ImportError as missing:  # the loop rides the eval and mcp extras
+        raise SystemExit(
+            f"housecast mcpeval needs the eval and mcp extras: "
+            f"pip install 'housecast[eval,mcp]' ({missing})"
+        ) from missing
+    try:
+        return group.main(args=argv, standalone_mode=False) or 0
+    except click.ClickException as refused:
+        refused.show()
+        return refused.exit_code
+
+
 def _compose(args: argparse.Namespace) -> int:
     loaded = roster_module.load(args.roster)
     if args.role not in loaded.roles:
@@ -72,6 +90,8 @@ def main(argv: list[str] | None = None) -> int:
     raw = sys.argv[1:] if argv is None else argv
     if raw and raw[0] == "grade":
         return _grade(raw[1:])
+    if raw and raw[0] == "mcpeval":
+        return _mcpeval(raw[1:])
 
     parser = argparse.ArgumentParser(prog="housecast")
     parser.add_argument("--roster", default=str(roster_module.DATA))
@@ -94,6 +114,7 @@ def main(argv: list[str] | None = None) -> int:
     fields_parser.set_defaults(handler=_fields)
 
     sub.add_parser("grade", help="grade a board dataset (needs the eval extra)")
+    sub.add_parser("mcpeval", help="the MCP tool-description loop (needs the eval and mcp extras)")
 
     args = parser.parse_args(argv)
     handler: object = args.handler

@@ -1,0 +1,113 @@
+# A task is a capability, not a test case. Twenty prompts, because prompts past
+# ten cost machine time rather than review time, and the sign test needs 15 of 20
+# to move where it needs 9 of 10.
+#
+# Nothing in this file is ever sent to the model, which sees the prompt text and
+# the subject's own tool descriptions and nothing else. `rules` is the grader's,
+# and a rule naming the expected calls would measure whether the agent can read
+# the answer key.
+#
+# `rules` at the top level applies to every prompt and each prompt overrides it.
+# p13 and p14 are the edge case: the file has no audio track, so the correct
+# behaviour is to discover that and tell the user rather than transcribe.
+task: transcribe-video
+title: Transcribe a video
+capability: Get the spoken words out of a media file and give them to the user as text.
+
+rules:
+  expect: transcript
+  required_tools: [media_transcribe]
+  discouraged_tools: [media_analyze]
+  before: media_register
+  after: media_transcribe
+  poll_tool: media_job_status
+  max_calls: 5
+
+prompts:
+  - id: p01
+    text: "I have a 40 minute lecture recording at /media/lecture.mp4. Get me the text of what was said."
+    rules: {answer_contains: "cache coherence"}
+
+  - id: p02
+    text: "Transcribe /media/interview.mov for me."
+    rules: {answer_contains: "migration"}
+
+  - id: p03
+    text: "What was said in /media/standup-2026-09-02.mp4? I missed the standup."
+    rules: {answer_contains: "ingest queue"}
+
+  - id: p04
+    text: "Can you pull the spoken words out of /media/keynote.webm and show them to me?"
+    rules: {answer_contains: "three years ago"}
+
+  - id: p05
+    text: "I need a written record of /media/podcast-ep12.wav."
+    rules: {answer_contains: "episode twelve"}
+
+  - id: p06
+    text: "Turn the audio in /media/lecture.mp4 into text please."
+    rules: {answer_contains: "cache coherence"}
+
+  - id: p07
+    text: "Give me a transcript of the interview file. It is at /media/interview.mov."
+    rules: {answer_contains: "migration"}
+
+  - id: p08
+    text: "/media/standup-2026-09-02.mp4 - what did they say?"
+    rules: {answer_contains: "ingest queue"}
+
+  - id: p09
+    text: "Read me back the speech from /media/keynote.webm."
+    rules: {answer_contains: "three years ago"}
+
+  - id: p10
+    text: "I want to search the words in /media/podcast-ep12.wav later, so I need them as text first."
+    rules: {answer_contains: "episode twelve"}
+
+  - id: p11
+    text: "Someone sent me /media/lecture.mp4 and I cannot play audio right now. What is in it?"
+    rules: {answer_contains: "cache coherence"}
+
+  - id: p12
+    text: "Extract the dialogue from /media/interview.mov."
+    rules: {answer_contains: "migration"}
+
+  - id: p13
+    text: "Transcribe /media/b-roll-skyline.mp4."
+    rules:
+      expect: no_audio
+      required_tools: []
+      poll_tool: ""
+      max_calls: 4
+
+  - id: p14
+    text: "I need the words from /media/b-roll-skyline.mp4 as a subtitle file."
+    rules:
+      expect: no_audio
+      required_tools: []
+      poll_tool: ""
+      max_calls: 4
+
+  - id: p15
+    text: "Please write out everything spoken in /media/standup-2026-09-02.mp4."
+    rules: {answer_contains: "ingest queue"}
+
+  - id: p16
+    text: "I am summarising /media/keynote.webm for a colleague. Start by getting me what was actually said."
+    rules: {answer_contains: "three years ago"}
+
+  - id: p17
+    text: "Convert the speech in /media/podcast-ep12.wav to written text."
+    rules: {answer_contains: "episode twelve"}
+
+  - id: p18
+    text: "Get the transcript for /media/lecture.mp4. Do not summarise it, I want the words."
+    rules: {answer_contains: "cache coherence"}
+
+  - id: p19
+    text: "The file /media/interview.mov has an interview in it. I need it in text form."
+    rules: {answer_contains: "migration"}
+
+  - id: p20
+    text: "Whatever is being said in /media/keynote.webm, I need it written down."
+    rules: {answer_contains: "three years ago"}

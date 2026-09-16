@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Change a description. Know if it helped.</title>
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="frame">
+  <p class="eyebrow">MCP tool definitions</p>
+  <h1>Change a description. Know if it helped.</h1>
+  <p class="lede">One task, ten to twenty-five prompts, two arms, one thing changed. The comparison is paired prompt to prompt and never two averages.</p>
+
+  <ol class="rail" id="rail">
+    <li data-step="task">1 pick a task</li>
+    <li data-step="run">2 run the arm</li>
+    <li data-step="read">3 read the queue</li>
+    <li data-step="edit">4 edit the prose</li>
+    <li data-step="rerun">5 re-run</li>
+    <li data-step="decide">6 decide</li>
+  </ol>
+
+  <section class="panel" id="p-task">
+    <header>
+      <h2>Task</h2>
+      <span class="meta" id="env"></span>
+    </header>
+    <div class="row">
+      <select id="task"></select>
+      <select id="defs"></select>
+      <button id="go">Run this arm</button>
+      <button id="baseline" class="ghost">Capture baseline</button>
+    </div>
+    <p id="cap"></p>
+    <div class="bar hidden" id="bar"><span style="width:0"></span></div>
+    <p class="meta" id="progress"></p>
+  </section>
+
+  <section class="panel hidden" id="p-run">
+    <header>
+      <h2>Run</h2>
+      <span class="meta" id="run-meta"></span>
+    </header>
+    <div class="tally" id="run-tally"></div>
+    <span class="budget" id="budget"></span>
+    <div class="queue" id="queue"></div>
+  </section>
+
+  <section class="panel hidden" id="p-edit">
+    <header>
+      <h2>Prose</h2>
+      <span class="meta" id="edit-meta"></span>
+    </header>
+    <div class="row">
+      <select id="tool"></select>
+      <input id="label" placeholder="what this change is trying to fix">
+    </div>
+    <div class="stack" style="margin-top:var(--space-2)">
+      <textarea id="prose" rows="7"></textarea>
+      <div class="notes" id="notes"></div>
+      <div class="row">
+        <button id="save">Save this version and run it</button>
+        <button id="revert" class="quiet">Revert</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="p-compare">
+    <header>
+      <h2>Comparison</h2>
+      <span class="meta" id="cmp-meta"></span>
+    </header>
+    <div id="cmp-body"></div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

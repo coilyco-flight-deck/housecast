@@ -119,6 +119,26 @@ evalkit-export *ARGS:
 evalkit-filter *ARGS:
     @uv run --extra eval python -m evalkit.filter "$@"
 
+# Serve the MCP subject under evaluation, over HTTP MCP.
+mcpeval-subject *ARGS:
+    @uv run --extra eval --extra mcp housecast mcpeval subject "$@"
+
+# One live request, before a board rather than inside one.
+mcpeval-preflight *ARGS:
+    @uv run --extra eval --extra mcp housecast mcpeval preflight "$@"
+
+# Run every prompt of one task against one definition set.
+mcpeval-run *ARGS:
+    @uv run --extra eval --extra mcp housecast mcpeval run "$@"
+
+# Pair two runs of one task, prompt to prompt. Never two averages.
+mcpeval-compare *ARGS:
+    @uv run --extra eval --extra mcp housecast mcpeval compare "$@"
+
+# The visual flow: task, run, triaged queue, prose editor, comparison.
+mcpeval-serve *ARGS:
+    @uv run --extra eval --extra mcp housecast mcpeval serve "$@"
+
 # Ask whether response dispersion predicted the grade. `just evalkit-validity RUN/annotations.kai.yaml`.
 evalkit-validity ANNOTATIONS:
     @uv run --extra eval python evaluations/split-candidates-2026-09-08/validity.py "{{ANNOTATIONS}}"
