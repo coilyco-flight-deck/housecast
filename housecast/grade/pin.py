@@ -24,7 +24,7 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from housecast.compose import digest
+from housecast.digest import digest
 from housecast.grade.schema import AGENT_COMPOSE, LABEL_SETS, Challenge, DatasetEntry, Profile
 
 # The five inputs, in the order the rule names them. `labels` covers the label
