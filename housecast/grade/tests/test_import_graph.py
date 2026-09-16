@@ -1,11 +1,14 @@
 """The grading half imports no composition engine.
 
-`housecast/grade/pin.py` used to reach up for `digest`, which was the one import
-pointing from the generic half down into the role engine. Severing it is only
-durable if something fails when it comes back, and an editor adding
-`from housecast.compose import ...` for one convenient helper is how it comes
-back. A negative control is included because an import scan that matches nothing
-passes for the wrong reason.
+`housecast/grade/pin.py` used to reach up for `digest`, the one import pointing
+from the generic half down into the role engine. `provider.py` now declares an
+interface providers implement from above, so the same scan holds `evalkit` out
+as well, which is `A-2`.
+
+Severing an import is durable only if something fails when it comes back, and
+an editor adding one convenient helper import is how it comes back. A negative
+control is included because a scan matching nothing passes for the wrong
+reason.
 """
 
 from __future__ import annotations
@@ -14,7 +17,7 @@ import ast
 import pathlib
 
 GRADE = pathlib.Path(__file__).resolve().parent.parent
-FORBIDDEN = "housecast.compose"
+FORBIDDEN = ("housecast.compose", "evalkit")
 
 
 def _imported_modules(path: pathlib.Path) -> set[str]:
@@ -28,13 +31,17 @@ def _imported_modules(path: pathlib.Path) -> set[str]:
     return found
 
 
+def _is_forbidden(module: str) -> bool:
+    return any(module == f or module.startswith(f + ".") for f in FORBIDDEN)
+
+
 def _sources() -> list[pathlib.Path]:
     return [p for p in sorted(GRADE.rglob("*.py")) if "tests" not in p.parts]
 
 
-def test_grade_does_not_import_the_composition_engine() -> None:
+def test_grade_imports_neither_the_composition_engine_nor_a_provider() -> None:
     offenders = {
-        p.relative_to(GRADE).as_posix(): sorted(m for m in _imported_modules(p) if m == FORBIDDEN)
+        p.relative_to(GRADE).as_posix(): sorted(m for m in _imported_modules(p) if _is_forbidden(m))
         for p in _sources()
     }
     assert {k: v for k, v in offenders.items() if v} == {}

@@ -22,8 +22,8 @@ from typing import Any
 
 import yaml
 
-from evalkit.matrix import derive
 from evalkit.profile import PROFILE
+from evalkit.provider import RoleProvider
 from housecast import roster as roster_module
 from housecast import snapshot as snapshot_module
 from housecast.grade.schema import Profile
@@ -125,7 +125,7 @@ def build(
     profile: Profile = PROFILE,
 ) -> Report:
     settings = config or Config()
-    derived = {challenge.id for challenge in derive(project(roster_path))}
+    derived = {challenge.id for challenge in RoleProvider(project(roster_path)).challenges()}
     authored = authored_ids(challenges)
     runs, rejected = (
         graded_runs(evaluations, settings.retired_runs, profile)

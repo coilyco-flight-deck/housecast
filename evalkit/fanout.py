@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from evalkit.matrix import derive
+from evalkit.provider import RoleProvider
 
 # Replaces the field outright rather than appending, because a summary is read
 # only up to its first comma and an appended marker would show as no change.
@@ -70,9 +70,10 @@ def perturb(person: dict[str, Any], spec: str) -> dict[str, Any]:
 def moved(person: dict[str, Any], spec: str) -> list[str]:
     """Every challenge id whose target text changes when this field changes."""
     probe = perturb(person, spec)  # first, so an unreadable field fails before any derive
-    before = {c.id: c.target for c in derive(person)}
-    after = {c.id: c.target for c in derive(probe)}
-    return [c.id for c in derive(person) if before[c.id] != after.get(c.id)]
+    board = RoleProvider(person).challenges()
+    before = {c.id: c.target for c in board}
+    after = {c.id: c.target for c in RoleProvider(probe).challenges()}
+    return [c.id for c in board if before[c.id] != after.get(c.id)]
 
 
 def fanout(person: dict[str, Any], spec: str) -> list[str]:
@@ -82,7 +83,7 @@ def fanout(person: dict[str, Any], spec: str) -> list[str]:
     challenge that moves is reported by `moved` and is absent here, so read the
     two together rather than treating this as the whole blast radius.
     """
-    index = {c.id: c.pair_id for c in derive(person)}
+    index = {c.id: c.pair_id for c in RoleProvider(person).challenges()}
     reached: list[str] = []
     for challenge_id in moved(person, spec):
         pair = index.get(challenge_id)
