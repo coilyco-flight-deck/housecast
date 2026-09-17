@@ -1,0 +1,123 @@
+/* The room's composition over the coilyco kit (kit.css). Every value is a
+   `--k-*` token or a kit class - see coilyco-design-system in website. */
+
+body {
+  margin: 0;
+  /* Explicit, not inherited: a transparent body borrows the host's paint,
+     and there is no host here. */
+  background: var(--k-ground);
+  /* Sticky positioning on the footer measured against the viewport and
+     landed mid-page on a short round; `margin-top: auto` fixes it below. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Kit classes like `.k-card` set `display: flex` unconditionally, which
+   outranks the UA `[hidden]{display:none}` - these ID rules win instead. */
+#commitments:not([hidden]) { display: flex; }
+#empty-state:not([hidden]) { display: flex; }
+#case-block:not([hidden]) { display: flex; }
+#vote-block:not([hidden]) { display: flex; }
+#split-block:not([hidden]) { display: flex; }
+#reveal-block:not([hidden]) { display: flex; }
+#critique-block:not([hidden]) { display: flex; }
+#banner:not([hidden]) { display: flex; }
+#presenter:not([hidden]) { display: flex; }
+
+#commitments[hidden],
+#empty-state[hidden],
+#case-block[hidden],
+#vote-block[hidden],
+#split-block[hidden],
+#reveal-block[hidden],
+#critique-block[hidden],
+#banner[hidden],
+#presenter[hidden] { display: none; }
+
+#commitments-list {
+  margin: 0;
+  padding-left: var(--k-s-4);
+  list-style: disc;
+}
+#commitments-list li { font-size: var(--k-t-body); }
+
+/* -------------------------------------------------------------- voting */
+.room-vote {
+  flex: 1 1 0;
+  justify-content: center;
+  font-size: var(--k-t-h3);
+  padding-block: var(--k-s-5);
+  min-width: 0;
+}
+.room-vote[aria-pressed="true"].room-vote--pass {
+  border-color: var(--k-grant);
+  background: color-mix(in srgb, var(--k-grant) 18%, var(--k-ground));
+  color: var(--k-grant);
+}
+.room-vote[aria-pressed="true"].room-vote--fail {
+  border-color: var(--k-cost);
+  background: color-mix(in srgb, var(--k-cost) 18%, var(--k-ground));
+  color: var(--k-cost);
+}
+.room-vote[disabled] { opacity: var(--k-loud); }
+
+/* --------------------------------------------------------------- split */
+.room-split-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--k-s-3);
+}
+.room-split-track {
+  height: var(--k-s-5);
+  background: var(--k-raised);
+  border-radius: var(--k-r-2);
+  overflow: hidden;
+}
+.room-split-fill {
+  height: 100%;
+  width: 0%;
+  transition: width var(--k-dur-slow) var(--k-ease);
+}
+.room-split-fill--grant { background: var(--k-grant); }
+.room-split-fill--cost { background: var(--k-cost); }
+.room-split-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: right;
+  min-width: 2ch;
+}
+
+/* -------------------------------------------------------------- reveal */
+.room-verdict {
+  align-self: flex-start;
+  font-size: var(--k-t-h3);
+  padding: var(--k-s-2) var(--k-s-4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Evidence is reference material, not a verdict, so it takes --k-reference
+   rather than grant/cost. */
+#response mark {
+  background: color-mix(in srgb, var(--k-reference) 24%, var(--k-ground));
+  box-shadow: inset 0 -2px 0 var(--k-reference);
+  border-radius: var(--k-r-1);
+  padding: 0 0.1em;
+}
+
+/* ------------------------------------------------------------ presenter */
+.room-presenter {
+  /* See the `body` comment above: flow, not a viewport-pinned position. */
+  margin-top: auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s-3);
+  background: var(--k-canvas);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

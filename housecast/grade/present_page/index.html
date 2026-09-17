@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>housecast // the room</title>
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<!-- .k-canvas--auto: the room votes from whatever phone a person already has,
+     so this follows the viewer's own theme rather than forcing one. -->
+<body class="k k-canvas k-canvas--auto">
+<a class="k-skip" href="#main">Skip to voting</a>
+
+<main class="k-canvas__inner k-stack k-stack--5" id="main">
+
+  <header class="k-stack k-stack--2">
+    <p class="k-eyebrow" id="deck-name">housecast</p>
+    <p class="k-body" id="progress">connecting&hellip;</p>
+  </header>
+
+  <div class="k-card" id="commitments" hidden>
+    <p class="k-eyebrow">This round commits to</p>
+    <ul class="k-stack k-stack--2" id="commitments-list"></ul>
+  </div>
+
+  <section class="k-stack k-stack--4" id="stage">
+    <div class="k-empty" id="empty-state">
+      <p class="k-body">Waiting on the presenter. The first round has not opened
+        yet, and this page updates on its own.</p>
+    </div>
+
+    <article class="k-stack k-stack--3" id="case-block" hidden>
+      <div class="k-stack k-stack--2">
+        <p class="k-eyebrow">The prompt</p>
+        <p class="k-lead" id="prompt"></p>
+      </div>
+      <div class="k-card">
+        <p class="k-eyebrow">The response</p>
+        <p class="k-body" id="response"></p>
+      </div>
+    </article>
+
+    <div class="k-stack k-stack--3" id="vote-block" hidden>
+      <div class="k-btn-row" id="vote-row">
+        <button class="k-btn room-vote room-vote--pass" id="vote-pass" type="button" aria-pressed="false">
+          <span aria-hidden="true">&#10003;</span> pass
+        </button>
+        <button class="k-btn room-vote room-vote--fail" id="vote-fail" type="button" aria-pressed="false">
+          <span aria-hidden="true">&#10007;</span> fail
+        </button>
+      </div>
+      <p class="k-small" id="vote-say" aria-live="polite"></p>
+    </div>
+
+    <div class="k-stack k-stack--3" id="split-block" hidden>
+      <p class="k-eyebrow">The room voted</p>
+      <div class="k-stack k-stack--2" id="split-bars">
+        <div class="room-split-row">
+          <span class="k-chip k-chip--grant">pass</span>
+          <div class="room-split-track"><div class="room-split-fill room-split-fill--grant" id="split-pass-fill"></div></div>
+          <span class="k-body room-split-count" id="split-pass-count">0</span>
+        </div>
+        <div class="room-split-row">
+          <span class="k-chip k-chip--cost">fail</span>
+          <div class="room-split-track"><div class="room-split-fill room-split-fill--cost" id="split-fail-fill"></div></div>
+          <span class="k-body room-split-count" id="split-fail-count">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="k-stack k-stack--3" id="reveal-block" hidden>
+      <p class="k-chip room-verdict" id="verdict-chip"></p>
+      <div class="k-note" id="critique-block" hidden>
+        <p class="k-note__label">Why</p>
+        <p class="k-body" id="critique-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <p class="k-note k-note--refuse" id="banner" role="status" hidden>
+    <span class="k-note__label">Connection</span>
+    <span class="k-body" id="banner-text"></span>
+  </p>
+
+</main>
+
+<footer class="room-presenter k-card" id="presenter" hidden>
+  <div class="k-btn-row">
+    <button class="k-btn k-btn--ghost" id="ctl-back" type="button">&larr; back</button>
+    <button class="k-btn k-btn--primary" id="ctl-advance" type="button">advance &rarr;</button>
+  </div>
+  <span class="k-small">use &larr; &rarr; too</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
