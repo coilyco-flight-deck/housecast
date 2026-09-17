@@ -180,6 +180,9 @@ class Role:
     body: str
     methods: list[str] = field(default_factory=list)
     favorite_color: str = ""
+    # A role naming color_twin copies another role's favorite_color instead
+    # of deriving its own; see resolve_favorite_colors. agent-compose#7847.
+    color_twin: str = ""
     # Per-role rather than per-meld (agent-compose#396): a meld is not a unique
     # key, since two roles sharing one fail the favorite-colour floor.
     creature: str = ""
@@ -222,9 +225,14 @@ class Roster:
     raw: bytes = field(default=b"", repr=False)
 
     def resolve_favorite_colors(self) -> None:
-        """Derive every role's favorite together, in role order."""
+        """Derive every untwinned role's favorite together, in role order.
+
+        A role naming color_twin sits out of the solve and copies its named
+        role's result once every untwinned role is resolved. agent-compose#7847.
+        """
+        solved = [name for name in self.role_order if not self.roles[name].color_twin]
         groups = []
-        for name in self.role_order:
+        for name in solved:
             role = self.roles[name]
             components = []
             for personality in role.personalities:
@@ -240,8 +248,19 @@ class Roster:
             derived = color.favorites(groups)
         except color.ColorError as exc:
             raise RosterError(f"derive role favorite colors: {exc}") from exc
-        for name, value in zip(self.role_order, derived, strict=True):
+        for name, value in zip(solved, derived, strict=True):
             self.roles[name].favorite_color = value
+        for name in self.role_order:
+            twin = self.roles[name].color_twin
+            if not twin:
+                continue
+            if twin not in self.roles:
+                raise RosterError(f"role {name!r}: color_twin {twin!r} is not defined")
+            if self.roles[twin].color_twin:
+                raise RosterError(
+                    f"role {name!r}: color_twin {twin!r} is itself a twin, no chaining"
+                )
+            self.roles[name].favorite_color = self.roles[twin].favorite_color
 
 
 def _voice(spec: dict[str, Any] | None) -> Voice | None:
@@ -343,6 +362,7 @@ def load(path: pathlib.Path | str = DATA) -> Roster:
             element=str(spec.get("element", "")),
             grounding=str(spec.get("grounding", "")),
             guardrail=str(spec.get("guardrail", "")),
+            color_twin=str(spec.get("color_twin", "")),
             outro=_outro(spec.get("outro")),
             acts=_acts(spec.get("acts")),
             archived=bool(spec.get("archived", False)),

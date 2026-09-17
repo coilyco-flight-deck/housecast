@@ -18,7 +18,7 @@ import yaml
 PAGE = Path(__file__).resolve().parents[1] / "page/index.html"
 ROSTER = Path(__file__).resolve().parents[2] / "data/roster.yaml"
 ENTRY = re.compile(
-    r'(\w+):\s*\{\s*who:\s*"([^"]+)",\s*element:\s*"([^"]+)",\s*glyph:\s*"([^"]*)"\s*\}'
+    r'"?([\w-]+)"?:\s*\{\s*who:\s*"([^"]+)",\s*element:\s*"([^"]+)",\s*glyph:\s*"([^"]*)"\s*\}'
 )
 
 
