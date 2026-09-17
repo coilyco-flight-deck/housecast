@@ -1276,16 +1276,17 @@ function halfPanel(kase) {
    land a decoration next to a grade. test_page_roster.py fails on drift.
    An entity the roster does not name renders with no glyph and no name. */
 var ROSTER = {
-  platform: { who: "Angie",     element: "earth", glyph: "\uD83E\uDEA8" },
-  sysadmin: { who: "Vera",      element: "earth", glyph: "\uD83E\uDEA8" },
-  science:  { who: "Evie",      element: "water", glyph: "\uD83D\uDCA7" },
-  frontend: { who: "Delphi",    element: "fire",  glyph: "\uD83D\uDD25" },
-  gamedev:  { who: "Sprite",    element: "water", glyph: "\uD83D\uDCA7" },
-  director: { who: "Portia",    element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
-  advocate: { who: "Gem",       element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
-  analyst:  { who: "Cassandra", element: "fire",  glyph: "\uD83D\uDD25" },
-  psych:    { who: "Iris",      element: "earth", glyph: "\uD83E\uDEA8" },
-  reporter: { who: "Nell",      element: "air",   glyph: "\uD83C\uDF2C\uFE0F" }
+  platform:         { who: "Angie",     element: "earth", glyph: "\uD83E\uDEA8" },
+  "senior-sysadmin": { who: "Vera",     element: "earth", glyph: "\uD83E\uDEA8" },
+  science:          { who: "Evie",      element: "water", glyph: "\uD83D\uDCA7" },
+  frontend:         { who: "Delphi",    element: "fire",  glyph: "\uD83D\uDD25" },
+  gamedev:          { who: "Sprite",    element: "water", glyph: "\uD83D\uDCA7" },
+  director:         { who: "Portia",    element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
+  advocate:         { who: "Gem",       element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
+  analyst:          { who: "Cassandra", element: "fire",  glyph: "\uD83D\uDD25" },
+  psych:            { who: "Iris",      element: "earth", glyph: "\uD83E\uDEA8" },
+  reporter:         { who: "Nell",      element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
+  "junior-sysadmin": { who: "Valerie",  element: "water", glyph: "\uD83D\uDCA7" }
 };
 
 function identity(entity) { return ROSTER[entity] || null; }

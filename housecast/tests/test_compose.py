@@ -100,7 +100,11 @@ def test_snapshot_round_trips_through_json(loaded: Roster) -> None:
 
 
 def test_favorite_colors_are_distinct(loaded: Roster) -> None:
-    colors = [loaded.roles[n].favorite_color for n in loaded.role_order]
+    # A color_twin is meant to collide with its source, not be told apart
+    # from it - agent-compose#7847.
+    colors = [
+        loaded.roles[n].favorite_color for n in loaded.role_order if not loaded.roles[n].color_twin
+    ]
     assert len(set(colors)) == len(colors)
 
 

@@ -89,7 +89,7 @@ def test_the_shipped_guardrails_declare_the_kinds_the_board_derives(loaded: Rost
     """
     kinds = {g.role: g.reproducible for g in loaded.guardrails.values()}
     assert kinds == {
-        "sysadmin": False,
+        "senior-sysadmin": False,
         "science": False,
         "director": False,
         "advocate": True,

@@ -30,22 +30,22 @@ def write(tmp_path: pathlib.Path, doc: dict[str, Any]) -> pathlib.Path:
 
 
 def test_role_acts_append_after_the_portable_ones(shipped: Roster, tmp_path: pathlib.Path) -> None:
-    before = list(shipped.roles["sysadmin"].acts)
+    before = list(shipped.roles["senior-sysadmin"].acts)
     path = write(
         tmp_path,
-        {"roles": {"sysadmin": [{"tool": "aosguard", "text": "paste the before state"}]}},
+        {"roles": {"senior-sysadmin": [{"tool": "aosguard", "text": "paste the before state"}]}},
     )
-    after = overlay.apply(shipped, path).roles["sysadmin"].acts
+    after = overlay.apply(shipped, path).roles["senior-sysadmin"].acts
     assert [a.text for a in after] == [*[a.text for a in before], "paste the before state"]
 
 
 def test_the_shipped_roster_is_not_mutated(shipped: Roster, tmp_path: pathlib.Path) -> None:
     """apply returns a new roster, so a second call cannot compound the first."""
-    count = len(shipped.roles["sysadmin"].acts)
-    path = write(tmp_path, {"roles": {"sysadmin": [{"tool": "t", "text": "x"}]}})
+    count = len(shipped.roles["senior-sysadmin"].acts)
+    path = write(tmp_path, {"roles": {"senior-sysadmin": [{"tool": "t", "text": "x"}]}})
     overlay.apply(shipped, path)
     overlay.apply(shipped, path)
-    assert len(shipped.roles["sysadmin"].acts) == count
+    assert len(shipped.roles["senior-sysadmin"].acts) == count
 
 
 def test_boundary_acts_land_on_the_named_side(shipped: Roster, tmp_path: pathlib.Path) -> None:
