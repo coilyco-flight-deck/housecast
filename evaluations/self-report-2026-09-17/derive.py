@@ -41,6 +41,12 @@ ENTITY = "sirens-deep"
 # exactly the 5 replies that carry a trace id, which is the cross-check.
 SERVICE_NOTICE = re.compile(r"^> `[^`]+`(?:\n> `trace id [0-9a-f]{32}`)?$")
 
+# Discord renders an @-mention as a raw snowflake in the message content this
+# corpus pulled, and a deck round puts the prompt in front of a room: replaced
+# rather than dropped, because the mention is part of what the prompt said.
+# `housecast grade deck`'s secret scan is what caught this, on 148 of 188 cases.
+MENTION = re.compile(r"<@!?\d+>")
+
 
 @dataclass(frozen=True)
 class Dimension:
@@ -126,7 +132,7 @@ def read_corpus(path: Path, traced: set[str]) -> list[Reply]:
             ordinal=index,
             reply_id=str(record["reply_id"]),
             ts=str(record["ts"]),
-            prompt=str(record.get("prompt") or ""),
+            prompt=MENTION.sub("@agent", str(record.get("prompt") or "")),
             text=str(record.get("reply") or ""),
             disclosed_runs=sum(line.get("runs", 1) for line in record.get("disclosed") or []),
             traced=str(record["reply_id"]) in traced,
