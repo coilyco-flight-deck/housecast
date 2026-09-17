@@ -223,6 +223,7 @@ class GradingSession:
                     "label_set": spec.label_set,
                     "word_cap": spec.word_cap,
                     "requires": list(spec.requires),
+                    "readings": dict(spec.readings),
                 }
                 for spec in self.profile.test_types
             ],

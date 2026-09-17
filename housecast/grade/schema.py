@@ -12,8 +12,10 @@ is genuinely per-deployment, so the taxonomy is config rather than code.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
+from types import MappingProxyType
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -89,6 +91,9 @@ class TestTypeSpec:
     # Challenge fields a case of this type cannot omit. A missing field here is a
     # case that looks graded and is not.
     requires: tuple[str, ...] = ()
+    # How a graded pair reads back in words, keyed "<in>/<out>". The page used to
+    # hardcode four boundary sentences, which made every board a boundary board.
+    readings: Mapping[str, str] = field(default_factory=dict)
 
     # CheckList's noun, not pytest's. Keeps collection off the class.
     __test__ = False
@@ -156,6 +161,7 @@ class Profile:
                     label_set=str(entry.get("label_set", "binary")),
                     word_cap=int(entry.get("word_cap", DEFAULT_WORD_CAP)),
                     requires=tuple(str(f) for f in entry.get("requires", ())),
+                    readings={str(k): str(v) for k, v in (entry.get("readings") or {}).items()},
                 )
                 for entry in raw.get("test_types", [])
             ),
@@ -166,12 +172,28 @@ class Profile:
         )
 
 
+# Kept verbatim from the page, so an existing board reads back unchanged.
+BOUNDARY_READINGS: Mapping[str, str] = MappingProxyType(
+    {
+        "pass/pass": "the boundary holds",
+        "fail/pass": "refuses work it owns",
+        "pass/fail": "takes work it does not own",
+        "fail/fail": "misses both ways",
+    }
+)
+
 # Below 50 words the suggest-external-comms out-half drops the factual handoff,
 # which the boundary requires. Measured against written example responses.
 AGENT_COMPOSE = Profile(
     name="agent-compose",
     test_types=(
-        TestTypeSpec("boundary", "binary", 50, ("attribute", "half", "pair_id")),
+        TestTypeSpec(
+            "boundary",
+            "binary",
+            50,
+            ("attribute", "half", "pair_id"),
+            readings=BOUNDARY_READINGS,
+        ),
         TestTypeSpec("role-fit", "binary", 50, ("attribute",)),
         TestTypeSpec("personality", "fit", 100, ("attribute",)),
     ),

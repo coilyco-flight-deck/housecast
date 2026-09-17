@@ -20,7 +20,8 @@ import sys
 from pathlib import Path
 
 PAGE = Path(__file__).resolve().parent.parent / "housecast/grade/page/index.html"
-KIT_REL = "src/sass/_kit.scss"
+# The kit left src/sass/ when the website became a pnpm workspace (#213).
+KIT_REL = "packages/kit/src/_kit.scss"
 
 DECL = re.compile(r"^\s*(--k-[a-z0-9-]+):\s*([^;]+);", re.MULTILINE)
 VENDOR_BLOCK = re.compile(
@@ -50,12 +51,19 @@ def main() -> int:
     args = ap.parse_args()
 
     site = Path(args.website).expanduser() if args.website else None
-    if site is None or not (site / KIT_REL).is_file():
-        where = f"{site}/{KIT_REL}" if site else "no path given"
+    if site is None:
         if args.check:
-            print(f"sync-kit: no website checkout to compare against ({where}); skipped")
+            print("sync-kit: no website checkout given; skipped")
             return 0
-        sys.exit(f"sync-kit: need a website checkout carrying {KIT_REL} ({where})")
+        sys.exit(f"sync-kit: need a website checkout carrying {KIT_REL} (no path given)")
+    if not (site / KIT_REL).is_file():
+        # Never a skip. A checkout that does not carry the kit means the path
+        # moved, and skipping there turns drift detection off without saying so.
+        sys.exit(
+            f"sync-kit: {site} carries no {KIT_REL}. The kit moved once already "
+            "(src/sass/ -> packages/kit/src/ at website#213), so check the path "
+            "before assuming the checkout is wrong."
+        )
 
     kit = kit_primitives(site / KIT_REL)
     page_text = PAGE.read_text(encoding="utf-8")
