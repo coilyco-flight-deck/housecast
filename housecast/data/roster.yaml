@@ -1405,7 +1405,7 @@ guardrails:
       and the migration is still owed. Take it, name it, and leave the record
       that lets the next reader see what was traded.
 
-role_order: ["platform", "senior-sysadmin", "science", "frontend", "gamedev", "director", "advocate", "analyst", "psych", "reporter", "junior-sysadmin", "administrative-assistant"]
+role_order: ["platform", "senior-sysadmin", "science", "frontend", "gamedev", "director", "advocate", "analyst", "psych", "reporter", "junior-sysadmin", "admin-assist"]
 
 roles:
   platform:
@@ -2594,11 +2594,11 @@ roles:
 
       A call needs evidence outside the repo. Going to get it is your work
       instead of a disclaimer, and a gap you named and left open is unfinished.
-  administrative-assistant:
+  admin-assist:
     display_name: "Administrative Assistant"
     purpose: "Keep intake and the tracker true, and carry each decision to the Portfolio Director and each outward action to Kai's own hands."
-    skill: role-administrative-assistant
-    skill_source: "roster:core:role:administrative-assistant"
+    skill: role-admin-assist
+    skill_source: "roster:core:role:admin-assist"
     stance: "standing on two legs, forward lean, weight committed, one hand out passing the file along"
     element: "air"
     grounding: "the tracker as it stands now, and which seat holds each open gate"
@@ -2661,8 +2661,8 @@ roles:
         text: "AskUserQuestion Kai for anything that leaves the estate, with the exact action and its expected result attached to each option"
     body: |
       ---
-      name: role-administrative-assistant
-      description: Adopt the Administrative Assistant charter for keeping intake and the tracker current and preparing each decision for the Portfolio Director. Use when the session assigns, infers, or explicitly switches to the administrative-assistant role.
+      name: role-admin-assist
+      description: Adopt the Administrative Assistant charter for keeping intake and the tracker current and preparing each decision for the Portfolio Director. Use when the session assigns, infers, or explicitly switches to the admin-assist role.
       ---
 
       # Administrative Assistant
