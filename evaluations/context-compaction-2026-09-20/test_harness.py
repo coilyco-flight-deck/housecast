@@ -90,3 +90,34 @@ def test_grep_and_ls_results():
     assert bw.grep_result(files, "foo_bar") == "a.py:2: foo_bar\na.py:3: foo_bar\na.py:4: foo_bar"
     assert bw.grep_result(files, "absent") is None
     assert bw.ls_result(["a/x.py", "a/b/y.py", "c.md"], "a") == "b/\nx.py"
+
+
+def test_analyze_tallies_known_rows():
+    import argparse
+
+    import analyze
+
+    def row(arm, step, prompt, cached, final=False, grade="pass"):
+        base = {
+            "arm": arm,
+            "tid": "t00",
+            "kind": "early",
+            "step": step,
+            "prompt_tokens": prompt,
+            "cached_tokens": cached,
+            "completion_tokens": 100,
+            "reasoning_chars": 300,
+            "content_chars": 100,
+            "latency_s": 1.0,
+            "reread": None,
+        }
+        return base | ({"final": True, "grade": grade, "needle_state": "full"} if final else {})
+
+    rows = [row("A1", "turn6", 1000, 0), row("A1", "final0", 1000, 900, True)]
+    prices = argparse.Namespace(miss=1.0, hit=0.1, out=2.0, jev=0.0)
+    s = analyze.summarize(analyze.per_cell(rows, prices))["A"]
+    assert s["hit_share"] == 0.45
+    assert s["prompt"] == 2000
+    assert s["pass_rate"] == 1.0
+    assert s["cost"] == (1100 * 1.0 + 900 * 0.1 + 200 * 2.0) / 1e6
+    assert s["reasoning_share"] == 0.75
