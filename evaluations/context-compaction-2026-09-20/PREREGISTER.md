@@ -30,9 +30,11 @@ and are not claims under test.
   `evaluation/deepseek-v4-flash`, temperature 0.0, seed 7.
 * Workload: frozen, public-safe transcripts with large tool results, at least 20
   unpinned calls per transcript and mean result of at least 2000 characters.
-  Not yet authored, so no arm runs until it exists.
+  Built by `build_workload.py`, described in the amendment below.
 * Jev egress: those public-safe transcripts only, no secrets, no private
-  overlays. The key reaches the probe through the parameter store, never chat.
+  overlays. Kai said on 2026-09-20 that transcript handling by TypeSafe is not a
+  concern. The calls go through Agent Proxy's `/v1/systemone` shim, which holds
+  the key, so no key passes through this seat.
 * Prices are read from the provider's published sheet on the run date and
   recorded beside the result.
 
@@ -71,8 +73,36 @@ the result and leave the harness unchanged.
 ## Not run
 * No live agent loop. Direct replay does not test how a harness carries
   compacted history.
-* Jev's data-handling terms are an outside question Kai holds.
 
-## Blocked on a human
-* Kai stashes the TypeSafe key as a FILL_ME_IN value file through `just ssm-stash`.
-* The workload needs authoring before arm A runs.
+## Amendment, 2026-09-20, before the full run
+The first design had a confound, found before any tally. Jev's questions assume a
+dropped result can be recovered by re-running the tool, and the first final
+question forbade tool calls. That would score every drop as a failure and measure
+information retention instead of task completion. Changes, all made before the
+full run:
+* The final question allows `RE-READ <path>` for up to 2 re-reads. Each re-read
+  is a counted request, so C2 cost includes the price of recovering a drop. C3
+  quality is the pass rate after at most 2 re-reads. Re-read rate is reported.
+* Workload: 10 transcripts of 26 tool calls (16 read_file, 6 grep, 4 list_dir)
+  from this repository at 7a990d4d, seed 7, mean result 4048 characters. The
+  final question asks for one exact line of a file read earlier. 7 transcripts
+  ask about call 2 to 8 (droppable) and 3 about a call in the last 3 (pinned).
+  `workload/manifest.json` holds hashes and the transcripts regenerate byte for
+  byte from the ref.
+* Ladder: deepseek requests at turns 6, 10, 14, 18, 22 and 26, then the final
+  question, with earlier replies discarded. D compacts before every one of the
+  26 turns and the ladder samples those states. C compacts once, at the final
+  question. B and F apply at every ladder step and the final question, F only
+  at the final question with C's drop counts.
+* Each cell has its own salt in the system prompt, so no arm shares a cache
+  prefix with another and every ladder starts cold.
+* F is uninformative in any transcript where C drops every unpinned call, since
+  a random pick of all of them is the same set. If that holds in at least 80% of
+  transcripts, F is reported as not informative and C2 drops its F comparison.
+* Smoke run on t00 before this amendment: C dropped all 23 unpinned calls
+  including the needle (keepResult 0.36 against threshold 0.5), the re-read
+  recovered the answer, and C's final prompt was 3704 tokens against A's 35563.
+  One transcript, a plumbing check, not evidence for any claim.
+* Reasoning share is measured from `reasoning_content` characters against
+  content characters, since the proxy reports no reasoning token count. It is an
+  estimate and is labelled EST.
