@@ -1,0 +1,88 @@
+{
+ "ref": "7a990d4d3d0f4d5dd6a0e56e6a45aa19e069fce3",
+ "seed": 7,
+ "files_available": 96,
+ "t": [
+  {
+   "id": "t00",
+   "kind": "early",
+   "needle_call": 4,
+   "calls": 26,
+   "result_chars": 124578,
+   "sha256": "2931f5fffd7b281e"
+  },
+  {
+   "id": "t01",
+   "kind": "early",
+   "needle_call": 2,
+   "calls": 26,
+   "result_chars": 109353,
+   "sha256": "46c9d93b657775cd"
+  },
+  {
+   "id": "t02",
+   "kind": "early",
+   "needle_call": 6,
+   "calls": 26,
+   "result_chars": 99520,
+   "sha256": "701fc9a73182ee30"
+  },
+  {
+   "id": "t03",
+   "kind": "early",
+   "needle_call": 7,
+   "calls": 26,
+   "result_chars": 107016,
+   "sha256": "531e4965bb9fb6b6"
+  },
+  {
+   "id": "t04",
+   "kind": "early",
+   "needle_call": 3,
+   "calls": 26,
+   "result_chars": 100239,
+   "sha256": "fc737d5174f8ced1"
+  },
+  {
+   "id": "t05",
+   "kind": "early",
+   "needle_call": 5,
+   "calls": 26,
+   "result_chars": 100400,
+   "sha256": "d447770ece6c9a14"
+  },
+  {
+   "id": "t06",
+   "kind": "early",
+   "needle_call": 4,
+   "calls": 26,
+   "result_chars": 108664,
+   "sha256": "27a816f3387c09db"
+  },
+  {
+   "id": "t07",
+   "kind": "recent",
+   "needle_call": 26,
+   "calls": 26,
+   "result_chars": 118407,
+   "sha256": "23272796ea9c8e20"
+  },
+  {
+   "id": "t08",
+   "kind": "recent",
+   "needle_call": 25,
+   "calls": 26,
+   "result_chars": 89616,
+   "sha256": "18f1fa8a1d6ae701"
+  },
+  {
+   "id": "t09",
+   "kind": "recent",
+   "needle_call": 25,
+   "calls": 26,
+   "result_chars": 94638,
+   "sha256": "747649b96ee0e545"
+  }
+ ],
+ "mean_result_chars": 4048
+}

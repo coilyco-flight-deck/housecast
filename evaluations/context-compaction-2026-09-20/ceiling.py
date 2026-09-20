@@ -5,19 +5,23 @@ Usage: python ceiling.py RUNS_DIR [PIN]
 Sizes are chars/4 estimates, and the resend model assumes one call per turn,
 so both are marked EST in the output. Prompt totals are the reported figures.
 """
+
 import glob
 import json
 import sys
+from pathlib import Path
 
 runs_dir = sys.argv[1]
-pin = int(sys.argv[2]) if len(sys.argv) > 2 else 6  # fast-jev-compaction preserveRecentMessages default
+pin = (
+    int(sys.argv[2]) if len(sys.argv) > 2 else 6
+)  # fast-jev-compaction preserveRecentMessages default
 
 trials = calls = cand = 0
 prompt = completion = 0
 resent = cand_resent = 0.0
 result_chars = 0
 for path in sorted(glob.glob(f"{runs_dir}/*.json")):
-    for t in json.load(open(path))["trials"]:
+    for t in json.loads(Path(path).read_text())["trials"]:
         trials += 1
         prompt += t["prompt_tokens"]
         completion += t["completion_tokens"]
