@@ -106,3 +106,19 @@ full run:
 * Reasoning share is measured from `reasoning_content` characters against
   content characters, since the proxy reports no reasoning token count. It is an
   estimate and is labelled EST.
+
+## Addendum, 2026-09-20, after the first tally and before the dense run
+The first tally (`runs/20260920b`, 517 requests, `tally.txt`) sent requests at 6 of
+26 turns per cell. Sampling favours any arm that pays a full cache miss per
+request, because it counts 6 misses where a live loop pays 26. Compaction before
+every turn is what was asked, so the follow-up sends a request at every turn.
+* Dense run: arms A1 and D only, transcripts t00 to t02, a request at each of the
+  26 turns and then the final question. Run id `20260920c`.
+* C5, stated before the run: D costs more than A, including the estimated Jev
+  cost, because D's prompt was 0% cached at every sampled step in the first run
+  while A pays misses only for new tokens. C5 holds if D's dense cost exceeds A's
+  by any margin.
+* If C5 fails, the sampled result stands as a lower bound on D's cost and the
+  decision rule is re-read against the dense numbers.
+* Exploratory, not a claim: Jev's per-call scores at the final compaction for
+  all 10 transcripts, to see why it dropped every unpinned call.
