@@ -51,7 +51,7 @@ class Ctx:
         self.model = args.model
         self.lib = str(Path(args.lib).resolve())
         self.run_id = args.run_id
-        self.steps = {int(s) for s in args.steps.split(",")}
+        self.steps = {int(s) for s in args.steps.split(",") if s.strip()}
         self.gap = args.gap
         self.files = files
         self.out = Path(args.out) / "cells.jsonl"
