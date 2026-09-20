@@ -80,7 +80,7 @@ def chat(ctx: Ctx, messages: list[dict[str, str]], max_tokens: int) -> tuple[dic
                 json.dumps(body).encode(),
                 {"content-type": "application/json"},
             )
-            with urllib.request.urlopen(request, timeout=600) as response:
+            with urllib.request.urlopen(request, timeout=180) as response:
                 return json.load(response), time.monotonic() - started, attempt
         except urllib.error.HTTPError as err:
             last = f"HTTP {err.code}: {err.read()[:200]!r}"
