@@ -2644,7 +2644,7 @@ roles:
     defers: ["modify-live-backend", "seek-external-validation", "suggest-external-comms", "build-foundational-software"]
     personalities: ["decisive", "outward"]
     identity:
-      name: "Nerissa"
+      name: "Nessa"
       pronouns: "they"
     seats:
       - key: claude
