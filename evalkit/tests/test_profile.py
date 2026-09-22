@@ -2,7 +2,7 @@ import pathlib
 
 from evalkit.profile import PROFILE, main, to_dict
 from housecast.grade.io import load_profile
-from housecast.grade.schema import AGENT_COMPOSE
+from housecast.grade.schema import DEFAULT_PROFILE
 
 
 def test_the_profile_round_trips_through_the_yaml_a_grading_surface_reads(
@@ -16,7 +16,7 @@ def test_the_profile_round_trips_through_the_yaml_a_grading_surface_reads(
 def test_the_shipped_default_is_missing_the_types_this_board_derives() -> None:
     """The reason eval-annotate.sh hands a profile over. Measured on board-2026-09-01."""
     declared = {spec.name for spec in PROFILE.test_types}
-    fallback = {spec.name for spec in AGENT_COMPOSE.test_types}
+    fallback = {spec.name for spec in DEFAULT_PROFILE.test_types}
     assert declared - fallback == {"voice", "grounding", "guardrail", "autonomy"}
 
 

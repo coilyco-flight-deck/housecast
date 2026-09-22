@@ -4,10 +4,11 @@ import pytest
 from pydantic import ValidationError
 
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
+    DEFAULT_PROFILE,
     Annotation,
     Challenge,
     DatasetEntry,
+    EvalCase,
     Fit,
     Half,
     Profile,
@@ -48,20 +49,20 @@ def test_half_and_pair_id_travel_together() -> None:
 
 def test_profile_required_fields_are_reported_not_raised() -> None:
     challenge = Challenge(id="a", entity="qa", test_type="role-fit", prompt="p", target="t")
-    assert challenge.check_against(AGENT_COMPOSE) == ["a: role-fit challenge needs attribute"]
+    assert challenge.check_against(DEFAULT_PROFILE) == ["a: role-fit challenge needs attribute"]
 
 
 def test_unknown_test_type_is_named() -> None:
     challenge = Challenge(id="a", entity="qa", test_type="invented", prompt="p", target="t")
-    assert "invented" in challenge.check_against(AGENT_COMPOSE)[0]
+    assert "invented" in challenge.check_against(DEFAULT_PROFILE)[0]
 
 
 def test_label_set_and_word_cap_come_from_the_profile() -> None:
     challenge = Challenge(
         id="a", entity="qa", test_type="personality", prompt="p", target="t", attribute="warm"
     )
-    assert challenge.label_set(AGENT_COMPOSE) == "fit"
-    assert challenge.word_cap(AGENT_COMPOSE) == 100
+    assert challenge.label_set(DEFAULT_PROFILE) == "fit"
+    assert challenge.word_cap(DEFAULT_PROFILE) == 100
 
 
 def test_a_second_deployment_declares_its_own_taxonomy() -> None:
@@ -121,7 +122,7 @@ def test_annotation_order_is_entity_major_then_profile_order() -> None:
         entry("a-boundary", entity="qa", half="in", pair_id="a"),
         entry("m-boundary", entity="engineer", half="in", pair_id="m"),
     ]
-    ordered = [e.id for e in annotation_order(dataset, AGENT_COMPOSE, ["engineer", "qa"])]
+    ordered = [e.id for e in annotation_order(dataset, DEFAULT_PROFILE, ["engineer", "qa"])]
     assert ordered == ["m-boundary", "a-boundary", "z-personality"]
 
 
@@ -142,3 +143,22 @@ def test_an_unwritten_challenge_cannot_be_annotated() -> None:
     unwritten = Challenge(id="c1", entity="platform", test_type="boundary", target="pass")
     with pytest.raises(ValidationError):
         DatasetEntry(challenge=unwritten, output="whatever the subject said")
+
+
+def test_an_eval_case_holds_exactly_the_four_agreed_fields() -> None:
+    case = EvalCase(id="c1", input="ask", target="pass", metadata={"entity": "platform"})
+    assert set(EvalCase.model_fields) == {"id", "input", "target", "metadata"}
+    assert case.metadata["entity"] == "platform"
+
+
+def test_an_eval_case_refuses_a_fifth_top_level_field() -> None:
+    with pytest.raises(ValidationError):
+        EvalCase.model_validate(
+            {"id": "c1", "input": "ask", "target": "pass", "metadata": {}, "entity": "platform"}
+        )
+
+
+def test_an_eval_case_metadata_bag_is_opaque_to_the_schema() -> None:
+    """Any key, any value - housecast assigns no meaning to what a producer puts here."""
+    case = EvalCase(id="c1", input="ask", target="pass", metadata={"whatever": "a producer likes"})
+    assert case.metadata == {"whatever": "a producer likes"}

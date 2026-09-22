@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from housecast.grade.schema import AGENT_COMPOSE, Challenge, DatasetEntry, Profile, Response
+from housecast.grade.schema import DEFAULT_PROFILE, Challenge, DatasetEntry, Profile, Response
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ def tool_note(challenge: Challenge, response: Response) -> str:
     return f"did not call {challenge.required_tool}, called: {called or 'nothing'}"
 
 
-def validate(challenges: list[Challenge], profile: Profile = AGENT_COMPOSE) -> list[str]:
+def validate(challenges: list[Challenge], profile: Profile = DEFAULT_PROFILE) -> list[str]:
     """Profile-level shape for a whole challenge list, in one pass."""
     problems: list[str] = []
     for challenge in challenges:

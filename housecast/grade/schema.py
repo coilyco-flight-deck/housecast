@@ -182,10 +182,10 @@ BOUNDARY_READINGS: Mapping[str, str] = MappingProxyType(
     }
 )
 
-# Below 50 words the suggest-external-comms out-half drops the factual handoff,
-# which the boundary requires. Measured against written example responses.
-AGENT_COMPOSE = Profile(
-    name="agent-compose",
+# A deployment-agnostic fallback only. A real board always passes its own
+# --profile YAML instead. See docs/grading.md.
+DEFAULT_PROFILE = Profile(
+    name="default",
     test_types=(
         TestTypeSpec(
             "boundary",
@@ -197,13 +197,26 @@ AGENT_COMPOSE = Profile(
         TestTypeSpec("role-fit", "binary", 50, ("attribute",)),
         TestTypeSpec("personality", "fit", 100, ("attribute",)),
     ),
-    attribute_order=(
-        "build-foundational-software",
-        "modify-live-backend",
-        "suggest-external-comms",
-        "seek-external-validation",
-    ),
 )
+
+
+class EvalCase(BaseModel):
+    """The cross-repo hand-off shape: exactly what a producer owes housecast.
+
+    A generic eval-dataset record (Inspect/CheckList-shaped: id, input,
+    target, an opaque metadata bag), not this deployment's roster vocabulary.
+    housecast never assigns meaning to a `metadata` key - a producer defines
+    that, and this type only guarantees the four fields are present and
+    nothing else is. `extra="forbid"` is the point: an unrecognized fifth
+    top-level field is a schema drift, not data to carry along quietly.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    id: str
+    input: str
+    target: str
+    metadata: Mapping[str, str] = Field(default_factory=dict)
 
 
 class Turn(BaseModel):
@@ -467,7 +480,7 @@ def decode_label(value: str) -> Verdict | Fit | NonScore:
 
 def annotation_order(
     dataset: list[DatasetEntry],
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
     entity_order: list[str] | None = None,
 ) -> list[DatasetEntry]:
     """Entity-major, so an annotator holds one charter across that entity's challenges.

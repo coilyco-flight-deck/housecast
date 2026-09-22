@@ -168,6 +168,6 @@ def test_the_profile_growing_a_type_moves_that_case_s_labels() -> None:
     from housecast.grade.schema import Profile, TestTypeSpec
 
     before = pin_mod.take([entry("v", test_type="voice")], roster=ROSTER)
-    grown = Profile(name="agent-compose", test_types=(TestTypeSpec("voice", "binary", 50),))
+    grown = Profile(name="default", test_types=(TestTypeSpec("voice", "binary", 50),))
     drifts = pin_mod.verify(before, [entry("v", test_type="voice")], grown, ROSTER)
     assert [drift.input for drift in drifts] == ["labels"]

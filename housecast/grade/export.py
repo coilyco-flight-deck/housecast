@@ -13,7 +13,7 @@ from typing import Any
 
 from housecast.grade.io import annotations_name, load_annotations, load_dataset, read_yaml
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
+    DEFAULT_PROFILE,
     Annotation,
     DatasetEntry,
     Profile,
@@ -125,7 +125,7 @@ def build_run(
     annotations: dict[str, Annotation],
     include_private: bool = False,
     provenance: Provenance | None = None,
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
 ) -> ExportRun:
     """Join a dataset to its annotations, refusing anything unsafe to display."""
     run = ExportRun(
@@ -191,7 +191,7 @@ def export_run_dir(
     run_dir: Path,
     include_private: bool = False,
     grader: str | None = None,
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
 ) -> ExportRun:
     """Read a committed run directory: dataset.yaml beside its annotations.
 

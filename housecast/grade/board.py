@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from housecast.grade.schema import AGENT_COMPOSE, Challenge, Profile
+from housecast.grade.schema import DEFAULT_PROFILE, Challenge, Profile
 
 # Wire format, not a package name. Committed evidence carries it.
 BOARD_SCHEMA = "aos-eval.board.v1"
@@ -40,7 +40,7 @@ class Board:
         return sorted({challenge.entity for challenge in self.challenges})
 
 
-def load_board(raw: dict[str, Any], profile: Profile = AGENT_COMPOSE) -> Board:
+def load_board(raw: dict[str, Any], profile: Profile = DEFAULT_PROFILE) -> Board:
     """Read a board and refuse one that would run incompletely.
 
     An unwritten challenge or a missing context fails here rather than at the
