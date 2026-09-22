@@ -93,14 +93,6 @@ publish *ARGS:
 publish-test *ARGS:
     @uv publish --trusted-publishing never --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/housecast/ "$@"
 
-# Print the case list the current roster implies.
-evalkit-matrix *ARGS:
-    @sh scripts/eval-matrix.sh "$@"
-
-# Report cases the roster implies but nobody wrote, graded, or still derives.
-evalkit-coverage *ARGS:
-    @uv run --extra eval python -m evalkit.coverage "$@"
-
 # Compose one compiled bundle per role as the eval system prompts.
 evalkit-prompts *ARGS:
     @sh scripts/eval-prompts.sh "$@"

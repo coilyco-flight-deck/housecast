@@ -5,11 +5,19 @@ from __future__ import annotations
 import ast
 import json
 from pathlib import Path
+from typing import Any
 
 from evalkit import roster
-from evalkit.coverage import project
+from housecast import roster as roster_module
+from housecast import snapshot as snapshot_module
 
 ROSTER = Path(__file__).resolve().parents[2] / "housecast" / "data" / "roster.yaml"
+
+
+def project(path: Path) -> dict[str, Any]:
+    """The person snapshot, straight from the YAML roster with no file in between."""
+    return dict(json.loads(snapshot_module.dumps(roster_module.load(path))))
+
 
 PERSON = {
     "role_order": ["sysadmin", "tpm"],
