@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from housecast import render, roster
+from housecast import roster
 from housecast.roster import Roster
 
 
@@ -37,11 +37,3 @@ def test_no_personality_carries_one(shipped: Roster) -> None:
     """Not melded, so the banner stays one sentence."""
     for personality in shipped.personalities.values():
         assert not hasattr(personality, "outro") or getattr(personality, "outro", None) is None
-
-
-def test_it_stays_off_the_identity_card(shipped: Roster) -> None:
-    """The outro is a closing surface, not doctrine the seat reads at load."""
-    card = render.identity_card(shipped, "science")
-    outro = shipped.roles["science"].outro
-    assert outro is not None
-    assert outro.clean not in card

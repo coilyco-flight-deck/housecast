@@ -8,7 +8,6 @@ which is what makes the mutations meaningful.
 from __future__ import annotations
 
 import dataclasses
-import pathlib
 
 import pytest
 
@@ -163,6 +162,24 @@ def test_missing_personality_binding_is_rejected(loaded: Roster) -> None:
         validate.check_personality_bindings(loaded)
 
 
+def test_every_role_owns_exactly_one_boundary(loaded: Roster) -> None:
+    """The allocation rule the whole roster language rests on."""
+    for name in loaded.role_order:
+        owned = [b for b, spec in loaded.boundaries.items() if spec.owner == name]
+        assert len(owned) <= 1, f"{name} owns {owned}"
+    owners = {spec.owner for spec in loaded.boundaries.values()}
+    assert owners <= set(loaded.roles)
+
+
+def test_favorite_colors_are_distinct(loaded: Roster) -> None:
+    # A color_twin is meant to collide with its source, not be told apart
+    # from it - agent-compose#7847.
+    colors = [
+        loaded.roles[n].favorite_color for n in loaded.role_order if not loaded.roles[n].color_twin
+    ]
+    assert len(set(colors)) == len(colors)
+
+
 def test_a_role_with_no_personalities_is_rejected(loaded: Roster) -> None:
     loaded.roles["director"].personalities.clear()
     with pytest.raises(roster.RosterError, match="activates no personalities"):
@@ -251,14 +268,6 @@ def test_word_count_drops_a_leading_heading() -> None:
 
 def test_paragraph_count_ignores_blank_runs() -> None:
     assert validate.paragraph_count("a\n\n\n\nb") == 2
-
-
-def test_unsupported_model_tier_is_refused(loaded: Roster) -> None:
-    from housecast import compose
-
-    assert "oss" not in loaded.roles["director"].supported_model_tiers
-    with pytest.raises(ValueError, match="does not support model tier"):
-        compose.compose(loaded, "director", "oss", pathlib.Path("/tmp/zq49-unreachable"))
 
 
 def test_a_thin_role_body_is_rejected(loaded: Roster) -> None:

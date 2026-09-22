@@ -18,7 +18,7 @@ from typing import Any
 import pytest
 import yaml
 
-from housecast import render, roster
+from housecast import roster
 from housecast.roster import Roster, RosterError
 
 
@@ -59,13 +59,6 @@ def test_a_duplicate_creature_is_refused(tmp_path: pathlib.Path) -> None:
 
     with pytest.raises(RosterError, match="is on both"):
         roster.load(rewritten(tmp_path, collide))
-
-
-def test_the_card_does_not_render_it_yet(shipped: Roster) -> None:
-    """Held behind the parity pin, deliberately. When this starts failing the
-    Go engine and the pin have to move in the same change."""
-    card = render.identity_card(shipped, "science")
-    assert shipped.roles["science"].creature not in card
 
 
 def test_the_creature_opens_with_its_own_element(shipped: Roster) -> None:

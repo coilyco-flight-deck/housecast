@@ -81,3 +81,12 @@ def test_the_act_projection_is_not_narrowed_to_what_the_charter_renders(
     measured against the live roster.
     """
     assert all(a["tool"] for a in emitted["roles"]["science"]["acts"])
+
+
+def test_snapshot_round_trips_through_json(shipped: Roster) -> None:
+    text = snapshot.dumps(shipped)
+    parsed = json.loads(text)
+    assert parsed["role_order"] == shipped.role_order
+    assert set(parsed["roles"]) == set(shipped.roles)
+    for name in shipped.role_order:
+        assert parsed["roles"][name]["favorite_color"] == shipped.roles[name].favorite_color
