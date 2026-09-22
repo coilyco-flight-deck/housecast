@@ -20,8 +20,8 @@ from rich.table import Table
 from housecast.grade.io import save_annotations
 from housecast.grade.pin import charter_parts
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
     DEDUCTIONS,
+    DEFAULT_PROFILE,
     LABEL_SETS,
     Annotation,
     DatasetEntry,
@@ -147,7 +147,7 @@ def annotate_session(
     dataset: list[DatasetEntry],
     annotations: dict[str, Annotation],
     out: Path,
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
     roster: dict[str, Any] | None = None,
     grader: str | None = None,
 ) -> bool:

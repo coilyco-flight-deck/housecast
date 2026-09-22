@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from housecast.digest import digest
-from housecast.grade.schema import AGENT_COMPOSE, LABEL_SETS, Challenge, DatasetEntry, Profile
+from housecast.grade.schema import DEFAULT_PROFILE, LABEL_SETS, Challenge, DatasetEntry, Profile
 
 # The five inputs, in the order the rule names them. `labels` covers the label
 # set and the word cap together because one test type decides both.
@@ -64,7 +64,7 @@ def charter_lines(roster: dict[str, Any] | None, entity: str) -> list[str]:
     return [f"{display}  {purpose}", *notes]
 
 
-def case_digests(entry: DatasetEntry, profile: Profile = AGENT_COMPOSE) -> dict[str, str]:
+def case_digests(entry: DatasetEntry, profile: Profile = DEFAULT_PROFILE) -> dict[str, str]:
     challenge = entry.challenge
     asked: Any = challenge.prompt
     if challenge.turns:
@@ -99,7 +99,7 @@ def _label_contract(challenge: Challenge, profile: Profile) -> dict[str, Any]:
 
 def take(
     dataset: list[DatasetEntry],
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
     roster: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """The pin as it goes to disk. Sorted, so two takes of one run are byte-equal."""
@@ -132,7 +132,7 @@ class Drift:
 def verify(
     pinned: dict[str, Any],
     dataset: list[DatasetEntry],
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
     roster: dict[str, Any] | None = None,
 ) -> list[Drift]:
     """Every input that no longer matches, rather than the first one found.
@@ -179,7 +179,7 @@ def verify(
 def check(
     pinned: dict[str, Any],
     dataset: list[DatasetEntry],
-    profile: Profile = AGENT_COMPOSE,
+    profile: Profile = DEFAULT_PROFILE,
     roster: dict[str, Any] | None = None,
 ) -> None:
     """Refuse, naming every input that moved and how to accept the change on purpose."""

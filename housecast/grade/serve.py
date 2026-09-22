@@ -28,8 +28,8 @@ from housecast.grade.io import (
 )
 from housecast.grade.queue import load_queue, order_by_queue, queue_path
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
     DEDUCTIONS,
+    DEFAULT_PROFILE,
     LABEL_SETS,
     Annotation,
     DatasetEntry,
@@ -94,7 +94,7 @@ class GradingSession:
     """One run held open for one grader. Every decision lands on disk immediately."""
 
     run_dir: Path
-    profile: Profile = AGENT_COMPOSE
+    profile: Profile = DEFAULT_PROFILE
     entries: list[DatasetEntry] = field(default_factory=list)
     annotations: dict[str, Annotation] = field(default_factory=dict)
     roster: dict[str, Any] | None = None
@@ -104,7 +104,7 @@ class GradingSession:
     def open(
         cls,
         run_dir: Path,
-        profile: Profile = AGENT_COMPOSE,
+        profile: Profile = DEFAULT_PROFILE,
         roster: dict[str, Any] | None = None,
         grader: str | None = None,
         use_queue: bool = True,

@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from housecast.grade.schema import AGENT_COMPOSE
+from housecast.grade.schema import DEFAULT_PROFILE
 from housecast.mcp.profile import MCP_TOOLS
 
 PAGE = Path(__file__).resolve().parents[1] / "page/index.html"
@@ -19,7 +19,7 @@ OUTCOMES = ("pass/pass", "fail/pass", "pass/fail", "fail/fail")
 
 
 def boundary() -> dict[str, str]:
-    return dict(AGENT_COMPOSE.test_types[0].readings)
+    return dict(DEFAULT_PROFILE.test_types[0].readings)
 
 
 def test_the_existing_board_reads_back_exactly_as_it_did() -> None:

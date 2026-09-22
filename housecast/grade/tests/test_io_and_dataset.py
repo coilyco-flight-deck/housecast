@@ -10,7 +10,7 @@ from housecast.grade.io import (
     save_dataset,
 )
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
+    DEFAULT_PROFILE,
     Annotation,
     Challenge,
     DatasetEntry,
@@ -48,7 +48,7 @@ def test_a_missing_annotations_file_reads_as_nothing_graded(tmp_path: pathlib.Pa
 
 
 def test_no_profile_named_means_the_agent_compose_profile() -> None:
-    assert load_profile(None) is AGENT_COMPOSE
+    assert load_profile(None) is DEFAULT_PROFILE
 
 
 def test_a_declared_profile_is_read_from_yaml(tmp_path: pathlib.Path) -> None:

@@ -9,7 +9,7 @@ from typing import Any
 import yaml
 
 from housecast.grade.schema import (
-    AGENT_COMPOSE,
+    DEFAULT_PROFILE,
     Annotation,
     DatasetEntry,
     Profile,
@@ -161,5 +161,5 @@ def save_annotations(
 def load_profile(path: Path | None) -> Profile:
     """A deployment's own taxonomy, or agent-compose's when none is named."""
     if path is None:
-        return AGENT_COMPOSE
+        return DEFAULT_PROFILE
     return Profile.from_dict(read_yaml(path))
