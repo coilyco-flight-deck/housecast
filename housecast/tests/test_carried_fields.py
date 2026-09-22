@@ -12,7 +12,7 @@ from __future__ import annotations
 import pytest
 import yaml
 
-from housecast import render, roster
+from housecast import roster
 from housecast.roster import Roster
 
 METHODS = ["adversarial-verification", "state-machine-verification"]
@@ -37,26 +37,6 @@ def test_role_methods_survive_the_loader(carrying: Roster) -> None:
 
 def test_seat_channel_survives_the_loader(carrying: Roster) -> None:
     assert carrying.roles["science"].seats[0].channel == CHANNEL
-
-
-def test_the_identity_card_renders_role_methods(carrying: Roster) -> None:
-    """Go emits this line between the role skill and the boundaries."""
-    card = render.identity_card(carrying, "science")
-    assert "**Role methods // `adversarial-verification` // `state-machine-verification`**" in card
-    skill_at = card.index("**Role skill //")
-    methods_at = card.index("**Role methods //")
-    assert skill_at < methods_at
-    if "**Boundaries //" in card:
-        assert methods_at < card.index("**Boundaries //")
-
-
-# Negative control. Without the fields the card must not grow the line, or the
-# test above passes on a renderer that emits it unconditionally.
-def test_the_shipped_roster_renders_no_methods_line() -> None:
-    loaded = roster.load()
-    assert loaded.roles["science"].methods == []
-    assert loaded.roles["science"].seats[0].channel is None
-    assert "**Role methods //" not in render.identity_card(loaded, "science")
 
 
 @pytest.fixture(scope="module")
@@ -94,11 +74,3 @@ def test_the_projection_carries_archived(archived: Roster) -> None:
 
     assert snapshot.person_snapshot(archived)["roles"]["platform"]["archived"] is True
     assert snapshot.person_snapshot(roster.load())["roles"]["platform"]["archived"] is False
-
-
-def test_compose_refuses_an_archived_role(archived: Roster) -> None:
-    """The Go resolver refuses too, and the two engines owe the same semantics."""
-    from housecast import compose as compose_module
-
-    with pytest.raises(ValueError, match="archived"):
-        compose_module.compose(archived, "platform", "frontier", "/tmp/unused-bundle")

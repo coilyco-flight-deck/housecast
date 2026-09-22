@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from housecast import render, roster
+from housecast import roster
 from housecast.roster import Roster
 
 ACTS_PER_ATTRIBUTE = 3
@@ -62,14 +62,3 @@ def test_no_act_names_an_estate_only_tool(loaded: Roster) -> None:
         *(a for b in loaded.boundaries.values() for a in b.acts),
     ]:
         assert not act.tool.startswith(ESTATE_PREFIXES), act.tool
-
-
-def test_the_card_carries_the_side_the_seat_holds(loaded: Roster) -> None:
-    """A deferred boundary is a different act, never the owner's withheld."""
-    boundary = loaded.boundaries["seek-external-validation"]
-    card = render.instructions(loaded, "platform")
-    # platform scopes this boundary, so it owes the scoped acts and not the own.
-    for act in boundary.acts_for_side("scoped"):
-        assert act.text in card
-    for act in boundary.acts_for_side("own"):
-        assert act.text not in card

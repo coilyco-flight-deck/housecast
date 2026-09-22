@@ -43,10 +43,6 @@ pre-commit *ARGS:
 pre-commit-install *ARGS:
     @pre-commit install --hook-type pre-commit --hook-type pre-push "$@"
 
-# Compose one role bundle. `just compose --role tpm --out DIR`.
-compose *ARGS:
-    @uv run python -m housecast compose "$@"
-
 # Project the roster as person.json, which evalkit reads.
 roster *ARGS:
     @uv run python -m housecast roster "$@"

@@ -1,12 +1,12 @@
-"""The housecast CLI: compose a bundle, or project the roster.
+"""The housecast CLI: project the roster, or grade a board.
 
-    python -m housecast compose --role director --out DIR
     python -m housecast roster --out DIR
     python -m housecast fields
     python -m housecast grade annotate --dataset D --out O
 
-`roster` writes the person.json shape evalkit reads, which is what took the Go
-engine out of the eval path. See housecast/snapshot.py.
+`roster` writes the person.json shape evalkit reads. Composing a role's
+bundle is agent-compose's job now - `agent-compose compose request.kdl --out
+DIR` - see housecast#8041.
 """
 
 from __future__ import annotations
@@ -15,7 +15,6 @@ import argparse
 import pathlib
 import sys
 
-from housecast import compose as compose_module
 from housecast import reference as reference_module
 from housecast import roster as roster_module
 from housecast import snapshot as snapshot_module
@@ -58,17 +57,6 @@ def _mcpeval(argv: list[str]) -> int:
         return refused.exit_code
 
 
-def _compose(args: argparse.Namespace) -> int:
-    loaded = roster_module.load(args.roster)
-    if args.role not in loaded.roles:
-        raise SystemExit(f"roster defines no role {args.role!r}")
-    out = compose_module.compose(
-        loaded, args.role, args.model_tier, pathlib.Path(args.out), args.delivery
-    )
-    print(f"composed {args.role} at {args.model_tier} into {out}")
-    return 0
-
-
 def _roster(args: argparse.Namespace) -> int:
     loaded = roster_module.load(args.roster)
     out = pathlib.Path(args.out)
@@ -96,15 +84,6 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="housecast")
     parser.add_argument("--roster", default=str(roster_module.DATA))
     sub = parser.add_subparsers(dest="command", required=True)
-
-    compose_parser = sub.add_parser("compose", help="compose one role bundle")
-    compose_parser.add_argument("--role", required=True)
-    compose_parser.add_argument("--model-tier", default="frontier")
-    compose_parser.add_argument(
-        "--delivery", default="native-skills", choices=("native-skills", "compiled")
-    )
-    compose_parser.add_argument("--out", required=True)
-    compose_parser.set_defaults(handler=_compose)
 
     roster_parser = sub.add_parser("roster", help="project the roster as person.json")
     roster_parser.add_argument("--out", required=True)

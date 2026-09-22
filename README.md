@@ -57,8 +57,11 @@ distribution. `house-cast` is held defensively and never shipped.
 git clone https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git
 cd housecast
 just sync
-just compose --role director --out /tmp/bundle
+just roster --out /tmp/person
 ```
+
+Composing a role's bundle is `agent-compose compose`'s job now, not this
+repository's - housecast#8041.
 
 `just` with no arguments lists every verb. `just check` is the offline gate:
 lint, format check, types, and tests in one recipe.
