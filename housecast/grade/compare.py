@@ -1,19 +1,9 @@
 """The report that reads a variant's numbers without overstating them.
 
-Three pressures the loop creates on purpose, each with its label here:
-
-* a delta inside the noise floor is not a result (N-2), so it never renders as
-  an improvement
-* a tuning gain against a flat holdout is the overfitting signature (O-3), so
-  it is labelled rather than left for a reader to notice
-* a `selectable` gain bought with a `description-grounded` loss is an oversell
-  (O-4), so the trade is named rather than netted
-
-None of the three is a judgement the report defers to whoever reads it. They
-are the reasons the loop needs a report at all rather than a number.
-
-Rules O-3, O-4 and O-5, and acceptance A-7 and A-8, in
-`teable:coilyco-flight-deck/housecast#7802`.
+A delta inside the noise floor never renders as an improvement (N-2). A tuning
+gain against a flat holdout is labelled as overfitting (O-3). A `selectable`
+gain bought with a `description-grounded` loss is named, not netted (O-4).
+Rules in `teable:coilyco-flight-deck/housecast#7802`.
 """
 
 from __future__ import annotations

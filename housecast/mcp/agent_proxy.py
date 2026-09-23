@@ -1,23 +1,10 @@
 """The one `ModelClient` that talks to a real model, through Agent Proxy.
 
-AGENTS.md routes every model request through Agent Proxy, so this is the whole
-of housecast's transport surface. Everything the harness decides sits above it
-and does not change when a backend does.
-
-Four things here come from Agent Proxy's own behaviour rather than from the
-spec, established by the Platform Engineer at `teable:coilyco-flight-deck/agent-proxy#7805`:
-
-* `tool_choice` reaches an OpenAI-dialect backend, and an ollama-dialect route
-  now 400s on it rather than dropping it. Before that fix a forced call was
-  discarded silently and the run scored a dropped constraint as the model
-  declining to call, which is why this client refuses that pairing outright
-  instead of quietly falling back to `auto`.
-* `seed` is forwarded, so a variant is reproducible.
-* admission shedding defaults to one request per second per logical route, and
-  bursts are exactly this loop's traffic, so `Retry-After` is honoured rather
-  than retried blindly.
-* a tool call id is backend-issued on some routes and synthetic on ollama, so
-  ids are normalized away before anything compares two trials.
+Proxy behaviour, not spec (`teable:coilyco-flight-deck/agent-proxy#7805`): an
+ollama-dialect route 400s on `tool_choice`, so that pairing is refused rather than
+falling back to `auto` and scoring a dropped constraint as a decline. `seed` is
+forwarded, `Retry-After` is honoured because admission sheds bursts, and tool call
+ids are normalized away because some backends issue them and ollama invents them.
 """
 
 from __future__ import annotations

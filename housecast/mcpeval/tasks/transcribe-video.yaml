@@ -1,15 +1,5 @@
-# A task is a capability, not a test case. Twenty prompts, because prompts past
-# ten cost machine time rather than review time, and the sign test needs 15 of 20
-# to move where it needs 9 of 10.
-#
-# Nothing in this file is ever sent to the model, which sees the prompt text and
-# the subject's own tool descriptions and nothing else. `rules` is the grader's,
-# and a rule naming the expected calls would measure whether the agent can read
-# the answer key.
-#
-# `rules` at the top level applies to every prompt and each prompt overrides it.
-# p13 and p14 are the edge case: the file has no audio track, so the correct
-# behaviour is to discover that and tell the user rather than transcribe.
+# A task is a capability, not a test case. Why twenty prompts and what the model
+# never sees: docs/mcp-tasks.md.
 task: transcribe-video
 title: Transcribe a video
 capability: Get the spoken words out of a media file and give them to the user as text.

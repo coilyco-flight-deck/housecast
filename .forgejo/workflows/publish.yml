@@ -1,33 +1,5 @@
-# Publish housecast when a housecast-v* tag is pushed. Like ci.yml, every step
-# invokes a justfile recipe, so the train and a developer running `just build`
-# locally cannot disagree about what publishing is.
-#
-# PyPI accepts a version once and yanking is not deleting, so this gate is
-# ordered against that: the tag must agree with the packaged version, and the
-# offline gates must pass, both before anything is built or uploaded. A tag can
-# point at any commit, and ci.yml only gates main and pull requests, so running
-# `just check` here is a second run rather than a duplicated one.
-#
-# PyPI trusted publishing supports GitHub, GitLab, Google, and ActiveState as
-# identity providers, and Forgejo is none of them, so this authenticates with an
-# API token. `PYPI_TOKEN` and `TEST_PYPI_TOKEN` are repository Actions secrets
-# sourced from SSM by agentic-os `just sync-actions-secrets`. Each reaches uv
-# through the environment rather than argv, so neither lands in a process
-# listing. See docs/publishing.md.
-#
-# `--check-url` in both publish recipes makes a retry idempotent: files already
-# on the index are skipped rather than failing the run, so a rerun after a
-# partial upload finishes the job instead of wedging.
-#
-# The `index` input defaults to testpypi so a hand-run is harmless by default.
-# A tag push always takes the real index, and dispatching there is a deliberate
-# choice rather than the path of least resistance. testpypi skips the tag guard
-# on purpose: the point of that run is to prove build, auth, and upload from an
-# ordinary branch without spending a version number on the real index.
-#
-# The tag reaches `just release-check` through RELEASE_TAG rather than the run
-# line, so a tag carrying shell metacharacters is data to the recipe instead of
-# script.
+# Publish housecast when a housecast-v* tag is pushed. The gates, tokens, testpypi
+# rehearsal and tag guard are explained in docs/publishing.md.
 
 name: publish
 

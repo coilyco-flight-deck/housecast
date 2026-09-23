@@ -1,19 +1,9 @@
 """The definition set: the editable unit, and the overlay that applies it.
 
-This is the thing a tester changes. It holds tool prose, parameter prose and
-the instruction block, and it is versioned, attributable, diffable and
-revertable because every one of those is a requirement the loop leans on rather
-than a nicety.
-
-`overlay` is where the whole architecture lives. It clones what `tools/list`
-returned and rewrites the clone. The running subject is never mutated, so the
-tool calls the model produces route back to the unedited server and the edit
-cannot change what a tool *does*, only what it *says*. That is the difference
-between measuring prose and measuring a fork.
-
-A set is identified by its prose and nothing else, so an edit-and-revert
-collides with its origin instead of arriving as a third version whose numbers a
-reader would compare against the first two.
+`overlay` rewrites a clone of what `tools/list` returned. The running subject is never
+mutated, so calls route back to the unedited server and an edit changes only what a
+tool says, never what it does. A set is identified by its prose alone, so an
+edit-and-revert collides with its origin rather than arriving as a third version.
 """
 
 from __future__ import annotations

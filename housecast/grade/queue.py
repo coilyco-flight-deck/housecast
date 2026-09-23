@@ -1,18 +1,9 @@
 """Grading order as a view beside a run, never folded into the run itself.
 
-`dataset.yaml` records what a run produced, in derivation order. A pass that
-reordered it in place would rewrite that record to suit one session, which is
-the failure a committed dataset exists to prevent. `annotation-queue.csv` is
-the other half: a ranking written beside the dataset, saying which cases to
-reach first when a pass may not finish.
-
-Found by convention rather than by flag, the way `io.pin_path` finds pin.yaml,
-because both are facts about the run directory rather than choices a grader
-makes at the prompt.
-
-CSV rather than YAML because `dispersion.py` emits this table beside its other
-two, and converting on the way in would put a second copy of the order in the
-repository.
+Reordering `dataset.yaml` in place would rewrite the record of what a run
+produced. `annotation-queue.csv` ranks cases beside it instead, found by
+convention like `io.pin_path`. CSV because `dispersion.py` emits it with two
+sibling tables, and converting would keep a second copy of the order.
 """
 
 from __future__ import annotations

@@ -1,14 +1,9 @@
-"""The grading half imports no composition engine.
+"""The grading half imports no composition engine and no consumer's runner.
 
-`housecast/grade/pin.py` used to reach up for `digest`, the one import pointing
-from the generic half down into the role engine. `provider.py` now declares an
-interface providers implement from above, so the same scan holds `evalkit` out
-as well, which is `A-2`.
-
-Severing an import is durable only if something fails when it comes back, and
-an editor adding one convenient helper import is how it comes back. A negative
-control is included because a scan matching nothing passes for the wrong
-reason.
+`provider.py` declares an interface providers implement from above, so nothing in
+`housecast/grade` imports down into either. A severed import stays severed only if
+something fails when it returns. The negative control is here because a scan
+matching nothing passes for the wrong reason.
 """
 
 from __future__ import annotations

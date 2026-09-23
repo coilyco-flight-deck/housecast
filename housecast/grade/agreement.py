@@ -1,13 +1,9 @@
 """Two or more graders over one board, and the rate at which they disagree.
 
-The pairing half asks whether a paired attribute held. This asks whether the humans
-reading it saw the same thing, which is a different question and the one a
-split test is run to answer.
-
-A case counts toward the rate only when every grader has labelled it. A missing
-grade is reported as incomplete rather than folded in, because a denominator
-that quietly absorbs the cases nobody reached reports agreement that was never
-measured.
+The pairing half asks whether a paired attribute held. This asks whether the
+humans reading it saw the same thing. A case counts only when every grader
+labelled it, because a denominator that absorbs unreached cases reports
+agreement nobody measured.
 """
 
 from __future__ import annotations

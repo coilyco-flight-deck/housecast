@@ -1,13 +1,8 @@
 """Re-vendor the coilyco kit's primitive ramps into the grading page.
 
-The page carries no build step on purpose, so the kit's primitives are pasted
-into it rather than imported. That is the supported shape - the kit is authored
-as custom properties precisely so "a page elsewhere inlines the same text" - but
-a hand-copied palette drifts silently, and this one did: it sat on _vars.scss
-names for months after the kit replaced them.
-
-So the copy is mechanical and checkable. `--check` is the drift gate and needs
-a website checkout to compare against; with none present it skips rather than
+The page has no build step, so the kit's primitives are pasted in rather than
+imported, and a hand-copied palette drifts silently. So the copy is mechanical.
+`--check` is the drift gate. With no website checkout present it skips rather than
 failing, because housecast must build without one.
 """
 

@@ -1,19 +1,9 @@
-"""Pin the inputs a grade depends on, so a straddling pass refuses rather than averages.
+"""Pin a grade's inputs, so a straddling pass refuses rather than averages.
 
-A grade is a decision about five things: the case prompt, the stored response,
-the target, the label set with its word cap, and the charter the annotator is
-shown beside the case. Four of those live in the dataset. The fifth is composed
-at render time from the projection, which is why `housecast#7166` exists: two
-graders either side of a projection edit see different charters, every recorded
-field matches, and the disagreement rate absorbs the difference and reports it
-as disagreement between the people.
-
-The gate this replaces asked a person to hold in their head which open tickets
-reach which grade. This asks the bytes instead. A pin is taken when a run is
-composed, and every grading surface checks it before showing a case.
-
-Digests are per case and per entity rather than one roll-up, because a single
-whole-run digest says a pass is invalid without saying what moved.
+A grade depends on the prompt, the response, the target, the label set and the
+charter the annotator sees. The charter is composed at render time, so two
+graders either side of an edit can disagree over different text (housecast#7166).
+Digests are per case and per entity, so a drift says what moved.
 """
 
 from __future__ import annotations

@@ -1,13 +1,9 @@
-"""The shared contract between an science runner and the humans who grade it.
+"""The shared contract between an evaluation runner and the humans who grade it.
 
-Vocabulary follows the references where they have a word for something. Challenge,
-dataset, and target are Inspect's. Test type is CheckList's. Annotation, label,
-and critique are Phoenix's and Hamel's.
-
-Nothing here imports a runner or a model client. Two repos run evals very
-differently (a two-input prompt call, and a live harness turn against real
-tools) and both emit this shape. A `Profile` carries the part that
-is genuinely per-deployment, so the taxonomy is config rather than code.
+Vocabulary follows Inspect (challenge, dataset, target), CheckList (test type)
+and Phoenix (annotation, label, critique). Nothing here imports a runner or a
+model client, so runners that work very differently emit one shape. A `Profile`
+carries what is per deployment, so the taxonomy is config rather than code.
 """
 
 from __future__ import annotations

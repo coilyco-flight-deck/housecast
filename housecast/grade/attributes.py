@@ -4,8 +4,8 @@ A paired attribute is only measured by a pair. The in-half proves the rule fires
 out-half proves it does not fire on the neighbouring case that must still be
 served. Grading one half alone rewards a deployment that refuses everything.
 
-Derivation stops at the unwritten challenge. The target comes from the declaration, the prompt
-is written by a human, and nothing here invents one.
+Derivation stops at the unwritten challenge. The target comes from the declaration,
+a human writes the prompt, and nothing here invents one.
 """
 
 from __future__ import annotations

@@ -1,18 +1,9 @@
-"""The visual flow's HTTP surface.
+"""The visual flow's HTTP surface, the customer product rather than the annotator.
 
-This is the customer product rather than the internal annotator, and it imports
-nothing from `housecast.grade.page`. That separation is deliberate and load-
-bearing: where the customer frontend eventually lives is unsettled, and keeping
-it import-clean of everything but the loop's own modules means moving it is a
-directory move rather than an untangling.
-
-A run is launched and left. The interface never blocks on one, because a design
-that blocks on a running suite has spent the tester's hour on idling.
-
-The blind read is here rather than in the client, because a client holding the
-labels has not hidden them. `/api/compare` returns the two arms as A and B in an
-order the server chose and the client cannot invert, and the mapping is handed
-back only once a judgement has been committed against it.
+It imports nothing from `housecast.grade.page`, so moving it is a directory move. A run
+is launched and left, never blocked on. The blind read lives here, not in the client:
+`/api/compare` returns the arms as A and B in a server-chosen order and hands back the
+mapping only once a judgement is committed.
 """
 
 from __future__ import annotations

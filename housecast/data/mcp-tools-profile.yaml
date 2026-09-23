@@ -1,6 +1,5 @@
-# The MCP tool board's taxonomy, as `housecast grade --profile` takes it.
-# Generated from housecast/mcp/profile.py by `just sync-mcp-profile`.
-# Edit the Python, not this file.
+# The MCP tool board's taxonomy, as `housecast grade --profile` takes it. This
+# file is the source: housecast/mcp/profile.py loads it and refuses to run without it.
 name: mcp-tools
 group_by: entity
 test_types:

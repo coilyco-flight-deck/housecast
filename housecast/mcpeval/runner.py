@@ -1,21 +1,10 @@
 """One prompt, end to end, against one definition set. The centre of the loop.
 
-`tools/list` -> apply the definition set -> chat completion with tools attached
--> route the returned calls back to the real subject -> feed results back ->
-write a trial.
-
-The route back is the half that is easy to skip and cannot be. A model that
-asks for a tool and never sees its result never discovers that the media_id it
-invented was rejected, so a run without the return path measures first-guess
-selection and calls it task success. Recovery, the dimension that asks whether
-an error message actually got acted on, does not exist at all without it.
-
-Everything a comparison depends on is recorded on the trial rather than inferred
-later: the tool set the model was shown, the subject version, the model
-fingerprint, and the definition digest. An unrecorded input is an uncontrolled
-variable, and this is where prompt-optimization tooling usually fails quietly -
-the prose changes, the model version moves the same week, and the improvement
-is attributed to the edit.
+List tools, apply the set, call the model, route its calls back to the real subject,
+feed results back, write a trial. Without the return path a run measures first-guess
+selection and calls it task success. The tool set, subject version, model fingerprint
+and definition digest are recorded on the trial, because an unrecorded input is an
+uncontrolled variable.
 """
 
 from __future__ import annotations

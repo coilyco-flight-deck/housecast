@@ -3,7 +3,8 @@
 No live request is made here. What these own is the request this client would
 send and what it does with a response, both of which are decided before any
 socket opens. Whether the contract survives LiteLLM's translation per provider
-is a different question, and a deployed one: `teable:coilyco-flight-deck/agent-proxy#7807`.
+is a different question, and a deployed one:
+`teable:coilyco-flight-deck/agent-proxy#7807`.
 """
 
 from __future__ import annotations

@@ -1,16 +1,10 @@
 """The iteration loop: measure, propose, mint, re-measure, compare.
 
-Last, and only after its controls. A version of this that skipped the floor and
-the overfitting labels could be built quickly and would confidently report
-improvements that are not there, which is worse than not building it. Every
-guard below is already tested on its own, and what this module adds is the
-order they fire in.
-
-The loop refuses to start rather than warning, because a warning at the top of
-a run nobody is watching is the same as no control at all.
-
-Rules N-4, O-1, O-2 and O-5, and acceptance A-7 and A-8, in
-`teable:coilyco-flight-deck/housecast#7802`.
+Built last, after its controls, because a loop without the floor and the
+overfitting labels reports improvements that are not there. What this module
+adds is the order the guards fire in. It refuses to start rather than warning,
+because a warning at the top of an unwatched run is no control at all.
+Rules in `teable:coilyco-flight-deck/housecast#7802`.
 """
 
 from __future__ import annotations
