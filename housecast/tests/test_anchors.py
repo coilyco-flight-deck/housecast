@@ -1,8 +1,9 @@
 """Every roster personality has a grading anchor, and every anchor is used.
 
 Ported from internal/person/personality_anchors_test.go in agent-compose. The
-roster and the anchors both live here now, so the check that they agree lives
-here too rather than reaching across a repository boundary.
+roster now lives in agent-compose, read here through `agent-compose catalog
+roles --json`, and the anchors live in this repository, so the check that they
+agree still lives here rather than reaching across a repository boundary.
 
 The personality tier bypasses item analysis, so these anchors are the only
 thing holding its scale still. A personality without one cannot be graded.
@@ -10,14 +11,13 @@ thing holding its scale still. A personality without one cannot be graded.
 
 from __future__ import annotations
 
+import json
 import pathlib
+import subprocess
 from typing import Any
 
 import pytest
 import yaml
-
-from housecast import roster
-from housecast.roster import Roster
 
 ANCHORS = pathlib.Path(__file__).resolve().parents[2] / "evaluations" / "personality-anchors.yaml"
 
@@ -29,19 +29,28 @@ def anchors() -> dict[str, Any]:
 
 
 @pytest.fixture(scope="module")
-def loaded() -> Roster:
-    return roster.load()
+def roles() -> list[dict[str, Any]]:
+    raw = subprocess.run(
+        ["agent-compose", "catalog", "roles", "--json"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    items: list[dict[str, Any]] = json.loads(raw)["items"]
+    return items
 
 
-def test_every_melded_personality_has_an_anchor(loaded: Roster, anchors: dict[str, Any]) -> None:
+def test_every_melded_personality_has_an_anchor(
+    roles: list[dict[str, Any]], anchors: dict[str, Any]
+) -> None:
     traits = anchors["traits"]
     used = set()
     missing = []
-    for name in loaded.role_order:
-        for personality in loaded.roles[name].personalities:
+    for role in roles:
+        for personality in role["personalities"]:
             used.add(personality)
             if personality not in traits:
-                missing.append(f"{name} melds {personality}")
+                missing.append(f"{role['slug']} melds {personality}")
     assert not missing, f"melded without a grading anchor: {missing}"
     assert not set(traits) - used, f"anchors matching no meld: {sorted(set(traits) - used)}"
 

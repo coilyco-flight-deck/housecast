@@ -6,43 +6,42 @@ ward:
 
 ## Scope
 
-housecast is the **roster framework for agent context**. It reads
-roster data authored as YAML, validates it, resolves each role's personality
-meld and boundary allocation, derives the identity primitives, and emits an
-immutable bundle. It also runs and boards the behavior evaluations against what
-it composed, so the graded artifact and the shipped artifact stay identical.
+housecast is the **eval and grading harness for agent context**. It reads the
+roster `agent-compose catalog snapshot` reports - roles, personality melds,
+boundary allocations, identity primitives, all authored and composed in
+agent-compose now - and runs and boards the behavior evaluations against it,
+so the graded artifact and the shipped artifact stay identical.
 
 Read before changing anything here:
 
-- [`README.md`](README.md) explains what housecast is, the `acompose` pairing,
-  and the naming record.
+- [`README.md`](README.md) explains what housecast is, the `agent-compose`
+  pairing, and the naming record.
 - [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory, and every entry
   points at its own walkthrough under `docs/`. Those walkthroughs are stubs:
   each one carries a settled structure and a `Still to write` list.
 
-The engine and the eval runner both live here, moved out of agent-compose
-under `agent-compose#337`. The Go engine still exists in agent-compose and
-still composes. `agent-compose#339` deletes it, and until then that repository
-holds the differential test proving the two agree byte for byte.
+The composition engine (roster loading, meld and boundary resolution, bundle
+emission) lived here for a stretch under `agent-compose#337`, and moved back
+out under `housecast#8041` once the Go engine in agent-compose caught up to
+what this repository's Python port had grown. Only the eval half remains.
 
 ## Project shape
 
-- **`housecast/`** - the engine: roster loading, validation, meld and boundary
-  resolution, the OKLab favorite-color solve, bundle emission, and the roster
-  projection downstream tools read.
-- **`housecast/data/roster.yaml`** - the roster, with its field ancestry
-  documented in the file's own header.
-- **`evalkit/`** - the board runner. It travels with the engine deliberately.
+- **`housecast/`** - the eval and grading package: `digest.py`, `grade/`,
+  `mcpeval/`, `mcp/`. No roster loading lives here.
+- **`evalkit/`** - the board runner. It reads `agent-compose catalog
+  snapshot`'s JSON.
 - **`challenges.yaml`**, **`evaluations/`** - the board and its evidence.
 - **`scripts/`** - the eval workflow. No Go runs anywhere in this repository.
 
 ## Repo boundaries
 
-- housecast owns the roster language, the engine, the identity
-  primitives it derives, and the evaluation harness that grades its own output.
-- `acompose` is **downstream**. It renders the bundle housecast emits into
-  harness surfaces and launches them. It is never a peer, and housecast is
-  never its plugin, adapter, or helper.
+- housecast owns the evaluation harness that grades agent-compose's output,
+  and nothing about the roster itself.
+- `agent-compose` is **upstream**. It owns the roster language, resolves every
+  role's meld and boundary allocation, and composes the bundle. housecast is
+  never its plugin, adapter, or helper - it is a downstream consumer of
+  `agent-compose catalog snapshot`, same as any other eval tooling.
 - Harness selection, deployment identity, and standalone AOSguard policy stay
   in agentic-os. Fixed workflows and the broker stay in Ward.
 - Nothing in this repository reaches downward into a consumer for its own
@@ -59,8 +58,6 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 - `just check` runs the offline gates in one recipe: lint, format check,
   types, and tests. The individual verbs exist too.
-- The differential test against the Go engine lives in agent-compose, which is
-  the only place both engines exist. It pins this repository by tag.
 - `just pre-commit` runs the catalog suite over all tracked files. Never pass
   `--no-verify`.
 - A fresh clone has no hooks in `.git/hooks`. Run `just pre-commit-install`
@@ -81,15 +78,19 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 ## Cross-repo contracts
 
-- **agent-compose** hosts the slices that fill this repository:
-  `agent-compose#337` for the code and packaging, `agent-compose#329` for the
-  design, `agent-compose#330` for the name, `agent-compose#347` for the PyPI
-  claim.
+- **agent-compose** is upstream: `agent-compose catalog snapshot` is the only
+  roster input this repository reads. A role or boundary change there is
+  visible here the next time a script runs it, not committed alongside it.
+  `agent-compose#329` for the design history, `agent-compose#330` for the
+  name, `agent-compose#347` for the PyPI claim.
 - **agentic-os** authors the catalog validator suite this repository runs and
   the two generators that own `.pre-commit-config.yaml` and the git-workflow
-  block below.
-- The bundle format is the contract `acompose` builds against. Once it exists,
-  changing it is a cross-repo change wearing one repository's clothes.
+  block below. Its dev-base image is also where `agent-compose` itself comes
+  from in CI - see `docker/dev-base/install-common.sh` there.
+- `agent-compose catalog snapshot`'s JSON schema (`agent-compose.person-snapshot.v3`)
+  is the contract `evalkit/roster.py` builds against. Once a field is read
+  here, narrowing it upstream is a cross-repo change wearing one repository's
+  clothes.
 
 ## Release
 
@@ -117,8 +118,8 @@ the lowest number.
 The name claim landed under `agent-compose#347`: `housecast` is held on PyPI as
 a 0.0.1 placeholder. `house-cast` needs no defensive hold, since PyPI refuses it
 as too similar to `housecast`. The publish workflow is the packaging half of
-`agent-compose#329` scope A. The rest of that scope, growing the compositor's
-public API, is still open.
+`agent-compose#329` scope A; the compositor scope A also named left with the
+composition engine under `housecast#8041`.
 
 Keep [`docs/FEATURES.md`](docs/FEATURES.md) current when a shipped capability
 changes, in the same commit that changes it.
@@ -168,10 +169,10 @@ whole pass, so the cheap-looking ask is never as cheap as the minutes it takes.
 
 Two input sources are easy to miss:
 
-- `housecast/data/roster.yaml`. Boundary rules, acts, and personality text are
-  what a case target is authored against, so a record that edits them edits the
-  target. It also changes what a seat would answer, so the stored responses
-  stop describing the deployment the roster now names.
+- agent-compose's `seed/roster/data/`. Boundary rules, acts, and personality
+  text are what a case target is authored against, so a record that edits them
+  edits the target. It also changes what a seat would answer, so the stored
+  responses stop describing the deployment the roster now names.
 - The profile. A label set or word cap edit rescores every case it reaches
   without touching a word of the board.
 

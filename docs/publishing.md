@@ -34,7 +34,7 @@ after a partial upload skips files already on that index.
 
 ## What ships
 
-The wheel carries 66 entries: both packages, `housecast/data/roster.yaml`, the
-grading page's assets, three `py.typed` markers, and both licence files. The
+The wheel carries both packages, the grading page's assets, three `py.typed`
+markers, and both licence files - no roster data since `housecast#8041`. The
 sdist is the whole tag at 607 KB, because two tests read files under
 `evaluations/` and trimming the run evidence breaks pytest there.

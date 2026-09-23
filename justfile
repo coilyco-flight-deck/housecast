@@ -43,18 +43,6 @@ pre-commit *ARGS:
 pre-commit-install *ARGS:
     @pre-commit install --hook-type pre-commit --hook-type pre-push "$@"
 
-# Project the roster as person.json, which evalkit reads.
-roster *ARGS:
-    @uv run python -m housecast roster "$@"
-
-# Print the roster field reference, rendered from the dataclasses.
-fields *ARGS:
-    @uv run python -m housecast fields "$@"
-
-# Re-vendor roster.yaml's bodies and acts. `just sync-roster ../agent-compose/seed/roster/data`.
-sync-roster *ARGS:
-    @uv run python scripts/sync-roster.py "$@"
-
 # Seal an MCP tool board into a standalone page. `just mcp-board RUN out.html kai`.
 mcp-board RUN OUT GRADER="":
     @uv run --extra eval --extra mcp python -m housecast grade seal "{{RUN}}" \

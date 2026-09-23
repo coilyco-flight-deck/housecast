@@ -37,4 +37,3 @@ than in the schema. `evalkit/profile.py` declares the test types: a profile edit
 ## See also
 
 * [`evaluation-workflow.md`](evaluation-workflow.md) - the verb order, and what each type decides.
-* [`role-boundaries.md`](role-boundaries.md) - the allocations the board derives from.

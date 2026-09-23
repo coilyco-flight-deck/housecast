@@ -4,19 +4,22 @@ from __future__ import annotations
 
 import ast
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
 from evalkit import roster
-from housecast import roster as roster_module
-from housecast import snapshot as snapshot_module
-
-ROSTER = Path(__file__).resolve().parents[2] / "housecast" / "data" / "roster.yaml"
 
 
-def project(path: Path) -> dict[str, Any]:
-    """The person snapshot, straight from the YAML roster with no file in between."""
-    return dict(json.loads(snapshot_module.dumps(roster_module.load(path))))
+def project() -> dict[str, Any]:
+    """The person snapshot, straight from agent-compose with no file in between."""
+    raw = subprocess.run(
+        ["agent-compose", "catalog", "snapshot"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return dict(json.loads(raw))
 
 
 PERSON = {
@@ -95,14 +98,17 @@ def test_every_key_the_projection_reads_exists_on_the_snapshot() -> None:
     # reports success while asserting over an empty set. housecast#7183.
     assert {"boundaries", "scoped_boundaries", "purpose"} <= keys, keys
 
-    roles = project(ROSTER)["roles"]
-    missing = sorted({key for spec in roles.values() for key in keys if key not in spec})
+    roles = project()["roles"]
+    # agent-compose omits a sparse key (scoped_boundaries, guardrail) per role
+    # rather than emitting it empty, so the assertion is "on some role" here.
+    present = {key for spec in roles.values() for key in spec}
+    missing = sorted(keys - present)
 
     assert not missing, (
-        f"evalkit/roster.py reads {missing} off a role spec and the person snapshot does "
-        "not carry it. housecast/snapshot.py is the seam that renames roster.yaml's "
-        "defers and scoped: rename one side only and this is what fails. Assert against "
-        "the snapshot, never raw roster.yaml, where these are absent by design."
+        f"evalkit/roster.py reads {missing} off a role spec and no role in "
+        "agent-compose's catalog snapshot carries it. Assert against the "
+        "snapshot, never the seed roster.yaml, where these may be spelled "
+        "differently by design."
     )
 
 

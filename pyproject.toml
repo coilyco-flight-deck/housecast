@@ -1,7 +1,7 @@
 [project]
 name = "housecast"
 dynamic = ["version"]
-description = "Python composition engine for agent rosters."
+description = "Shared eval grading for agent-compose and sirens-echo."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

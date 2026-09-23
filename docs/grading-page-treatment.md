@@ -26,9 +26,7 @@ live in the rendered page, every painted text role clears WCAG AA in both themes
 
 The kit's registers retired the 21-degree coral/amber near-miss and **took amber off focus**: a
 focused card used to recolor its entity label to the hue meaning UNDECIDED. Focus and current-ness
-are structure and take purple, so amber only means undecided now. Each chapter carries its agent
-and an element glyph from `roster.yaml`, the glyph doing what a color would: the kit holds no
-spare hue, the warm ones being verdict-locked and there being no blue at all.
+are structure and take purple, so amber only means undecided now.
 
 ## Scale and keyboard
 

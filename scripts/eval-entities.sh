@@ -10,7 +10,7 @@ render_dir=$(mktemp -d)
 cleanup() { rm -rf "$render_dir"; }
 trap cleanup EXIT HUP INT TERM
 
-uv run python -m housecast roster --out "$render_dir" >/dev/null
+agent-compose catalog snapshot --out "$render_dir/person.json"
 uv run --extra eval python -m evalkit.roster \
   --person "$render_dir/person.json" \
   --out "$out"

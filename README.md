@@ -2,32 +2,31 @@
 
 Agent context, cast from one roster
 
-Change what a role may do and the evaluation that checks it moves with it, in
-the same commit. housecast reads roster data authored
-as YAML (roles, personalities, boundaries, and the invariant), validates it,
-resolves each role's personality meld and boundary allocation, derives the
-identity primitives including each role's favorite color, and emits an
-immutable bundle. It also runs and boards the behavior evaluations against what
-it composed, which is what keeps the graded artifact and the shipped artifact
+Change what a role may do and the evaluation that checks it moves with it.
+`agent-compose` owns the roster language now: it reads roster data authored as
+YAML, validates it, resolves each role's personality meld and boundary
+allocation, derives the identity primitives including each role's favorite
+color, and composes the immutable bundle. housecast runs and boards the
+behavior evaluations against exactly what `agent-compose catalog snapshot`
+reports, which is what keeps the graded artifact and the shipped artifact
 identical.
 
-The engine and the eval runner both live here now, moved out of agent-compose
-under `agent-compose#337`. [`docs/FEATURES.md`](docs/FEATURES.md) is the
-inventory. The name `housecast` is held on PyPI as a 0.0.1 placeholder under
-`agent-compose#347`, now closed. The release train that turns a `housecast-v*`
-tag into a real upload is wired, and until the first tag runs it, consumers
-install from Forgejo.
+housecast shipped the composition engine itself for a stretch (moved in under
+`agent-compose#337`, moved back out under `housecast#8041` once the Go engine
+caught up), and only the eval half remains here.
+[`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. The name `housecast`
+is held on PyPI as a 0.0.1 placeholder under `agent-compose#347`, now closed.
+The release train that turns a `housecast-v*` tag into a real upload is wired,
+and until the first tag runs it, consumers install from Forgejo.
 
-## housecast and acompose
+## housecast and agent-compose
 
-`acompose` is downstream of housecast, not its peer.
-
-housecast owns the roster language and the engine. `acompose` renders the
-bundle housecast emits into harness surfaces and launches them. Reading
-housecast as an accessory, plugin, adapter, or helper to `acompose` inverts the
-relationship the whole program exists to establish. The position housecast
-holds relative to `acompose` is the position umbra holds relative to its own
-downstream consumers.
+housecast is downstream of `agent-compose`, not its peer. `agent-compose` owns
+the roster language, resolves every role's meld and boundary allocation, and
+composes the bundle. housecast reads what `agent-compose catalog snapshot`
+reports and grades behavior against it - it authors and vendors none of the
+roster itself. Reading `agent-compose` as an accessory, plugin, adapter, or
+helper to housecast inverts the relationship this repository now holds.
 
 ## The name
 
@@ -57,11 +56,11 @@ distribution. `house-cast` is held defensively and never shipped.
 git clone https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git
 cd housecast
 just sync
-just roster --out /tmp/person
+agent-compose catalog snapshot --out /tmp/person.json
 ```
 
-Composing a role's bundle is `agent-compose compose`'s job now, not this
-repository's - housecast#8041.
+Projecting the roster and composing a role's bundle are both agent-compose's
+job now, not this repository's - housecast#8041.
 
 `just` with no arguments lists every verb. `just check` is the offline gate:
 lint, format check, types, and tests in one recipe.
@@ -80,18 +79,19 @@ housecast = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast
 ```
 
 That is the same shape the estate already uses for `aos-eval`. Add the `eval`
-extra when the consumer needs the board runner rather than the engine alone.
+extra when the consumer needs the board runner rather than the base package alone.
 Once a `housecast-v*` tag has run the train in
 [`docs/publishing.md`](docs/publishing.md), `pip install housecast` is the
 shorter path.
 
 ## Layout
 
-* `housecast/` - the engine. Roster loading, validation, meld and boundary
-  resolution, the OKLab favorite-color solve, and bundle emission.
-* `housecast/data/roster.yaml` - the roster the engine composes.
-* `evalkit/` - the board runner, which travels with the engine so the graded
-  artifact and the shipped artifact stay identical.
+* `housecast/` - the eval and grading package: `digest.py`, `grade/`,
+  `mcpeval/`, `mcp/`. No roster loading lives here anymore - that is
+  `agent-compose catalog snapshot`'s job.
+* `evalkit/` - the board runner, which reads `agent-compose catalog
+  snapshot`'s JSON so the graded artifact and the shipped artifact stay
+  identical.
 * `challenges.yaml` and `evaluations/` - the board and its committed evidence.
 * `scripts/` - the eval workflow, with no Go anywhere in it.
 

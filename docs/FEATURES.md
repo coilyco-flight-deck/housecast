@@ -4,12 +4,8 @@ Coarse inventory of the major capabilities housecast ships.
 
 ## Shipped
 
-* **The composition engine.** Reads a roster as YAML, resolves each role's meld and boundary
-  allocation, and emits an immutable bundle. [`composition.md`](composition.md), [`identity.md`](identity.md).
-* **The roster language.** `roster.yaml` carries roles, personalities, boundaries, acts and the invariant. [`roster-language.md`](roster-language.md), [`role-boundaries.md`](role-boundaries.md).
 * **Attribute acts, and the overlay extending them.** Every role, personality and boundary side names
   three runnable things; a private overlay appends estate-only acts. See [`overlay.md`](overlay.md).
-* **A roster projection.** `housecast roster` emits the `person.json` shape downstream tools read.
 * **evalkit, the board runner.** Derives the board across seven test types, runs it through Inspect,
   and reports the coverage gap. [`evaluation.md`](evaluation.md), [`grading-grounding.md`](grading-grounding.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
@@ -29,8 +25,7 @@ Coarse inventory of the major capabilities housecast ships.
 
 ## Not shipped
 
-No release is on PyPI yet, only the 0.0.1 name claim from `agent-compose#347`. agent-compose's Go
-engine still composes, deleted under `agent-compose#339`. Attested bundles are designed, not built.
+No release is on PyPI yet, only the 0.0.1 name claim from `agent-compose#347`. Attested bundles are designed, not built.
 The variant search has no `Measurer`. The MCP loop runs on one task and one subject: a second task,
 an LLM judge, HTTP fault injection and a holdout split are absent, and it has no `docs/` page
 because the band is full at 20.

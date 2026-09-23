@@ -1270,27 +1270,6 @@ function halfPanel(kase) {
 /* The payload's own `pairs` list carries only pairs with a graded half, so
    the units below are grouped from the cases instead. Same grouping key,
    and an ungraded pair still gets a card. */
-/* Who each entity is, mirrored from housecast/data/roster.yaml. Element gives
-   the glyph, because the kit holds no spare hue: every warm one is locked to a
-   verdict and there is no blue at all, so an invented element palette would
-   land a decoration next to a grade. test_page_roster.py fails on drift.
-   An entity the roster does not name renders with no glyph and no name. */
-var ROSTER = {
-  platform:         { who: "Angie",     element: "earth", glyph: "\uD83E\uDEA8" },
-  "senior-sysadmin": { who: "Vera",     element: "earth", glyph: "\uD83E\uDEA8" },
-  science:          { who: "Evie",      element: "water", glyph: "\uD83D\uDCA7" },
-  frontend:         { who: "Delphi",    element: "fire",  glyph: "\uD83D\uDD25" },
-  gamedev:          { who: "Sprite",    element: "water", glyph: "\uD83D\uDCA7" },
-  director:         { who: "Portia",    element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
-  advocate:         { who: "Gem",       element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
-  analyst:          { who: "Cassandra", element: "fire",  glyph: "\uD83D\uDD25" },
-  psych:            { who: "Iris",      element: "earth", glyph: "\uD83E\uDEA8" },
-  reporter:         { who: "Nell",      element: "air",   glyph: "\uD83C\uDF2C\uFE0F" },
-  "junior-sysadmin": { who: "Valerie",  element: "water", glyph: "\uD83D\uDCA7" },
-  "admin-assist": { who: "Nessa", element: "air", glyph: "\uD83C\uDF2C\uFE0F" }
-};
-
-function identity(entity) { return ROSTER[entity] || null; }
 
 function group(cases) {
   var units = [], byPair = {};
@@ -1539,12 +1518,6 @@ function buildMap(model) {
   order.forEach(function (entity) {
     var row = el("div", "map-row");
     var name = el("span", "ent-name", null);
-    var id = identity(entity);
-    if (id) {
-      var g = el("span", "glyph", id.glyph);
-      g.setAttribute("aria-hidden", "true");
-      name.appendChild(g);
-    }
     name.appendChild(document.createTextNode(entity));
     var group = rows[entity];
     var out = group.filter(function (k) { return NON_SCORES[k.label]; }).length;
@@ -1644,19 +1617,7 @@ function drawStream() {
     if (next && next !== entity) {
       entity = next;
       var head = el("h2", "chapter", null);
-      var id = identity(next);
-      if (id) {
-        var g = el("span", "glyph", id.glyph);
-        g.setAttribute("aria-hidden", "true");
-        head.appendChild(g);
-      }
       head.appendChild(document.createTextNode(next));
-      if (id) {
-        var who = el("span", "who", null);
-        who.appendChild(el("b", null, id.who));
-        who.appendChild(document.createTextNode(" // " + id.element));
-        head.appendChild(who);
-      }
       head.id = "chapter-" + next;
       stream.appendChild(head);
     }
