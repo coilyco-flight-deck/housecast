@@ -1,24 +1,9 @@
-"""The model client: plain OpenAI-style, and nothing in it knows about a gateway.
+"""The model client: plain OpenAI-style, with no gateway or vendor branch in it.
 
-Base URL, API key, model name. That is the whole configuration surface, and it
-is the code path a customer uses. Pointing it at this deployment's own gateway
-is a config value, not a branch in here, which is why no vendor or gateway
-appears below.
-
-Two behaviours are load-bearing and were established by measurement rather than
-read off a spec, on 2026-09-16 against the `evaluation/*` routes:
-
-* `tool_choice` is not universally accepted. `deepseek-v4-pro` and
-  `deepseek-v4-flash` are thinking-mode routes and answer `tool_choice` of any
-  value with HTTP 400 `Thinking mode does not support this tool_choice`. So the
-  default is to send no `tool_choice` at all, and a caller that sets one is
-  refused loudly rather than having it dropped quietly. A silently dropped
-  constraint scores as the model declining to call, which is a measurement of
-  the transport rather than of the prose.
-* not every route emits structured `tool_calls`. `ministral-3-14b` returns
-  `transcribe_video[ARGS]{...}` as message content, so a run against it would
-  score every prompt as calling nothing. `probe_tool_calls` exists so that is
-  caught before a board rather than inside one.
+Measured 2026-09-16 on the `evaluation/*` routes: deepseek thinking-mode routes answer
+any `tool_choice` with HTTP 400, so none is sent and a caller setting one is refused
+rather than silently dropped. Some routes emit calls as message content, not
+`tool_calls`, and `probe_tool_calls` catches that before a board rather than inside it.
 """
 
 from __future__ import annotations

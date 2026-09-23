@@ -1,19 +1,5 @@
-# Forgejo-canonical CI gate. Every step invokes a justfile recipe rather than a
-# hand-written command, so the gate and a developer running `just` locally can
-# never disagree about what the check actually is.
-#
-# The job runs in the moving :release aos dev-base image, which already ships
-# uv, managed Python 3.12 and 3.13, just, pre-commit, and trufflehog. That lets
-# CI skip every setup action and call the repo's declared verbs directly.
-#
-# uv resolves the dev dependency group through PyPI whenever its cache is cold,
-# and that egress flakes on this runner, so the job caches ~/.cache/uv and
-# raises uv's 30s HTTP timeout. The pre-commit cache is here for the same
-# reason: hook environments dominate a cold `just pre-commit`.
-#
-# This gate assumes the instance has an Actions runner labelled `docker`
-# attached to this repository. Where it does not yet, the workflow is still the
-# correct artifact and starts gating as soon as one is attached.
+# Forgejo CI gate: every step runs a justfile recipe in the aos dev-base image.
+# Why the cache, timeout and runner label look this way: docs/ci.md.
 
 name: ci
 

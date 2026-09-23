@@ -1,14 +1,9 @@
 """The local grading session, served to a page instead of a terminal.
 
-`export.py` projects a run one way onto a public display surface. This is the
-other direction and is deliberately not that: it holds one run open for one
-human on loopback, hands the page the grader-private fields, and writes every
-decision straight back to `annotations.yaml`.
-
-The split is the safety property rather than a layering preference. A built
-artifact embeds the public export and can neither read a critique nor write a
-label, so the file opened on a projector cannot leak one. Private text exists
-only while this process runs. See docs/grading.md.
+The reverse of `export.py`: one run held open for one grader on loopback, private
+fields handed to the page, every decision written back to `annotations.yaml`. The
+split is the safety property. A built artifact embeds only the public export, so
+the file on a projector cannot leak a critique. See docs/grading.md.
 """
 
 from __future__ import annotations

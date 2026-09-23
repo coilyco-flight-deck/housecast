@@ -1,13 +1,8 @@
 """Runs and definition sets on disk, as committed evidence.
 
-A run is written once and never rewritten. When a committed run and the current
-source disagree, the run is the record of what was true when it executed, and
-editing it to match today is exactly the failure a committed record exists to
-prevent.
-
-The layout is one directory per run because a run is the unit a comparison
-reads, and JSON rather than a database because the evidence has to be readable
-by someone who does not have this tool.
+A run is written once and never rewritten: it records what was true when it executed.
+One directory per run, because a run is the unit a comparison reads, and JSON rather
+than a database, so the evidence is readable without this tool.
 """
 
 from __future__ import annotations

@@ -1,18 +1,9 @@
 """PR-1: the subject, constructed inside the evaluation process.
 
-The harness process is the subject's runtime. That is a constraint rather than
-a preference: the transport is a linked in-memory stream pair, and a linked
-in-memory pair does not cross a language border, so no other runtime can
-construct the server object and hold the other end.
-
-The reason it has to be in-process is `apply_prose`. Editing a description
-means rewriting the tool registry before a client ever sees it, and an
-out-of-process client only receives what the subject chose to advertise.
-Dropping in-process does not simplify the loop, it cancels it.
-
-Everything here stops at a captured tool set. Nothing below decides anything a
-comparison depends on, which keeps the pinned runtime under the logic rather
-than through it.
+In-process is a constraint, not a preference. The transport is a linked in-memory
+stream pair that no other runtime can hold the other end of, and `apply_prose` has
+to rewrite the tool registry before a client sees it. An out-of-process client only
+receives what the subject advertises, so dropping in-process cancels the loop.
 """
 
 from __future__ import annotations

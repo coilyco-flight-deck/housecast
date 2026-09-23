@@ -1,13 +1,8 @@
 """PR-2 and PR-3: drive a model against the hosted subject, and record what came back.
 
-The model client is a protocol rather than a concrete class because transport
-is not this module's to decide. AGENTS.md routes every model request through
-Agent Proxy, so the concrete client is one implementation of `ModelClient` and
-nothing above it changes when that client arrives.
-
-What this module does own is the join. A response is logged against the case
-that provoked it and the provenance it ran under, because a response filed
-without either is an observation nobody can compare.
+The model client is a protocol because transport is not this module's to decide.
+What it owns is the join: a response is logged against the case that provoked it
+and the provenance it ran under, because an unjoined response cannot be compared.
 """
 
 from __future__ import annotations

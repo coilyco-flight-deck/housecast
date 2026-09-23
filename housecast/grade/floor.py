@@ -1,16 +1,9 @@
 """The noise floor, and the refusal to read a delta through it.
 
-A model is stochastic, so two runs of one variant give different per-attribute
-rates. Without that spread every reported delta is unreadable and every prose
-edit looks like it did something. The floor is a property of the board, the
-model and the subject together, so it is re-established when any of the three
-move rather than carried forward.
-
-A board whose floor is wider than the effect you care about is not a weak
-experiment, it is not an experiment, and `Floor.render` says so after one pair
-of runs rather than after a week of iteration. That is why this is reportable
-on its own and not only as an input to a comparison.
-
+Two runs of one variant differ, so without that spread every delta is
+unreadable. The floor belongs to the board, model and subject together, and is
+re-measured when any of them moves. A floor wider than the effect you care about
+means there is no experiment, and `Floor.render` says so after one pair of runs.
 Rules N-1 to N-5 in `teable:coilyco-flight-deck/housecast#7802`.
 """
 

@@ -1,12 +1,9 @@
 """A task and its prompts, read from YAML.
 
-A task is a capability, not a test case, and it is the unit of judgement and the
-thing that eventually gets signed off. A prompt is one phrasing or edge case
-within it - a sample, never a verdict.
-
-The correctness rules live here beside the prompts because they are written
-before the run, which is the only time they can be written honestly. They are
-never sent to the model.
+A task is a capability and the unit of judgement. A prompt is one phrasing or edge
+case within it, a sample and never a verdict. The correctness rules sit beside the
+prompts because they are written before the run, the only time they can be written
+honestly. They are never sent to the model.
 """
 
 from __future__ import annotations

@@ -1,18 +1,9 @@
 """Variants of the prose under test, and the chain that counts the search.
 
-The pin refuses a grade straddling a change to its inputs, and the prose shown
-beside a case is one of them. PR-4 edits that prose on purpose, so the pin stops
-being only a refusal and gains an axis: within one variant it refuses exactly as
-before, and across variants differing prose is the measurement.
-
-A variant is identified by its prose and nothing else. That is what makes an
-edit-and-revert collide with its origin instead of arriving as a third variant
-whose numbers a reader would compare against the first two.
-
-The parent chain is here because the count of variants tried has to be
-reported beside any result (O-5), and traversing a chain the store already
-keeps is cheaper than a second ledger that can disagree with it.
-
+Across variants, differing prose is the measurement rather than drift the pin
+refuses. A variant is identified by its prose alone, so an edit-and-revert collides
+with its origin instead of arriving as a third variant. The parent chain counts
+variants tried (O-5) without a second ledger that could disagree with it.
 Rules K-3 to K-5 and O-5 in `teable:coilyco-flight-deck/housecast#7802`.
 """
 

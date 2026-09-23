@@ -1,30 +1,9 @@
 """The subject: five media tools whose descriptions are deliberately flawed.
 
-This stands in for the customer's Node server, which is not available. It is a
-real HTTP MCP server rather than a mock, because the loop's whole claim is that
-the subject can be any language behind HTTP and housecast never notices.
-
-The flaws are the demo. Each is a documented failure shape, and each is
-reachable by a prose edit alone, so a tester can actually fix one and watch the
-number move:
-
-* `media_analyze` is over-broad. It says it extracts "text, speech, metadata and
-  content" and in fact returns only metadata, so it wins a transcription
-  selection it should lose.
-* `media_transcribe` buries its precondition. It needs a `media_id` from
-  `media_register`, and that sentence sits at the end of a long paragraph after
-  three sentences of unrelated capability prose.
-* `media_register` never says it is a prerequisite for anything, so a model with
-  a file path in hand has no reason to call it first.
-* `media_job_status` never names its terminal states, so a model either stops
-  polling while the job still runs or polls past completion.
-* `media_convert` gives no unit or format for `ratio`, so a model guesses
-  between "16:9" and 1.7778.
-
-Nothing here is secret from the model: it is shown these descriptions. What it
-is never shown is the correctness rule, which lives in the task file and is
-never sent over the wire. Grading material naming the expected calls would
-measure whether the agent can read the answer key.
+A real HTTP MCP server standing in for the customer's, not a mock. Each flaw is a
+documented failure shape fixable by a prose edit alone: an over-broad tool, a buried
+precondition, an unstated prerequisite, unnamed terminal states, and a unitless
+parameter. The correctness rule lives in the task file and never reaches the model.
 """
 
 from __future__ import annotations

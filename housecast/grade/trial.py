@@ -1,14 +1,8 @@
 """One measured turn, and everything a comparison of two of them depends on.
 
-An unrecorded input is an uncontrolled variable. This is where most homegrown
-prompt-optimization tooling quietly fails: the prose changes, the model version
-changes underneath it the same week, and the improvement is attributed to the
-edit. Refusing to pool is cheap and is the difference between a measurement and
-an anecdote.
-
-The refusals here never average across a difference. They name which side moved
-and stop.
-
+An unrecorded input is an uncontrolled variable: the prose changes, the model
+version changes the same week, and the gain is credited to the edit. The refusals
+here never average across a difference. They name which side moved and stop.
 Rules D-5, K-3, K-4 and K-5 in `teable:coilyco-flight-deck/housecast#7802`.
 """
 

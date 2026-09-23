@@ -1,14 +1,8 @@
 """The queue a tester actually reads, and the budget it costs them.
 
-Forty minutes at two minutes a result is about twenty results one person can
-genuinely examine per task-hour, and that figure is fixed no matter how many
-prompts ran. So the queue is ordered by what is worth those minutes and the
-rows that passed are not in it at all - a tester scrolling past fifteen green
-rows to reach three red ones has spent attention the budget cannot refund.
-
-Order: failures first, then the prompts a comparison moved, then inefficiency.
-The budget is reported in minutes rather than in rows, because rows are not the
-currency the hour is spent in.
+About twenty results fit in one task-hour however many prompts ran, so passing rows
+are left out. Order is failures, then prompts a comparison moved, then inefficiency.
+The budget is reported in minutes, the currency the hour is spent in.
 """
 
 from __future__ import annotations

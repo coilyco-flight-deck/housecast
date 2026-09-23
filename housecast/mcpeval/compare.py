@@ -1,24 +1,9 @@
-"""The comparison: two runs of one task, matched prompt to prompt.
+"""Two runs of one task, matched prompt to prompt. Never two averages.
 
-Never two averages. A before-average beside an after-average invites shipping
-noise, and it does it most often on the change a tester most wants to believe
-in - a change that lifts the mean while breaking three prompts reads as a win
-and an average conceals that completely.
-
-What this reports instead: how many prompts improved, how many regressed, how
-many held, and which ones by name. Then an exact two-tailed sign test over the
-prompts that moved, as a confidence statement rather than a verdict. At twenty
-prompts fifteen must move one way to clear 0.05, and at ten it takes nine of
-ten, so most honest comparisons at this sample size do not reach significance
-and the tool has to say so rather than render a bare pass.
-
-The decision rule is deliberately not the p-value. Net improvement, with no
-prompt regressing past a declared threshold, and both halves configurable so a
-team agrees in advance what qualifies.
-
-A comparison across a difference in anything but the prose refuses and names
-which side moved. Refusing to pool is cheap, and it is the whole difference
-between a measurement and an anecdote.
+A mean that rises while three prompts break reads as a win. This reports improved,
+regressed and held by name, then an exact sign test as confidence, not a verdict. The
+decision rule is net improvement with no regression past a declared threshold. A
+difference in anything but the prose refuses the comparison and names the side.
 """
 
 from __future__ import annotations

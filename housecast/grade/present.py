@@ -1,14 +1,9 @@
 """The audience surface. Public by default, because nothing private is here.
 
-`serve` refuses to listen past loopback. This listens openly and that inversion
-is deliberate: the two commands are separate processes so the only thing
-dividing a grader's critique from a room is which one is running, rather than a
-flag inside one that is a single wrong state away from serving the wrong half.
-
-Nothing here is authenticated, per Kai on inbox#472. A viewer creates no
-identity, and the vote is held in memory and discarded when the process exits.
-The one capability that is gated is the presenter's own control, because a room
-that can skip rounds or close a vote is a live failure with an audience.
+`serve` stays on loopback and this listens openly. They are separate processes
+so a wrong flag cannot serve a grader's critique to a room. Nothing is
+authenticated (inbox#472) and votes live in memory only. The presenter's control
+is the one gated capability. See docs/presenting.md.
 """
 
 from __future__ import annotations

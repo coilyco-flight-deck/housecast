@@ -1,13 +1,9 @@
 """The room-facing artifact: rounds built once, reviewed, and never live-read.
 
 `present` serves a deck rather than a run directory, and that is the whole
-safety design. A deck is built deliberately, scanned, and looked at before it
-reaches a room, so there is no path from an open grading session to a
-projector. `serve` holds the private side and never listens past loopback.
-
-Two sources meet here. The case comes from committed evidence. The commitments
-block is authored prose and belongs to the exercise content, not to this
-module. See docs/grading.md.
+safety design. A deck is built, scanned, and looked at before it reaches a room,
+so no path runs from an open grading session to a projector. The commitments
+block is authored exercise content, not this module's. See docs/deck.md.
 """
 
 from __future__ import annotations

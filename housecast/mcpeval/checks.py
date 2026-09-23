@@ -1,24 +1,9 @@
-"""Deterministic grading. No LLM judge, and that is not a shortcut.
+"""Deterministic grading. No LLM judge, because the target failures are structural.
 
-Deterministic checks run first in the real design too, because the failures this
-loop is built to find are structural - a tool selected that should not have
-been, a precondition skipped, a poll that never terminated - and every one of
-those is visible in the call sequence without asking a model what it thinks.
-
-Two method constraints from the brief hold here and are easy to violate by
-accident:
-
-* the grading material never names the expected calls **to the model**. The
-  rules below are the grader's and never travel over the wire. The subject's
-  descriptions and the prompt are all the model ever sees.
-* an executor or service failure is separated from an interface failure. A
-  transport error is recorded as `error` on the trial and the trial is scored
-  `None` rather than zero, because scoring a dropped connection as a prose
-  defect is how a run measures the network.
-
-Each check answers for one prompt and carries the evidence that decided it, so
-a tester reading the triaged queue sees why a row is there rather than a bare
-red mark.
+A wrong tool, a skipped precondition, or a poll that never ends shows in the call
+sequence. The rules never travel to the model. A transport error scores `None` rather
+than zero, because scoring a dropped connection as a prose defect measures the network.
+Each check carries the evidence that decided it.
 """
 
 from __future__ import annotations

@@ -1,20 +1,9 @@
 """A run: every prompt of one task against one definition set, concurrently.
 
-A run that blocks the person is a failed requirement rather than a slow one.
-The tester's hour is the binding constraint in this whole design - four hours,
-four tasks, and forty of those minutes go to reading results - so a serial
-twenty-prompt arm at a minute a prompt spends a third of the hour watching a
-progress bar.
-
-Concurrency is bounded by a semaphore rather than by `gather` over everything,
-because the ceiling belongs to the declared rate limit rather than to how many
-prompts a task happens to hold. A shed request is the caller's to slow down; it
-is never this code's to retry harder.
-
-Two runs of one task with one thing changed are the two arms of a controlled
-experiment. What must be identical between them is recorded on the run as its
-`fingerprint`, and `compare` refuses across a difference rather than averaging
-through it.
+The tester's hour is the binding constraint, so a run never blocks the person.
+Concurrency is capped by a semaphore sized to the declared rate limit, not by the
+prompt count, and a shed request is never retried harder. What two arms must share is
+recorded as the run's `fingerprint`, and `compare` refuses across a difference.
 """
 
 from __future__ import annotations

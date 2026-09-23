@@ -1,12 +1,9 @@
 """The drift check actually fires, proven rather than described.
 
-`sync_kit.py` was negative-controlled by hand when it was written, which is not
-the same as being covered. A guard whose failing path nobody runs is a guard
-that reports green for whatever reason it likes. Each case here drives the
-script as a subprocess so the exit code is the real one.
-
-The fake kit is synthesised from the page's OWN vendored block, so these run
-with no website checkout anywhere and still exercise both directions.
+A guard whose failing path nobody runs reports green for any reason it likes, so
+each case drives `sync_kit.py` as a subprocess and reads the real exit code. The
+fake kit is synthesised from the page's own vendored block, so these run with no
+website checkout and still exercise both directions.
 """
 
 from __future__ import annotations

@@ -1,13 +1,9 @@
 """The seam a board's source sits behind.
 
-A board needs three things from wherever its cases come from: the profile naming
-the test types, the entities a grader reads a charter for, and the challenges
-themselves. One provider exists today, which is why the interface is written
-now. Waiting for the second one means deriving the shape from two examples that already disagree.
-
-The core declares the protocol and implements none of it. A provider imports
-this module; this module imports no provider, which `test_import_graph.py`
-holds to.
+A board needs a profile, the entities a grader reads a charter for, and the
+challenges. One provider exists, and the interface is written now because a
+shape derived later from two disagreeing examples is worse. This module imports
+no provider, which `test_import_graph.py` holds to.
 """
 
 from __future__ import annotations

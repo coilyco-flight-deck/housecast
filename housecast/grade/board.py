@@ -1,12 +1,9 @@
 """A board: every context a run needs, and every challenge to put through it.
 
-A challenge is always answered the same way, by compiling a context and sending
-one model call. That is true of a composed role bundle and of a deployed
-conversational lane, so the board carries the compiled context rather than the
-recipe for it, and a runner needs to know nothing about how it was built.
-
-This layer defines and validates the board. It does not run one. See
-docs/grading.md.
+Every challenge is answered by compiling a context and sending one model call,
+so the board carries the compiled context rather than the recipe, and a runner
+needs to know nothing about how it was built. This layer defines and validates
+a board and does not run one. See docs/grading.md.
 """
 
 from __future__ import annotations
