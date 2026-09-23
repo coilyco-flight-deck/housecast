@@ -6,7 +6,7 @@ Coarse inventory of the major capabilities housecast ships.
 
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
   taxonomy, export, `grade serve`, and `grade pin`. See [`grading.md`](grading.md).
-* **The grading page.** One card per boundary pair, both halves side by side, evidence highlighted.
+* **The grading page.** One card per pair, both halves side by side, evidence highlighted.
   One file, no build step. See [`grading-page.md`](grading-page.md).
 * **Observational boards.** From replies a subject already gave, so a cell can be decided and not a verdict. [`grading-non-scores.md`](grading-non-scores.md).
 * **The room-facing half.** `grade deck` builds a scanned, slug-free deck and `grade present` serves
@@ -21,7 +21,7 @@ Coarse inventory of the major capabilities housecast ships.
 
 ## Not shipped
 
-No release is on PyPI yet, only the 0.0.1 name claim from `agent-compose#347`. Attested bundles are designed, not built.
+No release is on PyPI yet, only the 0.0.1 name claim. Attested bundles are designed, not built.
 The variant search has no `Measurer`. The MCP loop runs on one task and one subject: a second task,
 an LLM judge, HTTP fault injection and a holdout split are absent, and it has no `docs/` page
 because the band is full at 20.

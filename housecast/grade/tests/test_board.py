@@ -3,7 +3,8 @@ from typing import Any
 import pytest
 
 from housecast.grade.board import BOARD_SCHEMA, BoardError, load_board
-from housecast.grade.schema import DEFAULT_PROFILE, Profile, TestTypeSpec
+from housecast.grade.schema import Profile, TestTypeSpec
+from housecast.grade.tests.fixtures import PROFILE
 
 SOLO = Profile(name="solo", test_types=(TestTypeSpec("clause", "binary", 50, ("attribute",)),))
 
@@ -107,7 +108,7 @@ def test_provenance_is_the_deployment_s_and_travels_untouched() -> None:
 
 def test_the_built_in_profile_is_the_default() -> None:
     raw = board()
-    raw["challenges"][0]["test_type"] = "boundary"
+    raw["challenges"][0]["test_type"] = "paired"
     raw["challenges"][0]["half"] = "in"
     raw["challenges"][0]["pair_id"] = "platform-a"
-    assert load_board(raw, DEFAULT_PROFILE).entities == ["platform"]
+    assert load_board(raw, PROFILE).entities == ["platform"]

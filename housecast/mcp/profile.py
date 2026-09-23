@@ -27,8 +27,8 @@ PROFILE_PATH = pathlib.Path(__file__).parent.parent / "data" / "mcp-tools-profil
 def mcp_tools() -> Profile:
     """Read the shipped profile. Raises if it is missing, rather than defaulting.
 
-    Falling back to `DEFAULT_PROFILE` here would hand an MCP board the boundary
-    vocabulary, which is exactly the failure this whole change removed.
+    Falling back to another deployment's profile here would hand an MCP board
+    vocabulary it does not use.
     """
     if not PROFILE_PATH.is_file():
         raise FileNotFoundError(

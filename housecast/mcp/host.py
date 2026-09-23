@@ -2,7 +2,7 @@
 
 The harness process is the subject's runtime. That is a constraint rather than
 a preference: the transport is a linked in-memory stream pair, and a linked
-in-memory pair does not cross a language boundary, so no other runtime can
+in-memory pair does not cross a language border, so no other runtime can
 construct the server object and hold the other end.
 
 The reason it has to be in-process is `apply_prose`. Editing a description
@@ -10,7 +10,7 @@ means rewriting the tool registry before a client ever sees it, and an
 out-of-process client only receives what the subject chose to advertise.
 Dropping in-process does not simplify the loop, it cancels it.
 
-Everything here stops at a captured roster. Nothing below decides anything a
+Everything here stops at a captured tool set. Nothing below decides anything a
 comparison depends on, which keeps the pinned runtime under the logic rather
 than through it.
 """
@@ -51,7 +51,7 @@ class ToolDefinition:
 
 
 @dataclass(frozen=True)
-class Roster:
+class ToolSet:
     """The exact tool list the model was shown, in presentation order.
 
     Order is carried rather than sorted away, because whether a tool is
@@ -125,10 +125,10 @@ async def hosted(
         group.cancel_scope.cancel()
 
 
-async def roster(session: ClientSession) -> Roster:
+async def tool_set(session: ClientSession) -> ToolSet:
     """What the model would be shown, captured as the trial records it."""
     listed = await session.list_tools()
-    return Roster(
+    return ToolSet(
         tools=tuple(
             ToolDefinition(
                 name=tool.name,

@@ -22,7 +22,7 @@ stops being a typo guard. It stays in place as the guard against a page sending 
 `--grader kai` writes `annotations.kai.yaml` rather than the shared `annotations.yaml`, so two testers stop overwriting each other. The name is validated as lowercase letters, digits and hyphens because it
 becomes a filename, and it is written into the file under a `grader` key because a filename is the first thing a copy or an export changes. `grade disagreement` takes `--annotations` once per grader, reads that
 key ahead of the filename, and rates only the cases every grader reached: one nobody finished is incomplete rather than folded in, and nothing compared reports no rate rather than agreement. Required `--tester`
-declares the study's roster, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
+declares the study's graders, so a glob catching a calibrated grader refuses rather than counting. Counted files are named.
 
 ## The order a pass takes
 

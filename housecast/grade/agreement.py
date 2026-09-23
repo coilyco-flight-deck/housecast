@@ -1,6 +1,6 @@
 """Two or more graders over one board, and the rate at which they disagree.
 
-The pairing half asks whether a boundary held. This asks whether the humans
+The pairing half asks whether a paired attribute held. This asks whether the humans
 reading it saw the same thing, which is a different question and the one a
 split test is run to answer.
 

@@ -29,7 +29,6 @@ from housecast.grade.io import (
 from housecast.grade.queue import load_queue, order_by_queue, queue_path
 from housecast.grade.schema import (
     DEDUCTIONS,
-    DEFAULT_PROFILE,
     LABEL_SETS,
     Annotation,
     DatasetEntry,
@@ -94,25 +93,25 @@ class GradingSession:
     """One run held open for one grader. Every decision lands on disk immediately."""
 
     run_dir: Path
-    profile: Profile = DEFAULT_PROFILE
+    profile: Profile
     entries: list[DatasetEntry] = field(default_factory=list)
     annotations: dict[str, Annotation] = field(default_factory=dict)
-    roster: dict[str, Any] | None = None
+    projection: dict[str, Any] | None = None
     grader: str | None = None
 
     @classmethod
     def open(
         cls,
         run_dir: Path,
-        profile: Profile = DEFAULT_PROFILE,
-        roster: dict[str, Any] | None = None,
+        profile: Profile,
+        projection: dict[str, Any] | None = None,
         grader: str | None = None,
         use_queue: bool = True,
     ) -> GradingSession:
         dataset_path = run_dir / "dataset.yaml"
         if not dataset_path.exists():
             raise FileNotFoundError(f"{run_dir} has no dataset.yaml, so there is nothing to grade")
-        entity_order = list(roster.get("entity_order", [])) if roster else None
+        entity_order = list(projection.get("entity_order", [])) if projection else None
         entries = annotation_order(load_dataset(dataset_path), profile, entity_order)
         # Costs the charter locality annotation_order exists for, buys covering
         # the least stable cases first. docs/grading-surfaces.md carries why.
@@ -124,7 +123,7 @@ class GradingSession:
             profile=profile,
             entries=entries,
             annotations=load_annotations(run_dir / annotations_name(grader)),
-            roster=roster,
+            projection=projection,
             grader=grader,
         )
 
@@ -279,7 +278,7 @@ class GradingSession:
             "run": self.run_dir.name,
             "grader": self.grader,
             "profile": self.profile_payload(),
-            "roster": self.roster or {},
+            "projection": self.projection or {},
             "counts": self.counts(),
             "pairs": self.pairs(),
             "cases": [self.case(entry) for entry in self.entries],

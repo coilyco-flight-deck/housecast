@@ -16,7 +16,7 @@ def entry(challenge_id: str, entity: str = "qa") -> DatasetEntry:
     spec: dict[str, Any] = {
         "id": challenge_id,
         "entity": entity,
-        "test_type": "personality",
+        "test_type": "degree",
         "attribute": "candid",
         "prompt": "p",
         "target": "t",
@@ -26,7 +26,7 @@ def entry(challenge_id: str, entity: str = "qa") -> DatasetEntry:
 
 def write_queue(tmp_path: pathlib.Path, *cases: str) -> pathlib.Path:
     path = tmp_path / "annotation-queue.csv"
-    rows = "\n".join(f"{index + 1},{case},qa,personality,,0.5" for index, case in enumerate(cases))
+    rows = "\n".join(f"{index + 1},{case},qa,degree,,0.5" for index, case in enumerate(cases))
     path.write_text(f"rank,case,entity,test_type,pair_id,divergence\n{rows}\n")
     return path
 

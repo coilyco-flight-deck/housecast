@@ -14,13 +14,13 @@ import anyio
 
 from housecast.grade.trial import Provenance, Trial
 from housecast.mcp.driver import ModelReply, as_tool_payload, drive
-from housecast.mcp.host import hosted, roster
+from housecast.mcp.host import hosted, tool_set
 from housecast.mcp.tests.test_host import BASELINE, EDITED, fixture_server
 
 PROVENANCE = Provenance(
     board="sha256:board",
     fixture="sha256:fixture",
-    roster="sha256:unset",
+    tools="sha256:unset",
     subject_version="1.4.0",
     model="local/qwen3-coder",
     temperature=0.0,
@@ -45,7 +45,7 @@ class RecordingClient:
 async def run_one(prose: dict[str, str]) -> tuple[RecordingClient, Trial]:
     client = RecordingClient()
     async with hosted(fixture_server, prose) as session:
-        captured = await roster(session)
+        captured = await tool_set(session)
         trial = await drive(
             client,
             captured,
@@ -68,17 +68,17 @@ def test_the_response_is_joined_to_the_case_that_provoked_it() -> None:
 
 
 def test_the_trial_records_the_roster_it_actually_ran_against() -> None:
-    """A trial cannot claim a roster it was not run against, so the driver folds it in."""
+    """A trial cannot claim a tool set it was not run against, so the driver folds it in."""
     _, trial = anyio.run(run_one, EDITED)
-    assert trial.provenance.roster != "sha256:unset"
-    assert trial.provenance.roster.startswith("sha256:")
+    assert trial.provenance.tools != "sha256:unset"
+    assert trial.provenance.tools.startswith("sha256:")
 
 
 def test_two_variants_produce_trials_with_different_rosters() -> None:
     """Negative control for the fold above."""
     _, first = anyio.run(run_one, BASELINE)
     _, second = anyio.run(run_one, EDITED)
-    assert first.provenance.roster != second.provenance.roster
+    assert first.provenance.tools != second.provenance.tools
 
 
 def test_the_model_is_shown_the_variant_prose() -> None:
@@ -100,7 +100,7 @@ def test_the_tool_payload_keeps_presentation_order() -> None:
 def test_the_payload_carries_the_schema_the_subject_declared() -> None:
     async def capture() -> list[dict[str, object]]:
         async with hosted(fixture_server, BASELINE) as session:
-            return as_tool_payload(await roster(session))
+            return as_tool_payload(await tool_set(session))
 
     payload = anyio.run(capture)
     function = payload[0]["function"]

@@ -12,7 +12,7 @@ import pytest
 from mcp.server.mcpserver import MCPServer
 from mcp.types import TextContent
 
-from housecast.mcp.host import HostError, Roster, apply_prose, hosted, roster
+from housecast.mcp.host import HostError, ToolSet, apply_prose, hosted, tool_set
 
 BASELINE = {
     "write_file": "Write text to a path, creating parent directories.",
@@ -37,9 +37,9 @@ def fixture_server() -> MCPServer:
     return server
 
 
-async def capture(prose: dict[str, str] | None = None) -> Roster:
+async def capture(prose: dict[str, str] | None = None) -> ToolSet:
     async with hosted(fixture_server, prose) as session:
-        return await roster(session)
+        return await tool_set(session)
 
 
 def test_two_launches_of_one_variant_are_byte_identical() -> None:
@@ -81,7 +81,7 @@ def test_the_tool_still_runs_after_its_prose_is_rewritten() -> None:
 
 
 def test_presentation_order_is_carried_not_sorted() -> None:
-    """Selection depends on what else was on offer and where, so order is part of the roster."""
+    """Selection depends on what else was on offer and where, so order is part of the tool set."""
     assert anyio.run(capture, BASELINE).names() == ("write_file", "read_file")
 
 

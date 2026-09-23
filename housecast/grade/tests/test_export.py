@@ -11,6 +11,7 @@ from housecast.grade.export import (
 )
 from housecast.grade.io import save_annotations, save_dataset
 from housecast.grade.schema import Annotation, Challenge, DatasetEntry, Half, Provenance, Verdict
+from housecast.grade.tests.fixtures import PROFILE
 
 
 def pair_dataset(output: str = "a plain answer") -> list[DatasetEntry]:
@@ -19,7 +20,7 @@ def pair_dataset(output: str = "a plain answer") -> list[DatasetEntry]:
             challenge=Challenge(
                 id=f"live-{half.value}",
                 entity="ops",
-                test_type="boundary",
+                test_type="paired",
                 prompt="p",
                 target="t",
                 attribute="modify-live-backend",
@@ -41,7 +42,7 @@ GRADED = {
 
 
 def test_the_pair_travels_as_its_own_structure() -> None:
-    run = build_run("run1", pair_dataset(), GRADED)
+    run = build_run("run1", pair_dataset(), GRADED, profile=PROFILE)
     assert run.to_dict()["format"] == EXPORT_FORMAT
     assert run.pairs[0]["halves"] == {"in": "pass", "out": "fail"}
     assert run.pairs[0]["complete"]
@@ -50,10 +51,10 @@ def test_the_pair_travels_as_its_own_structure() -> None:
 
 
 def test_grader_notes_stay_out_unless_asked_for() -> None:
-    withheld = build_run("run1", pair_dataset(), GRADED)
+    withheld = build_run("run1", pair_dataset(), GRADED, profile=PROFILE)
     assert all("critique" not in case.to_dict() for case in withheld.cases)
 
-    included = build_run("run1", pair_dataset(), GRADED, include_private=True)
+    included = build_run("run1", pair_dataset(), GRADED, include_private=True, profile=PROFILE)
     assert any(case.to_dict().get("critique") for case in included.cases)
 
 
@@ -71,13 +72,13 @@ def test_grader_notes_stay_out_unless_asked_for() -> None:
 def test_the_exporter_refuses_rather_than_scrubs(text: str) -> None:
     assert scan_for_secrets(text)
     with pytest.raises(ExportRefusedError):
-        build_run("run1", pair_dataset(output=text), GRADED)
+        build_run("run1", pair_dataset(output=text), GRADED, profile=PROFILE)
 
 
 def test_a_refusal_names_every_reason_in_one_pass() -> None:
     text = "AKIAIOSFODNN7EXAMPLE and someone@example.com"
     with pytest.raises(ExportRefusedError) as refusal:
-        build_run("run1", pair_dataset(output=text), GRADED)
+        build_run("run1", pair_dataset(output=text), GRADED, profile=PROFILE)
     assert "an AWS key id" in str(refusal.value)
     assert "an email address" in str(refusal.value)
 
@@ -89,13 +90,15 @@ def test_a_grader_note_is_only_scanned_when_it_is_exported() -> None:
             id="live-out", label=Verdict.FAIL, critique="saw AKIAIOSFODNN7EXAMPLE"
         ),
     }
-    build_run("run1", pair_dataset(), leaky)
+    build_run("run1", pair_dataset(), leaky, profile=PROFILE)
     with pytest.raises(ExportRefusedError):
-        build_run("run1", pair_dataset(), leaky, include_private=True)
+        build_run("run1", pair_dataset(), leaky, include_private=True, profile=PROFILE)
 
 
 def test_provenance_rides_along_when_the_run_recorded_it() -> None:
-    run = build_run("run1", pair_dataset(), GRADED, provenance=Provenance(model="a-model"))
+    run = build_run(
+        "run1", pair_dataset(), GRADED, provenance=Provenance(model="a-model"), profile=PROFILE
+    )
     assert run.to_dict()["provenance"]["model"] == "a-model"
 
 
@@ -105,7 +108,7 @@ def test_a_run_directory_round_trips(tmp_path: pathlib.Path) -> None:
     save_dataset(run_dir / "dataset.yaml", pair_dataset())
     save_annotations(run_dir / "annotations.yaml", GRADED)
 
-    run = export_run_dir(run_dir)
+    run = export_run_dir(run_dir, profile=PROFILE)
     assert run.name == "run1"
     assert run.counts()["cases"] == 2
 
@@ -125,10 +128,12 @@ def test_a_named_grader_s_annotations_are_found_only_when_asked_for(
     save_dataset(run_dir / "dataset.yaml", pair_dataset())
     save_annotations(run_dir / "annotations.kai.yaml", GRADED, "kai")
 
-    assert export_run_dir(run_dir).counts()["annotated"] == 0
-    assert export_run_dir(run_dir, grader="kai").counts()["annotated"] == len(GRADED)
+    assert export_run_dir(run_dir, profile=PROFILE).counts()["annotated"] == 0
+    assert export_run_dir(run_dir, grader="kai", profile=PROFILE).counts()["annotated"] == len(
+        GRADED
+    )
 
 
 def test_a_directory_with_no_dataset_is_refused(tmp_path: pathlib.Path) -> None:
     with pytest.raises(ExportRefusedError, match="nothing to display"):
-        export_run_dir(tmp_path)
+        export_run_dir(tmp_path, profile=PROFILE)

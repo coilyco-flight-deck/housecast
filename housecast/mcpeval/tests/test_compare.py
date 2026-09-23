@@ -45,7 +45,7 @@ def _run(run_id: str, digest: str, grades: list[Grade], **fingerprint: object) -
         definition_digest=digest,
         definition_label=run_id,
         definition_authored_by="human:test",
-        roster_digest=f"roster-of-{digest}",
+        roster_digest=f"tools-of-{digest}",
         started_at="2026-09-16T00:00:00+00:00",
         finished_at="2026-09-16T00:01:00+00:00",
         fingerprint={"task": "t", "model": "m", "temperature": 0.0, **fingerprint},
@@ -64,7 +64,7 @@ def test_pairs_prompt_to_prompt_and_never_averages() -> None:
 
 
 def test_a_differing_roster_digest_alone_does_not_refuse_the_comparison() -> None:
-    """The roster is derived from the prose, which is the measurement."""
+    """The tool set is derived from the prose, which is the measurement."""
     before = _run("a", "d1", [_grade("p1", 0.0)])
     after = _run("b", "d2", [_grade("p1", 1.0)])
     assert before.roster_digest != after.roster_digest

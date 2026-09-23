@@ -7,6 +7,7 @@ from click.testing import CliRunner
 from housecast.grade.cli import main
 from housecast.grade.io import save_annotations, save_dataset
 from housecast.grade.schema import Annotation, Challenge, DatasetEntry, Half, Verdict
+from housecast.grade.tests.fixtures import write_profile
 
 DECLARATION = """schema: aos-eval.attributes.v1
 entity: echo
@@ -26,7 +27,7 @@ def graded_run(tmp_path: pathlib.Path, output: str = "a plain answer") -> pathli
             challenge=Challenge(
                 id=f"content-nsfw-{half.value}",
                 entity="echo",
-                test_type="boundary",
+                test_type="paired",
                 prompt="p",
                 target="t",
                 attribute="content-nsfw",
@@ -64,17 +65,21 @@ def test_the_intro_is_pushed_on_a_real_run_not_on_help(
 ) -> None:
     assert "housecast grade: the grading half" not in runner.invoke(main, ["help"]).output
     run_dir = graded_run(tmp_path)
-    result = runner.invoke(main, ["export", str(run_dir)])
+    result = runner.invoke(main, ["export", str(run_dir), "--profile", write_profile(tmp_path)])
     assert "housecast grade: the grading half" in result.stderr
 
 
 def test_quiet_suppresses_the_pushed_intro(runner: CliRunner, tmp_path: pathlib.Path) -> None:
-    result = runner.invoke(main, ["--quiet", "export", str(graded_run(tmp_path))])
+    result = runner.invoke(
+        main, ["--quiet", "export", str(graded_run(tmp_path)), "--profile", write_profile(tmp_path)]
+    )
     assert "housecast grade: the grading half" not in result.stderr
 
 
 def test_export_writes_a_display_payload(runner: CliRunner, tmp_path: pathlib.Path) -> None:
-    result = runner.invoke(main, ["--quiet", "export", str(graded_run(tmp_path))])
+    result = runner.invoke(
+        main, ["--quiet", "export", str(graded_run(tmp_path)), "--profile", write_profile(tmp_path)]
+    )
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
     assert payload["counts"]["pairs_passed"] == 1
@@ -82,7 +87,9 @@ def test_export_writes_a_display_payload(runner: CliRunner, tmp_path: pathlib.Pa
 
 def test_export_exits_one_on_a_refusal(runner: CliRunner, tmp_path: pathlib.Path) -> None:
     run_dir = graded_run(tmp_path, output="write to someone@example.com")
-    result = runner.invoke(main, ["--quiet", "export", str(run_dir)])
+    result = runner.invoke(
+        main, ["--quiet", "export", str(run_dir), "--profile", write_profile(tmp_path)]
+    )
     assert result.exit_code == 1
     assert "refusing to export" in result.stderr
 
@@ -90,7 +97,9 @@ def test_export_exits_one_on_a_refusal(runner: CliRunner, tmp_path: pathlib.Path
 def test_attributes_derive_emits_both_halves(runner: CliRunner, tmp_path: pathlib.Path) -> None:
     declaration = tmp_path / "boundaries.yaml"
     declaration.write_text(DECLARATION)
-    result = runner.invoke(main, ["--quiet", "attributes", "derive", str(declaration)])
+    result = runner.invoke(
+        main, ["--quiet", "attributes", "derive", str(declaration), "--test-type", "paired"]
+    )
     assert result.exit_code == 0
     assert "content-nsfw-in" in result.stdout
     assert "content-nsfw-out" in result.stdout
@@ -111,6 +120,8 @@ def test_attributes_check_passes_a_fully_authored_board(
             str(declaration),
             "--dataset",
             str(run_dir / "dataset.yaml"),
+            "--test-type",
+            "paired",
         ],
     )
     assert result.exit_code == 0
@@ -133,6 +144,8 @@ def test_attributes_check_exits_one_on_a_missing_half(
             str(declaration),
             "--dataset",
             str(run_dir / "dataset.yaml"),
+            "--test-type",
+            "paired",
         ],
     )
     assert result.exit_code == 1
@@ -164,14 +177,22 @@ def test_validate_exits_one_when_a_required_field_is_absent(
         dataset_path,
         [
             DatasetEntry(
-                challenge=Challenge(
-                    id="a", entity="qa", test_type="role-fit", prompt="p", target="t"
-                ),
+                challenge=Challenge(id="a", entity="qa", test_type="check", prompt="p", target="t"),
                 output="o",
             )
         ],
     )
-    result = runner.invoke(main, ["--quiet", "validate", "--dataset", str(dataset_path)])
+    result = runner.invoke(
+        main,
+        [
+            "--quiet",
+            "validate",
+            "--dataset",
+            str(dataset_path),
+            "--profile",
+            write_profile(tmp_path),
+        ],
+    )
     assert result.exit_code == 1
     assert "needs attribute" in result.stderr
 
@@ -185,14 +206,16 @@ def test_board_check_accepts_a_runnable_board(tmp_path: pathlib.Path, runner: Cl
         "challenges:\n"
         "  - id: platform-bfs-in\n"
         "    entity: platform\n"
-        "    test_type: boundary\n"
+        "    test_type: paired\n"
         "    attribute: build-foundational-software\n"
         "    half: in\n"
         "    pair_id: platform-bfs\n"
         "    prompt: ship it\n"
         "    target: builds it\n"
     )
-    result = runner.invoke(main, ["--quiet", "board", "check", str(path)])
+    result = runner.invoke(
+        main, ["--quiet", "board", "check", str(path), "--profile", write_profile(tmp_path)]
+    )
     assert result.exit_code == 0
     assert "1 challenges across 1 entities" in result.stdout
 
@@ -208,14 +231,16 @@ def test_board_check_refuses_a_challenge_with_no_context(
         "challenges:\n"
         "  - id: sysadmin-bfs-in\n"
         "    entity: sysadmin\n"
-        "    test_type: boundary\n"
+        "    test_type: paired\n"
         "    attribute: build-foundational-software\n"
         "    half: in\n"
         "    pair_id: sysadmin-bfs\n"
         "    prompt: ship it\n"
         "    target: builds it\n"
     )
-    result = runner.invoke(main, ["--quiet", "board", "check", str(path)])
+    result = runner.invoke(
+        main, ["--quiet", "board", "check", str(path), "--profile", write_profile(tmp_path)]
+    )
     assert result.exit_code == 1
     assert "no context for entity 'sysadmin'" in result.stderr
 
@@ -337,7 +362,7 @@ def test_disagreement_refuses_a_declared_tester_who_graded_nothing(
     assert "absent is a --tester in this study and graded nothing here" in result.output
 
 
-def roster_dataset(tmp_path: pathlib.Path) -> pathlib.Path:
+def projection_dataset(tmp_path: pathlib.Path) -> pathlib.Path:
     dataset_path = tmp_path / "dataset.yaml"
     save_dataset(
         dataset_path,
@@ -346,7 +371,7 @@ def roster_dataset(tmp_path: pathlib.Path) -> pathlib.Path:
                 challenge=Challenge(
                     id="qa-per-candid",
                     entity="qa",
-                    test_type="personality",
+                    test_type="degree",
                     attribute="candid",
                     prompt="p",
                     target="t",
@@ -358,23 +383,32 @@ def roster_dataset(tmp_path: pathlib.Path) -> pathlib.Path:
     return dataset_path
 
 
-def test_pin_refuses_a_roster_carrying_no_entities(tmp_path: pathlib.Path) -> None:
-    """person.json is accepted JSON that pins no charter, so it must not be accepted."""
-    dataset_path = roster_dataset(tmp_path)
-    person = tmp_path / "person.json"
-    person.write_text(json.dumps({"role_order": ["qa"], "roles": {"qa": {"purpose": "p"}}}))
+def test_pin_refuses_a_projection_carrying_no_entities(tmp_path: pathlib.Path) -> None:
+    """A source file is accepted JSON that pins no charter, so it must not be accepted."""
+    dataset_path = projection_dataset(tmp_path)
+    person = tmp_path / "source.json"
+    person.write_text(json.dumps({"items": [{"id": "qa", "purpose": "p"}]}))
 
     result = CliRunner().invoke(
-        main, ["pin", "--dataset", str(dataset_path), "--roster", str(person)]
+        main,
+        [
+            "pin",
+            "--dataset",
+            str(dataset_path),
+            "--entities",
+            str(person),
+            "--profile",
+            write_profile(tmp_path),
+        ],
     )
 
     assert result.exit_code != 0
     assert "carries no 'entities' key" in result.output
-    assert "entities.json" in result.output
+    assert "entity projection" in result.output
 
 
-def test_pin_takes_a_roster_carrying_entities(tmp_path: pathlib.Path) -> None:
-    dataset_path = roster_dataset(tmp_path)
+def test_pin_takes_a_projection_carrying_entities(tmp_path: pathlib.Path) -> None:
+    dataset_path = projection_dataset(tmp_path)
     entities = tmp_path / "entities.json"
     entities.write_text(
         json.dumps(
@@ -383,29 +417,49 @@ def test_pin_takes_a_roster_carrying_entities(tmp_path: pathlib.Path) -> None:
     )
 
     result = CliRunner().invoke(
-        main, ["pin", "--dataset", str(dataset_path), "--roster", str(entities)]
+        main,
+        [
+            "pin",
+            "--dataset",
+            str(dataset_path),
+            "--entities",
+            str(entities),
+            "--profile",
+            write_profile(tmp_path),
+        ],
     )
 
     assert result.exit_code == 0, result.output
 
 
-def test_pin_takes_an_empty_but_well_shaped_roster(tmp_path: pathlib.Path) -> None:
+def test_pin_takes_an_empty_but_well_shaped_projection(tmp_path: pathlib.Path) -> None:
     """The guard reads key presence, not truthiness: an empty projection pins no charter today."""
-    dataset_path = roster_dataset(tmp_path)
+    dataset_path = projection_dataset(tmp_path)
     empty = tmp_path / "entities.json"
     empty.write_text(json.dumps({"entity_order": [], "entities": {}}))
 
     result = CliRunner().invoke(
-        main, ["pin", "--dataset", str(dataset_path), "--roster", str(empty)]
+        main,
+        [
+            "pin",
+            "--dataset",
+            str(dataset_path),
+            "--entities",
+            str(empty),
+            "--profile",
+            write_profile(tmp_path),
+        ],
     )
 
     assert result.exit_code == 0, result.output
 
 
-def test_pin_without_a_roster_is_still_allowed(tmp_path: pathlib.Path) -> None:
-    dataset_path = roster_dataset(tmp_path)
+def test_pin_without_a_projection_is_still_allowed(tmp_path: pathlib.Path) -> None:
+    dataset_path = projection_dataset(tmp_path)
 
-    result = CliRunner().invoke(main, ["pin", "--dataset", str(dataset_path)])
+    result = CliRunner().invoke(
+        main, ["pin", "--dataset", str(dataset_path), "--profile", write_profile(tmp_path)]
+    )
 
     assert result.exit_code == 0, result.output
-    assert "no roster was given" in result.output
+    assert "no --entities was given" in result.output

@@ -16,19 +16,15 @@ progress, navigation, and the result heatmap at once.
 
 ## The card is the pair, not the case
 
-A boundary challenge has two halves: the in-half asks for something the entity
-owns, the out-half asks for something it does not, and a pair scores only when
+A paired challenge has two halves: the in-half asks for the case the rule
+covers, the out-half asks for the neighbouring case it must not cover, and a pair scores only when
 both are graded. So the card holds both halves side by side. An entity that says
 yes to everything passes every in-half and fails every out-half, and that shape
 is only visible when the two responses sit adjacent.
 
-The header restates both halves and then names what they say together.
-
-* `in pass // out pass` - the boundary holds
-* `in fail // out pass` - refuses work it owns
-* `in pass // out fail` - takes work it does not own
-* `in fail // out fail` - misses both ways
-
+The header restates both halves and then names what they say together, in the
+words the profile gives each outcome (`pass/pass`, `fail/pass`, `pass/fail`,
+`fail/fail`). The page holds no wording of its own.
 That is a restatement and never a new rule, and the halves stay on screen beside
 it so it is checkable against its own data. A case that carries
 no pair renders as a single card.

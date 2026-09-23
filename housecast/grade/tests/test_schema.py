@@ -4,7 +4,6 @@ import pytest
 from pydantic import ValidationError
 
 from housecast.grade.schema import (
-    DEFAULT_PROFILE,
     Annotation,
     Challenge,
     DatasetEntry,
@@ -17,17 +16,18 @@ from housecast.grade.schema import (
     annotation_order,
     pair_results,
 )
+from housecast.grade.tests.fixtures import PROFILE
 
 
 def entry(
-    challenge_id: str, entity: str = "engineer", test_type: str = "boundary", **fields: Any
+    challenge_id: str, entity: str = "engineer", test_type: str = "paired", **fields: Any
 ) -> DatasetEntry:
     defaults = {
-        "boundary": "modify-live-backend",
+        "attribute": "modify-live-backend",
         "half": Half.IN,
         "pair_id": challenge_id.rsplit("-", 1)[0],
     }
-    if test_type != "boundary":
+    if test_type != "paired":
         defaults = {}
     return DatasetEntry(
         challenge=Challenge(
@@ -44,25 +44,25 @@ def entry(
 
 def test_half_and_pair_id_travel_together() -> None:
     with pytest.raises(ValidationError):
-        Challenge(id="a", entity="qa", test_type="boundary", prompt="p", target="t", half=Half.IN)
+        Challenge(id="a", entity="qa", test_type="paired", prompt="p", target="t", half=Half.IN)
 
 
 def test_profile_required_fields_are_reported_not_raised() -> None:
-    challenge = Challenge(id="a", entity="qa", test_type="role-fit", prompt="p", target="t")
-    assert challenge.check_against(DEFAULT_PROFILE) == ["a: role-fit challenge needs attribute"]
+    challenge = Challenge(id="a", entity="qa", test_type="check", prompt="p", target="t")
+    assert challenge.check_against(PROFILE) == ["a: check challenge needs attribute"]
 
 
 def test_unknown_test_type_is_named() -> None:
     challenge = Challenge(id="a", entity="qa", test_type="invented", prompt="p", target="t")
-    assert "invented" in challenge.check_against(DEFAULT_PROFILE)[0]
+    assert "invented" in challenge.check_against(PROFILE)[0]
 
 
 def test_label_set_and_word_cap_come_from_the_profile() -> None:
     challenge = Challenge(
-        id="a", entity="qa", test_type="personality", prompt="p", target="t", attribute="warm"
+        id="a", entity="qa", test_type="degree", prompt="p", target="t", attribute="warm"
     )
-    assert challenge.label_set(DEFAULT_PROFILE) == "fit"
-    assert challenge.word_cap(DEFAULT_PROFILE) == 100
+    assert challenge.label_set(PROFILE) == "fit"
+    assert challenge.word_cap(PROFILE) == 100
 
 
 def test_a_second_deployment_declares_its_own_taxonomy() -> None:
@@ -118,12 +118,12 @@ def test_a_fit_label_never_scores_a_pair() -> None:
 
 def test_annotation_order_is_entity_major_then_profile_order() -> None:
     dataset = [
-        entry("z-personality", entity="qa", test_type="personality", attribute="candid"),
-        entry("a-boundary", entity="qa", half="in", pair_id="a"),
-        entry("m-boundary", entity="engineer", half="in", pair_id="m"),
+        entry("z-degree", entity="qa", test_type="degree", attribute="candid"),
+        entry("a-paired", entity="qa", half="in", pair_id="a"),
+        entry("m-paired", entity="engineer", half="in", pair_id="m"),
     ]
-    ordered = [e.id for e in annotation_order(dataset, DEFAULT_PROFILE, ["engineer", "qa"])]
-    assert ordered == ["m-boundary", "a-boundary", "z-personality"]
+    ordered = [e.id for e in annotation_order(dataset, PROFILE, ["engineer", "qa"])]
+    assert ordered == ["m-paired", "a-paired", "z-degree"]
 
 
 def test_a_deduction_is_the_thing_that_needs_a_critique() -> None:
@@ -133,14 +133,14 @@ def test_a_deduction_is_the_thing_that_needs_a_critique() -> None:
 
 
 def test_a_derived_challenge_is_unwritten_until_it_has_both_halves_of_the_question() -> None:
-    derived = Challenge(id="c1", entity="platform", test_type="boundary")
+    derived = Challenge(id="c1", entity="platform", test_type="paired")
     assert not derived.written
     assert not derived.model_copy(update={"prompt": "ask"}).written
     assert derived.model_copy(update={"prompt": "ask", "target": "pass"}).written
 
 
 def test_an_unwritten_challenge_cannot_be_annotated() -> None:
-    unwritten = Challenge(id="c1", entity="platform", test_type="boundary", target="pass")
+    unwritten = Challenge(id="c1", entity="platform", test_type="paired", target="pass")
     with pytest.raises(ValidationError):
         DatasetEntry(challenge=unwritten, output="whatever the subject said")
 

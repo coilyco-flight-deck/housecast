@@ -37,7 +37,7 @@ class Provenance:
 
     board: str
     fixture: str
-    roster: str
+    tools: str
     subject_version: str
     model: str
     temperature: float

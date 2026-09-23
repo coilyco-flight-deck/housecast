@@ -176,7 +176,7 @@ async def execute(
         roster_digest=ordered[0].roster_digest if ordered else "",
         started_at=started,
         finished_at=_now(),
-        # What must be identical between two arms. The roster digest is absent
+        # What must be identical between two arms. The tool-set digest is absent
         # on purpose: it is derived from the prose, which is the measurement.
         fingerprint={
             "task": task.slug,

@@ -1,1 +1,1 @@
-"""Shared eval grading: schema, boundary pairing, annotation, taxonomy, export."""
+"""Shared eval grading: schema, pairing, annotation, taxonomy, export."""

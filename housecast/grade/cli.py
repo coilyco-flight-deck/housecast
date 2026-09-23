@@ -50,14 +50,13 @@ INTRO = """housecast grade: the grading half. Committed YAML in, human decisions
 display payloads out. No runner and no model client live here.
 Run `housecast grade help` for the full reference."""
 
-HELP = """housecast grade - shared eval grading for agent-compose and sirens-echo
+HELP = """housecast grade - shared eval grading for any runner that emits its shape
 
 WHAT IT IS
   The schema, pairing rule, human grading loop, failure taxonomy, and display
-  export that two science runners were each implementing separately. The runners
-  stay in their own repos: agent-compose calls a composed prompt through Agent
-  Proxy, sirens-echo drives a live harness against a real tool roster. Both
-  emit this shape and both grade through this command.
+  export. Runners stay in their consumers' repos, whether one calls a prompt
+  through Agent Proxy or drives a live harness against real tools. Each emits
+  this shape and grades through this command.
 
 WHAT IT REFUSES TO DO
   Certify. `attributes check` reports missing challenges rather than a coverage
@@ -65,17 +64,16 @@ WHAT IT REFUSES TO DO
   challenge. A number this command prints can come back negative.
 
 THE PAIRING RULE
-  A boundary is scored as a pair, never as a half. The in-half proves the rule
+  A paired attribute is scored as a pair, never as a half. The in-half proves the rule
   fires. The out-half proves it does not fire on the neighbouring case that
   must still be served. A pair passes only when both halves pass, so a
   deployment that refuses everything scores zero rather than fifty percent.
 
 PROFILES
   Test types, their label sets, word caps, and required fields are per
-  deployment, declared in a profile YAML and passed with --profile. Without one
-  the built-in agent-compose profile applies: boundary and role-fit take the
-  binary pass/fail label set at a 50-word cap, personality takes the
-  fit/undecided/does-not-fit set at 100.
+  deployment, declared in a profile YAML and passed with --profile. housecast
+  ships no profile of its own, so every command that reads a label set requires
+  one. Label sets are binary pass/fail and fit/undecided/does-not-fit.
 
 COMMANDS
   annotate    Grade a dataset by hand. One challenge per screen, one keystroke per
@@ -84,13 +82,13 @@ COMMANDS
               verbatim evidence span, checked against the output.
   attributes  derive turns a declaration into the unwritten challenges the board
               must contain. check compares those to what a dataset authored,
-              and names every missing case, half-authored pair, and boundary
+              and names every missing case, half-authored pair, and paired
               case no declaration derived.
   disagreement  How often two graders labelled the same case differently. Takes
               --annotations once per grader and counts only the cases every one
               of them reached, because a denominator that absorbs the ungraded
               reports agreement nobody measured. --tester declares the study's
-              roster and is required: a glob that pulls in a calibrated grader
+              graders and is required: a glob that pulls in a calibrated grader
               can leave the rate unmoved while changing which cases it covers,
               so an undeclared grader refuses instead of counting. Every file
               counted is named in the output.
@@ -163,23 +161,23 @@ def write_out(text: str, out: Path | None) -> None:
         click.echo(text)
 
 
-def load_roster(path: Path | None) -> dict[str, Any] | None:
+def load_projection(path: Path | None) -> dict[str, Any] | None:
     """The entity projection, refusing a payload no charter can be read from.
 
-    `person.json` and `entities.json` are both valid JSON and only the second
-    carries `entities`, which `pin.charter_parts` reads. Handed the first, every
-    charter renders empty, the pin covers nothing, and a clean board reports one
+    A source file and its projection can both be valid JSON while only the
+    projection carries `entities`, which `pin.charter_parts` reads. Handed the
+    source, every charter renders empty, the pin covers nothing, and a clean board reports one
     drift per entity. See housecast#7196.
     """
     if path is None:
         return None
     data: dict[str, Any] = json.loads(path.read_text())
-    # Key presence, not truthiness: a roster with no entities still carries the
+    # Key presence, not truthiness: a projection with no entities still carries the
     # key, and that file pins no charter today without being an error.
     if "entities" not in data:
         raise click.UsageError(
             f"{path} carries no 'entities' key, so no charter can be read from it. "
-            "Pass entities.json, projected from person.json by evalkit.roster."
+            "Pass the entity projection, not the file it was projected from."
         )
     return data
 
@@ -204,7 +202,7 @@ def check_pin(
     dataset_path: Path,
     entries: list[DatasetEntry],
     profile: Profile,
-    roster_data: dict[str, Any] | None,
+    projection: dict[str, Any] | None,
 ) -> None:
     """Refuse a grading surface whose inputs moved since the run was pinned.
 
@@ -221,7 +219,7 @@ def check_pin(
         )
         return
     try:
-        pin_mod.check(pinned, entries, profile, roster_data)
+        pin_mod.check(pinned, entries, profile, projection)
     except pin_mod.PinMismatchError as moved:
         click.echo(f"housecast grade: {moved}", err=True)
         raise SystemExit(1) from moved
@@ -231,11 +229,14 @@ def check_pin(
 @click.option(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
-@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
 @click.option(
-    "--roster",
+    "--profile", "profile_path", type=click.Path(exists=True, path_type=Path), required=True
+)
+@click.option(
+    "--entities",
+    "entities_path",
     type=click.Path(exists=True, path_type=Path),
-    help="entities.json, projected from person.json by evalkit.roster",
+    help="entities.json: the deployment's entity projection, keyed by `entities`",
 )
 @click.option(
     "--out", type=click.Path(path_type=Path), help="defaults to pin.yaml beside the dataset"
@@ -246,8 +247,8 @@ def check_pin(
 def pin_command(
     context: click.Context,
     dataset_path: Path,
-    profile_path: Path | None,
-    roster: Path | None,
+    profile_path: Path,
+    entities_path: Path | None,
     out: Path | None,
     check_only: bool,
     force: bool,
@@ -256,7 +257,7 @@ def pin_command(
     intro(context)
     profile = load_profile(profile_path)
     entries = load_dataset(dataset_path)
-    roster_data = load_roster(roster)
+    projection = load_projection(entities_path)
     target = out or pin_path(dataset_path)
     existing = load_pin(target)
 
@@ -264,7 +265,7 @@ def pin_command(
         if existing is None:
             click.echo(f"housecast grade pin: {target} does not exist", err=True)
             raise SystemExit(1)
-        drifts = pin_mod.verify(existing, entries, profile, roster_data)
+        drifts = pin_mod.verify(existing, entries, profile, projection)
         for drift in drifts:
             click.echo(str(drift), err=True)
         if drifts:
@@ -275,10 +276,10 @@ def pin_command(
         outro(f"housecast grade annotate --dataset {dataset_path} --out annotations.yaml")
         return
 
-    taken = pin_mod.take(entries, profile, roster_data)
+    taken = pin_mod.take(entries, profile, projection)
     save_pin(target, taken)
     charters = len(taken["charters"])
-    unpinned = "" if roster else ", and no roster was given so no charter is pinned"
+    unpinned = "" if entities_path else ", and no --entities was given so no charter is pinned"
     click.echo(f"pinned {len(taken['cases'])} cases and {charters} charters to {target}{unpinned}")
     outro(f"housecast grade annotate --dataset {dataset_path} --out annotations.yaml")
 
@@ -310,11 +311,14 @@ def _apply_queue(dataset_path: Path, entries: list[DatasetEntry]) -> list[Datase
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
 @click.option("--out", type=click.Path(path_type=Path), required=True, help="annotations.yaml")
-@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
 @click.option(
-    "--roster",
+    "--profile", "profile_path", type=click.Path(exists=True, path_type=Path), required=True
+)
+@click.option(
+    "--entities",
+    "entities_path",
     type=click.Path(exists=True, path_type=Path),
-    help="entities.json, projected from person.json by evalkit.roster",
+    help="entities.json: the deployment's entity projection, keyed by `entities`",
 )
 @click.option("--entity", "entities", multiple=True, help="grade only these entities")
 @click.option("--summary", is_flag=True, help="print results and exit without grading")
@@ -332,8 +336,8 @@ def annotate(
     context: click.Context,
     dataset_path: Path,
     out: Path,
-    profile_path: Path | None,
-    roster: Path | None,
+    profile_path: Path,
+    entities_path: Path | None,
     entities: tuple[str, ...],
     summary: bool,
     grader: str | None,
@@ -346,19 +350,19 @@ def annotate(
     if entities:
         entries = [entry for entry in entries if entry.challenge.entity in set(entities)]
     annotations = load_annotations(out)
-    roster_data = load_roster(roster)
+    projection = load_projection(entities_path)
     console = Console()
 
     # Checked against the full run rather than an --entity slice, before a
     # single case is shown. See housecast.grade.pin.
-    check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
+    check_pin(dataset_path, load_dataset(dataset_path), profile, projection)
     # After the pin, so a refused run says why instead of announcing an order
     # for a pass that is not going to start.
     if use_queue:
         entries = _apply_queue(dataset_path, entries)
 
     if not summary and not annotate_mod.annotate_session(
-        entries, annotations, out, profile, roster_data, grader
+        entries, annotations, out, profile, projection, grader
     ):
         console.print("\n[yellow]stopped early, annotations saved[/yellow]")
 
@@ -373,9 +377,11 @@ def board() -> None:
 
 @board.command(name="check")
 @click.argument("board_path", type=click.Path(exists=True, path_type=Path), metavar="BOARD")
-@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--profile", "profile_path", type=click.Path(exists=True, path_type=Path), required=True
+)
 @click.pass_context
-def board_check(context: click.Context, board_path: Path, profile_path: Path | None) -> None:
+def board_check(context: click.Context, board_path: Path, profile_path: Path) -> None:
     """Refuse a board that would run incompletely, before it spends a token."""
     intro(context)
     try:
@@ -399,7 +405,7 @@ def attributes() -> None:
 @attributes.command(name="derive")
 @click.argument("declaration", type=click.Path(exists=True, path_type=Path))
 @click.option("--out", type=click.Path(path_type=Path))
-@click.option("--test-type", default=attributes_mod.DEFAULT_TEST_TYPE, show_default=True)
+@click.option("--test-type", required=True, help="the paired test type named in the profile")
 @click.pass_context
 def attributes_derive(
     context: click.Context, declaration: Path, out: Path | None, test_type: str
@@ -423,7 +429,7 @@ def attributes_derive(
 @click.option(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
-@click.option("--test-type", default=attributes_mod.DEFAULT_TEST_TYPE, show_default=True)
+@click.option("--test-type", required=True, help="the paired test type named in the profile")
 @click.pass_context
 def attributes_check(
     context: click.Context, declaration: Path, dataset_path: Path, test_type: str
@@ -575,9 +581,11 @@ def taxonomy(
 @click.option(
     "--dataset", "dataset_path", type=click.Path(exists=True, path_type=Path), required=True
 )
-@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--profile", "profile_path", type=click.Path(exists=True, path_type=Path), required=True
+)
 @click.pass_context
-def validate(context: click.Context, dataset_path: Path, profile_path: Path | None) -> None:
+def validate(context: click.Context, dataset_path: Path, profile_path: Path) -> None:
     """Check a dataset against a profile's required fields."""
     intro(context)
     entries = load_dataset(dataset_path)
@@ -594,11 +602,14 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
 
 @main.command(name="serve")
 @click.argument("run_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
-@click.option("--profile", "profile_path", type=click.Path(exists=True, path_type=Path))
 @click.option(
-    "--roster",
+    "--profile", "profile_path", type=click.Path(exists=True, path_type=Path), required=True
+)
+@click.option(
+    "--entities",
+    "entities_path",
     type=click.Path(exists=True, path_type=Path),
-    help="entities.json, projected from person.json by evalkit.roster",
+    help="entities.json: the deployment's entity projection, keyed by `entities`",
 )
 @click.option(
     "--static",
@@ -633,8 +644,8 @@ def validate(context: click.Context, dataset_path: Path, profile_path: Path | No
 def serve_command(
     context: click.Context,
     run_dir: Path,
-    profile_path: Path | None,
-    roster: Path | None,
+    profile_path: Path,
+    entities_path: Path | None,
     static: Path | None,
     no_page: bool,
     grader: str | None,
@@ -650,18 +661,18 @@ def serve_command(
     if static is None and not no_page:
         static = seal_mod.PAGE.parent
     profile = load_profile(profile_path)
-    roster_data = load_roster(roster)
+    projection = load_projection(entities_path)
     # Checked before the run is loaded, so a refused bind costs nothing and the
     # reason reaches the operator before any private text is in memory.
     try:
         serve_mod.check_bind(host, expose)
-        session = serve_mod.GradingSession.open(run_dir, profile, roster_data, grader, use_queue)
+        session = serve_mod.GradingSession.open(run_dir, profile, projection, grader, use_queue)
     except (serve_mod.BindRefusedError, GraderNameRejectedError, FileNotFoundError) as refused:
         click.echo(f"housecast grade serve: {refused}", err=True)
         raise SystemExit(1) from refused
 
     dataset_path = run_dir / "dataset.yaml"
-    check_pin(dataset_path, load_dataset(dataset_path), profile, roster_data)
+    check_pin(dataset_path, load_dataset(dataset_path), profile, projection)
 
     counts = session.counts()
     click.echo(
@@ -692,8 +703,8 @@ def serve_command(
     "--profile",
     "profile_path",
     type=click.Path(exists=True, path_type=Path),
-    help="a profile YAML. Without one the built-in agent-compose taxonomy applies, "
-    "which reads every pair in boundary words.",
+    required=True,
+    help="the deployment's profile YAML. housecast ships none.",
 )
 @click.pass_context
 def seal_command(
@@ -702,12 +713,12 @@ def seal_command(
     out: Path,
     include_private: bool,
     grader: str | None,
-    profile_path: Path | None,
+    profile_path: Path,
 ) -> None:
     """Write a run's export into a copy of the grading page."""
     intro(context)
     try:
-        run = export_run_dir(run_dir, include_private, grader, load_profile(profile_path))
+        run = export_run_dir(run_dir, include_private, grader, profile=load_profile(profile_path))
         written = seal_mod.seal_to(out, run.to_dict())
     except ExportRefusedError as refusal:
         click.echo(f"housecast grade seal: {refusal}", err=True)
@@ -814,8 +825,8 @@ def present(
     "--profile",
     "profile_path",
     type=click.Path(exists=True, path_type=Path),
-    help="a profile YAML. Without one the built-in agent-compose taxonomy applies, "
-    "which reads every pair in boundary words.",
+    required=True,
+    help="the deployment's profile YAML. housecast ships none.",
 )
 @click.pass_context
 def export(
@@ -825,12 +836,12 @@ def export(
     include_private: bool,
     output_format: str,
     grader: str | None,
-    profile_path: Path | None,
+    profile_path: Path,
 ) -> None:
     """Project a committed run into a display payload. One way, never back."""
     intro(context)
     try:
-        run = export_run_dir(run_dir, include_private, grader, load_profile(profile_path))
+        run = export_run_dir(run_dir, include_private, grader, profile=load_profile(profile_path))
     except ExportRefusedError as refusal:
         click.echo(f"housecast grade export: {refusal}", err=True)
         raise SystemExit(1) from refusal

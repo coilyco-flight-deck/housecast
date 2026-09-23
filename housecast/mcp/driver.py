@@ -17,7 +17,7 @@ from dataclasses import dataclass, replace
 from typing import Protocol
 
 from housecast.grade.trial import Provenance, Trial
-from housecast.mcp.host import Roster
+from housecast.mcp.host import ToolSet
 
 
 @dataclass(frozen=True)
@@ -31,7 +31,7 @@ class ModelReply:
 class ModelClient(Protocol):
     """One turn against a model with tools attached.
 
-    `tools` is the roster in presentation order, already rendered to whatever
+    `tools` is the tool set in presentation order, already rendered to whatever
     the transport wants. The implementation owns that rendering because the
     wire shape belongs to the transport rather than to the harness.
     """
@@ -39,8 +39,8 @@ class ModelClient(Protocol):
     async def turn(self, prompt: str, tools: Sequence[Mapping[str, object]]) -> ModelReply: ...
 
 
-def as_tool_payload(roster: Roster) -> list[dict[str, object]]:
-    """The roster as a tools array, order preserved.
+def as_tool_payload(tool_set: ToolSet) -> list[dict[str, object]]:
+    """The tool set as a tools array, order preserved.
 
     Order survives because selection depends on what else was on offer and
     where, so a client that sorts this has changed the measurement.
@@ -54,13 +54,13 @@ def as_tool_payload(roster: Roster) -> list[dict[str, object]]:
                 "parameters": tool.schema,
             },
         }
-        for tool in roster.tools
+        for tool in tool_set.tools
     ]
 
 
 async def drive(
     client: ModelClient,
-    roster: Roster,
+    tool_set: ToolSet,
     *,
     challenge_id: str,
     prompt: str,
@@ -70,15 +70,15 @@ async def drive(
 ) -> Trial:
     """One case against one variant, returned as the record a comparison reads.
 
-    The roster digest is folded into provenance here rather than trusted from
-    the caller, so a trial cannot claim a roster it was not run against.
+    The tool-set digest is folded into provenance here rather than trusted from
+    the caller, so a trial cannot claim a tool set it was not run against.
     """
-    reply = await client.turn(prompt, as_tool_payload(roster))
+    reply = await client.turn(prompt, as_tool_payload(tool_set))
     return Trial(
         challenge_id=challenge_id,
         variant=variant,
         epoch=epoch,
-        provenance=replace(provenance, roster=roster.digest),
+        provenance=replace(provenance, tools=tool_set.digest),
         response=reply.text,
         tools_called=reply.tool_calls,
     )

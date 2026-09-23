@@ -109,7 +109,7 @@ mcpeval-demo *ARGS:
 grade-taxonomy *ARGS:
     @uv run --extra eval housecast grade taxonomy "$@"
 
-# Pin or check the five grade inputs. `just grade-pin --dataset D --roster R`.
+# Pin or check the five grade inputs. `just grade-pin --dataset D --profile P --entities E`.
 grade-pin *ARGS:
     @uv run --extra eval housecast grade pin "$@"
 

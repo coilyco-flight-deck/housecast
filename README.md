@@ -5,16 +5,14 @@ Human-graded behavior evaluations, for any agent
 housecast is the grading half of an evaluation: the case and dataset schema,
 the pairing rule, one-keystroke annotation, the grading page, the room-facing
 deck, and the MCP tool-description loop. It knows nothing about who the subject
-is. A consumer brings its own cases, its own entity list, and its own runner,
-and housecast grades what came back. agent-compose's `evalkit` is one consumer,
-sirens-echo is another.
+is. A consumer brings its own cases, entity projection, profile, and runner, and
+housecast grades what came back. It ships no profile, so every board names its
+own.
 
-housecast carried a composition engine and a role roster for a stretch (in under
-`agent-compose#337`, back out under `housecast#7961` and `#8041`). None of that
-remains here. [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. The name
-`housecast` is held on PyPI as a 0.0.1 placeholder under `agent-compose#347`,
-now closed. The release train that turns a `housecast-v*` tag into a real upload
-is wired, and until the first tag runs it, consumers install from Forgejo.
+[`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. The name `housecast` is
+held on PyPI as a 0.0.1 placeholder. The release train that turns a
+`housecast-v*` tag into a real upload is wired, and until the first tag runs it,
+consumers install from Forgejo.
 
 ## The name
 
@@ -31,9 +29,6 @@ Two other readings of the string are live, and neither one is this project.
 * **type casting** - `cast` is a live Python concept, so a Python reader lands
   on coercion for a beat before they land on the theatre. This engine does no
   type casting worth the name.
-
-The name is locked in `agent-compose#330`, which carries the full search
-record.
 
 `housecast` unhyphenated is the repository, the import name, and the primary
 distribution. `house-cast` is held defensively and never shipped.
@@ -72,8 +67,8 @@ shorter path.
 ## Layout
 
 * `housecast/` - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
-* `evaluations/` - committed evidence for housecast's own tooling: the MCP loop,
-  context compaction, and the Sirens boards. Role boards live in agent-compose.
+* `evaluations/` - run evidence waiting to move to the repo that consumes it.
+  New evaluations live in their consumer's repo.
 * `scripts/` - release, kit sync, and the MCP demo recorder.
 
 ## License
