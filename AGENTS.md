@@ -26,9 +26,8 @@ thing to maintain (`teable:coilyco-flight-deck/housecast#7961`).
 ## Project shape
 
 - **`housecast/`** - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
-- **`evaluations/`** - run evidence waiting to move to the repo that consumes
-  it (`teable:coilyco-flight-deck/housecast#8125`). housecast hosts no new
-  evaluation: each one lives in its consumer's repo.
+- housecast hosts no evaluation. Each one lives in the repo that consumes its
+  result.
 - **`scripts/`** - release, kit sync, and the MCP demo recorder.
 
 ## Repo boundaries

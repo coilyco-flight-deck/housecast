@@ -173,7 +173,7 @@ class GradingSession:
 
         `seed` is the exception and it never travels. It is not a slug about the
         board: a deriver is free to seed a case with whatever identifies the
-        thing it was built from, and `evaluations/self-report-2026-09-17` seeds
+        thing it was built from, and sirens-echo's `eval/self-report-2026-09-17` seeds
         each case with the source message's timestamp. Beside a withheld prompt
         that is a key back to the text somebody took out.
 

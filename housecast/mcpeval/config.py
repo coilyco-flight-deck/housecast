@@ -18,7 +18,7 @@ DEFAULT_MODEL = "evaluation/deepseek-v4-flash"
 DEFAULT_SUBJECT_URL = "http://127.0.0.1:8931/mcp"
 
 # Measured 2026-09-16, both facts and the timings behind this default:
-# evaluations/mcp-tool-loop-2026-09-16/README.md.
+# agentic-os-kai evaluations/mcp-tool-loop-2026-09-16/README.md.
 KNOWN_NO_TOOL_CHOICE = (
     "evaluation/deepseek-v4-pro",
     "evaluation/deepseek-v4-flash",

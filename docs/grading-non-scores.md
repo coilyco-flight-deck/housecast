@@ -1,7 +1,7 @@
 # Non-scores
 
 A cell that is decided and is not a verdict, in three reasons that are not interchangeable. Added
-for the first observational board, `evaluations/self-report-2026-09-17`.
+for the first observational board, sirens-echo's `eval/self-report-2026-09-17`.
 
 ## Why a board needs them
 
