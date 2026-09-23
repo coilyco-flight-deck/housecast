@@ -1,32 +1,20 @@
 # housecast
 
-Agent context, cast from one roster
+Human-graded behavior evaluations, for any agent
 
-Change what a role may do and the evaluation that checks it moves with it.
-`agent-compose` owns the roster language now: it reads roster data authored as
-YAML, validates it, resolves each role's personality meld and boundary
-allocation, derives the identity primitives including each role's favorite
-color, and composes the immutable bundle. housecast runs and boards the
-behavior evaluations against exactly what `agent-compose catalog snapshot`
-reports, which is what keeps the graded artifact and the shipped artifact
-identical.
+housecast is the grading half of an evaluation: the case and dataset schema,
+the pairing rule, one-keystroke annotation, the grading page, the room-facing
+deck, and the MCP tool-description loop. It knows nothing about who the subject
+is. A consumer brings its own cases, its own entity list, and its own runner,
+and housecast grades what came back. agent-compose's `evalkit` is one consumer,
+sirens-echo is another.
 
-housecast shipped the composition engine itself for a stretch (moved in under
-`agent-compose#337`, moved back out under `housecast#8041` once the Go engine
-caught up), and only the eval half remains here.
-[`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. The name `housecast`
-is held on PyPI as a 0.0.1 placeholder under `agent-compose#347`, now closed.
-The release train that turns a `housecast-v*` tag into a real upload is wired,
-and until the first tag runs it, consumers install from Forgejo.
-
-## housecast and agent-compose
-
-housecast is downstream of `agent-compose`, not its peer. `agent-compose` owns
-the roster language, resolves every role's meld and boundary allocation, and
-composes the bundle. housecast reads what `agent-compose catalog snapshot`
-reports and grades behavior against it - it authors and vendors none of the
-roster itself. Reading `agent-compose` as an accessory, plugin, adapter, or
-helper to housecast inverts the relationship this repository now holds.
+housecast carried a composition engine and a role roster for a stretch (in under
+`agent-compose#337`, back out under `housecast#7961` and `#8041`). None of that
+remains here. [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory. The name
+`housecast` is held on PyPI as a 0.0.1 placeholder under `agent-compose#347`,
+now closed. The release train that turns a `housecast-v*` tag into a real upload
+is wired, and until the first tag runs it, consumers install from Forgejo.
 
 ## The name
 
@@ -56,11 +44,8 @@ distribution. `house-cast` is held defensively and never shipped.
 git clone https://forgejo.coilysiren.me/coilyco-flight-deck/housecast.git
 cd housecast
 just sync
-agent-compose catalog snapshot --out /tmp/person.json
+just check
 ```
-
-Projecting the roster and composing a role's bundle are both agent-compose's
-job now, not this repository's - housecast#8041.
 
 `just` with no arguments lists every verb. `just check` is the offline gate:
 lint, format check, types, and tests in one recipe.
@@ -79,21 +64,17 @@ housecast = { git = "https://forgejo.coilysiren.me/coilyco-flight-deck/housecast
 ```
 
 That is the same shape the estate already uses for `aos-eval`. Add the `eval`
-extra when the consumer needs the board runner rather than the base package alone.
+extra when the consumer needs the grader rather than the base package alone.
 Once a `housecast-v*` tag has run the train in
 [`docs/publishing.md`](docs/publishing.md), `pip install housecast` is the
 shorter path.
 
 ## Layout
 
-* `housecast/` - the eval and grading package: `digest.py`, `grade/`,
-  `mcpeval/`, `mcp/`. No roster loading lives here anymore - that is
-  `agent-compose catalog snapshot`'s job.
-* `evalkit/` - the board runner, which reads `agent-compose catalog
-  snapshot`'s JSON so the graded artifact and the shipped artifact stay
-  identical.
-* `challenges.yaml` and `evaluations/` - the board and its committed evidence.
-* `scripts/` - the eval workflow, with no Go anywhere in it.
+* `housecast/` - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
+* `evaluations/` - committed evidence for housecast's own tooling: the MCP loop,
+  context compaction, and the Sirens boards. Role boards live in agent-compose.
+* `scripts/` - release, kit sync, and the MCP demo recorder.
 
 ## License
 

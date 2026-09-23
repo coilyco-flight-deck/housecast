@@ -33,7 +33,7 @@ def test_the_sdist_is_an_allowlist_so_a_new_directory_is_out_by_default() -> Non
     config = tomllib.loads((ROOT / "pyproject.toml").read_text())
     sdist = config["tool"]["hatch"]["build"]["targets"]["sdist"]
     assert "include" in sdist, "an exclude list would ship the next directory by default"
-    assert set(sdist["include"]) >= {"/housecast", "/evalkit"}
+    assert "/housecast" in sdist["include"]
 
 
 def test_every_sdist_pattern_is_rooted_because_a_bare_name_matches_at_any_depth() -> None:

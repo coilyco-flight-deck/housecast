@@ -1671,12 +1671,12 @@ function nothingHere() {
 
   box.appendChild(el("div", "field-l", "to grade a board"));
   box.appendChild(el("pre", null,
-    "housecast grade serve evaluations/reflow-v3/board-2026-08-26 \\\n"
+    "housecast grade serve RUN_DIR \\\n"
     + "    --static housecast/grade/page"));
 
   box.appendChild(el("div", "field-l", "to read one from a file path"));
   box.appendChild(el("pre", null,
-    "housecast grade export evaluations/reflow-v3/board-2026-08-26 \\\n"
+    "housecast grade export RUN_DIR \\\n"
     + "    --out board.json"));
   box.appendChild(el("p", null,
     "That writes the payload. Putting it into this file is the sealing step, and it is "

@@ -6,42 +6,39 @@ ward:
 
 ## Scope
 
-housecast is the **eval and grading harness for agent context**. It reads the
-roster `agent-compose catalog snapshot` reports - roles, personality melds,
-boundary allocations, identity primitives, all authored and composed in
-agent-compose now - and runs and boards the behavior evaluations against it,
-so the graded artifact and the shipped artifact stay identical.
+housecast is the **role-agnostic grading engine** for agent behavior
+evaluations: case and dataset schema, pairing, annotation, the grading page,
+the deck, and the MCP tool-description loop. It holds no notion of role,
+personality, or boundary. Consumers bring their own cases and entity lists,
+and agent-compose's `evalkit` is the main one.
 
 Read before changing anything here:
 
-- [`README.md`](README.md) explains what housecast is, the `agent-compose`
-  pairing, and the naming record.
+- [`README.md`](README.md) explains what housecast is, its consumers, and the
+  naming record.
 - [`docs/FEATURES.md`](docs/FEATURES.md) is the inventory, and every entry
   points at its own walkthrough under `docs/`. Those walkthroughs are stubs:
   each one carries a settled structure and a `Still to write` list.
 
-The composition engine (roster loading, meld and boundary resolution, bundle
-emission) lived here for a stretch under `agent-compose#337`, and moved back
-out under `housecast#8041` once the Go engine in agent-compose caught up to
-what this repository's Python port had grown. Only the eval half remains.
+A composition engine, a roster, and the role board runner lived here for a
+stretch under `agent-compose#337`. They moved to agent-compose under
+`housecast#7961` and `#8041`. Anything role-shaped found here now is a leftover
+to delete, not a thing to maintain.
 
 ## Project shape
 
-- **`housecast/`** - the eval and grading package: `digest.py`, `grade/`,
-  `mcpeval/`, `mcp/`. No roster loading lives here.
-- **`evalkit/`** - the board runner. It reads `agent-compose catalog
-  snapshot`'s JSON.
-- **`challenges.yaml`**, **`evaluations/`** - the board and its evidence.
-- **`scripts/`** - the eval workflow. No Go runs anywhere in this repository.
+- **`housecast/`** - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
+- **`evaluations/`** - evidence for housecast's own tooling (the MCP loop,
+  context compaction, the Sirens boards). Role boards live in agent-compose.
+- **`scripts/`** - release, kit sync, and the MCP demo recorder.
 
 ## Repo boundaries
 
-- housecast owns the evaluation harness that grades agent-compose's output,
-  and nothing about the roster itself.
-- `agent-compose` is **upstream**. It owns the roster language, resolves every
-  role's meld and boundary allocation, and composes the bundle. housecast is
-  never its plugin, adapter, or helper - it is a downstream consumer of
-  `agent-compose catalog snapshot`, same as any other eval tooling.
+- housecast owns the grader and nothing about who is graded. A consumer passes
+  its cases, entities, and profile in, and housecast never reads a consumer's
+  source to get them.
+- `agent-compose` is a **consumer**. Its `evalkit`, `challenges.yaml`, role
+  evaluations, and the `evalkit-*` verbs live there, pinned to a housecast rev.
 - Harness selection, deployment identity, and standalone AOSguard policy stay
   in agentic-os. Fixed workflows and the broker stay in Ward.
 - Nothing in this repository reaches downward into a consumer for its own
@@ -70,27 +67,18 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 - Keep every artifact public-safe. No private identity labels, no opaque ids,
   no tokens, and no host or tailnet identifiers in tracked files.
-- Roster data describes people and seats. Treat any real personal detail as
-  out of scope for this repository until a slice explicitly admits it.
 - The name is claimed, so that gate is spent. What remains irreversible is a
   version: pushing a `housecast-v*` tag uploads to PyPI, and that number can
   never be reused. Treat a tag push as the externally visible action it now is.
 
 ## Cross-repo contracts
 
-- **agent-compose** is upstream: `agent-compose catalog snapshot` is the only
-  roster input this repository reads. A role or boundary change there is
-  visible here the next time a script runs it, not committed alongside it.
-  `agent-compose#329` for the design history, `agent-compose#330` for the
-  name, `agent-compose#347` for the PyPI claim.
+- **agent-compose** consumes the grader by pinned rev, so a change here reaches
+  it only when that pin moves. `agent-compose#329` for the design history,
+  `agent-compose#330` for the name, `agent-compose#347` for the PyPI claim.
 - **agentic-os** authors the catalog validator suite this repository runs and
   the two generators that own `.pre-commit-config.yaml` and the git-workflow
-  block below. Its dev-base image is also where `agent-compose` itself comes
-  from in CI - see `docker/dev-base/install-common.sh` there.
-- `agent-compose catalog snapshot`'s JSON schema (`agent-compose.person-snapshot.v3`)
-  is the contract `evalkit/roster.py` builds against. Once a field is read
-  here, narrowing it upstream is a cross-repo change wearing one repository's
-  clothes.
+  block below.
 
 ## Release
 
@@ -169,10 +157,9 @@ whole pass, so the cheap-looking ask is never as cheap as the minutes it takes.
 
 Two input sources are easy to miss:
 
-- agent-compose's `seed/roster/data/`. Boundary rules, acts, and personality
-  text are what a case target is authored against, so a record that edits them
-  edits the target. It also changes what a seat would answer, so the stored
-  responses stop describing the deployment the roster now names.
+- The consumer's source data, such as agent-compose's `seed/roster/data/`. A
+  case target is authored against it, so a record that edits it edits the
+  target, and the stored responses stop describing the subject it now names.
 - The profile. A label set or word cap edit rescores every case it reaches
   without touching a word of the board.
 
@@ -187,13 +174,12 @@ out afterwards.
 
 This repository is not resident. It has no checkout under `~/projects/<owner>/`.
 Work it from a task-scoped temporary clone and remove that clone once the work
-lands. `agent-compose#337` moved real code in, so residency is now worth
-revisiting whenever active development starts here rather than in agent-compose.
+lands. Revisit residency if active development moves here.
 
 A temporary root can be purged at any time, so commit and push before pausing,
 switching tasks, or ending a session. The remote is the only durable artifact.
 
 ## See also
 
-- [README.md](README.md) - human-facing intro, the acompose pairing, the name.
+- [README.md](README.md) - human-facing intro, the consumers, the name.
 - [docs/FEATURES.md](docs/FEATURES.md) - inventory of what ships today.

@@ -6,11 +6,12 @@ The grading half, `housecast.grade`, and the `housecast grade` command that driv
 ## What it is
 
 Committed YAML in, human decisions and one-way display payloads out. It holds no runner and no model
-client. The runner is `evalkit`, which reaches Inspect and Agent Proxy, and the seam between them is
-deliberate: a board can be regraded without re-running it, and a run repeated without regrading it.
+client. The runner is the consumer's (agent-compose's `evalkit` reaches Inspect and Agent Proxy),
+and the seam is deliberate: a board can be regraded without re-running it, and a run repeated
+without regrading it.
 `housecast grade help` is the long form, and each verb ends with the next.
 
-It rides the `eval` extra with `evalkit`, because a consumer composing a bundle should not pay for a
+It rides the `eval` extra, because a consumer that only needs the schema should not pay for a
 grading stack, and `housecast grade` says so rather than failing on an import error when the extra is
 absent. `test_no_runner_reaches_the_dependency_set` pins the half that matters: no runner reaches the
 **core** dependency set whatever the extra carries.
@@ -18,11 +19,10 @@ absent. `test_no_runner_reaches_the_dependency_set` pins the half that matters: 
 ## The profile is the deployment's
 
 `Profile` lets a deployment declare its own test types without this schema growing a branch per
-consumer, and adding one is a profile edit plus a deriver rather than a schema edit:
-`evalkit/matrix.py` unpacks them by arity, so a new type fails loudly. A profile also names the
-board map's grouping field, and `graders`, the people who may carry a label. An agent that wrote a
-board's prompts and targets emits labels indistinguishable from grades, and one did on 2026-09-15.
-Empty permits anyone; a named roster is closed and `coverage` names what it refused.
+consumer, and adding one is a profile edit plus the consumer's deriver rather than a schema edit.
+A profile also names the board map's grouping field, and `graders`, the people who may carry a
+label. An agent that wrote a board's prompts and targets emits labels indistinguishable from
+grades, and one did on 2026-09-15. Empty permits anyone; a named roster is closed and `coverage` names what it refused.
 
 ## Schema ids are a wire format
 
