@@ -96,3 +96,16 @@ this commit, and changing one later takes a dated amendment made before any tall
 ## Not run
 * No live tier. This scores the model call the tier would make, not the build.
 * No latency or cost. `#7978`'s gate names neither.
+
+## Amendment, 2026-09-23, before any corpus or tally
+The director ruled on `teable:coilyco-flight-deck/umbra#7978` (comment
+`recrUumyHzSJsbHjJea`) that underpowered is an unbounded non-result, as written
+above. No tolerance, threshold or floor changes. One reporting duty is added, on
+every run and not only an underpowered one:
+* Eligible n per class, and the drop count per class.
+* For each dropped item, the rule that caught it after its deciding rule was
+  removed. This separates a corpus too small to reach the floor from a guardfile
+  whose rules overlap too much to yield eligible items.
+
+A second underpowered corpus goes to Kai as a product call on whether this
+instrument can measure the tier at all. It is not a gate result.
