@@ -109,3 +109,24 @@ every run and not only an underpowered one:
 
 A second underpowered corpus goes to Kai as a product call on whether this
 instrument can measure the tier at all. It is not a gate result.
+
+## Amendment, 2026-09-23, label provenance, before any corpus or tally
+`teable:coilyco-flight-deck/umbra#8121`: an uncovered, `never run` or withheld exec
+call exits 2 and writes no audit row. The label source and one claim above change.
+No tolerance, threshold or floor moves.
+* The label is the observed exit and refusal text of each corpus call, with the
+  deciding rule present. The audit row is attached where one exists and is never
+  the label source, because for the reject class it does not exist.
+* Correction. The fallback above, deriving `r` by re-running the engine once per
+  removed rule, works only for `can` grants. umbra refuses by default, so removing
+  a `never` or `withhold` leaves the call refused, and a `never` refusal prints the
+  same text as an uncovered call (#8121). For the reject class the deciding rule
+  comes only from the generator's declaration, so that field on `#8024` is required
+  and has no fallback.
+* A reject item counts only if its declared rule appears in the guardfile and
+  matches the argv. For `withhold` the refusal text must also name it. A `never`
+  item cannot be checked from output until #8121 lands, and the report counts those
+  items separately.
+* A call whose observed decision contradicts its declared rule, such as a `never`
+  under a granted parent that the engine allows (#8120), is dropped, counted, and
+  reported as an engine defect. It is never used as a label.
