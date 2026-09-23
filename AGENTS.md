@@ -8,9 +8,9 @@ ward:
 
 housecast is the **role-agnostic grading engine** for agent behavior
 evaluations: case and dataset schema, pairing, annotation, the grading page,
-the deck, and the MCP tool-description loop. It holds no notion of role,
-personality, or boundary. Consumers bring their own cases and entity lists,
-and agent-compose's `evalkit` is the main one.
+the deck, and the MCP tool-description loop. It holds no notion of who is
+graded. A consumer brings its own cases, entity projection, profile, and
+runner.
 
 Read before changing anything here:
 
@@ -20,16 +20,15 @@ Read before changing anything here:
   points at its own walkthrough under `docs/`. Those walkthroughs are stubs:
   each one carries a settled structure and a `Still to write` list.
 
-A composition engine, a roster, and the role board runner lived here for a
-stretch under `agent-compose#337`. They moved to agent-compose under
-`housecast#7961` and `#8041`. Anything role-shaped found here now is a leftover
-to delete, not a thing to maintain.
+Anything shaped like one consumer found here is a leftover to delete, not a
+thing to maintain (`teable:coilyco-flight-deck/housecast#7961`).
 
 ## Project shape
 
 - **`housecast/`** - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
-- **`evaluations/`** - evidence for housecast's own tooling (the MCP loop,
-  context compaction, the Sirens boards). Role boards live in agent-compose.
+- **`evaluations/`** - run evidence waiting to move to the repo that consumes
+  it (`teable:coilyco-flight-deck/housecast#8125`). housecast hosts no new
+  evaluation: each one lives in its consumer's repo.
 - **`scripts/`** - release, kit sync, and the MCP demo recorder.
 
 ## Repo boundaries
@@ -37,8 +36,8 @@ to delete, not a thing to maintain.
 - housecast owns the grader and nothing about who is graded. A consumer passes
   its cases, entities, and profile in, and housecast never reads a consumer's
   source to get them.
-- `agent-compose` is a **consumer**. Its `evalkit`, `challenges.yaml`, role
-  evaluations, and the `evalkit-*` verbs live there, pinned to a housecast rev.
+- A consumer keeps its cases, profile, runner, and evaluations in its own repo,
+  pinned to a housecast rev.
 - Harness selection, deployment identity, and standalone AOSguard policy stay
   in agentic-os. Fixed workflows and the broker stay in Ward.
 - Nothing in this repository reaches downward into a consumer for its own
@@ -73,9 +72,8 @@ There is no Makefile. Each recipe runs its command directly through uv.
 
 ## Cross-repo contracts
 
-- **agent-compose** consumes the grader by pinned rev, so a change here reaches
-  it only when that pin moves. `agent-compose#329` for the design history,
-  `agent-compose#330` for the name, `agent-compose#347` for the PyPI claim.
+- **Consumers** pin the grader by rev, so a change here reaches one only when
+  its pin moves.
 - **agentic-os** authors the catalog validator suite this repository runs and
   the two generators that own `.pre-commit-config.yaml` and the git-workflow
   block below.
@@ -103,11 +101,8 @@ reports the wrong version. They are kept rather than deleted because deleting th
 would falsify the history, and named here so nobody pins one by reaching for
 the lowest number.
 
-The name claim landed under `agent-compose#347`: `housecast` is held on PyPI as
-a 0.0.1 placeholder. `house-cast` needs no defensive hold, since PyPI refuses it
-as too similar to `housecast`. The publish workflow is the packaging half of
-`agent-compose#329` scope A; the compositor scope A also named left with the
-composition engine under `housecast#8041`.
+`housecast` is held on PyPI as a 0.0.1 placeholder. `house-cast` needs no
+defensive hold, since PyPI refuses it as too similar to `housecast`.
 
 Keep [`docs/FEATURES.md`](docs/FEATURES.md) current when a shipped capability
 changes, in the same commit that changes it.
@@ -157,8 +152,7 @@ whole pass, so the cheap-looking ask is never as cheap as the minutes it takes.
 
 Two input sources are easy to miss:
 
-- The consumer's source data, such as agent-compose's `seed/roster/data/`. A
-  case target is authored against it, so a record that edits it edits the
+- The consumer's source data. A case target is authored against it, so a record that edits it edits the
   target, and the stored responses stop describing the subject it now names.
 - The profile. A label set or word cap edit rescores every case it reaches
   without touching a word of the board.

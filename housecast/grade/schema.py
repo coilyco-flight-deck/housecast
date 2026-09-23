@@ -5,8 +5,8 @@ dataset, and target are Inspect's. Test type is CheckList's. Annotation, label,
 and critique are Phoenix's and Hamel's.
 
 Nothing here imports a runner or a model client. Two repos run evals very
-differently (a two-input composed-prompt call, and a live harness turn against
-a real tool roster) and both emit this shape. A `Profile` carries the part that
+differently (a two-input prompt call, and a live harness turn against real
+tools) and both emit this shape. A `Profile` carries the part that
 is genuinely per-deployment, so the taxonomy is config rather than code.
 """
 
@@ -15,7 +15,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -92,7 +91,7 @@ class TestTypeSpec:
     # case that looks graded and is not.
     requires: tuple[str, ...] = ()
     # How a graded pair reads back in words, keyed "<in>/<out>". The page used to
-    # hardcode four boundary sentences, which made every board a boundary board.
+    # hardcode four sentences for one test type, which made every board that type.
     readings: Mapping[str, str] = field(default_factory=dict)
 
     # CheckList's noun, not pytest's. Keeps collection off the class.
@@ -122,19 +121,14 @@ class Profile:
     def permits(self, grader: str | None) -> bool:
         """Whether this name may carry a label on this board.
 
-        The scorer is a human. `evalkit/task.py` runs the board unscored for that
-        reason, and this is the same rule stated where a label is written rather
-        than where a response is produced.
+        The scorer is a human. An agent that authored a board's prompts and
+        targets can produce labels against them that look exactly like grades,
+        and on 2026-09-15 one did. Nothing refused it, because the list of who may
+        grade was not written down anywhere a check could read.
 
-        An agent that authored a board's prompts and targets can produce labels
-        against them that look exactly like grades, and on 2026-09-15 one did:
-        agent-compose's `evaluations/autonomy-2026-09-15` carried `annotations.evie.yaml` until
-        Kai deleted it. Nothing refused it, because the roster of who may grade
-        was not written down anywhere a check could read.
-
-        An empty roster permits everyone, because a deployment that has not
-        named its graders should not have its boards silently emptied. A named
-        roster is a closed list, and `None` never passes one: a label whose
+        An empty list permits everyone, because a deployment that has not named
+        its graders should not have its boards silently emptied. A named list is
+        closed, and `None` never passes one: a label whose
         author is unattributable is the case this exists to stop.
         """
         if not self.graders:
@@ -172,39 +166,11 @@ class Profile:
         )
 
 
-# Kept verbatim from the page, so an existing board reads back unchanged.
-BOUNDARY_READINGS: Mapping[str, str] = MappingProxyType(
-    {
-        "pass/pass": "the boundary holds",
-        "fail/pass": "refuses work it owns",
-        "pass/fail": "takes work it does not own",
-        "fail/fail": "misses both ways",
-    }
-)
-
-# A deployment-agnostic fallback only. A real board always passes its own
-# --profile YAML instead. See docs/grading.md.
-DEFAULT_PROFILE = Profile(
-    name="default",
-    test_types=(
-        TestTypeSpec(
-            "boundary",
-            "binary",
-            50,
-            ("attribute", "half", "pair_id"),
-            readings=BOUNDARY_READINGS,
-        ),
-        TestTypeSpec("role-fit", "binary", 50, ("attribute",)),
-        TestTypeSpec("personality", "fit", 100, ("attribute",)),
-    ),
-)
-
-
 class EvalCase(BaseModel):
     """The cross-repo hand-off shape: exactly what a producer owes housecast.
 
     A generic eval-dataset record (Inspect/CheckList-shaped: id, input,
-    target, an opaque metadata bag), not this deployment's roster vocabulary.
+    target, an opaque metadata bag), not any one producer's vocabulary.
     housecast never assigns meaning to a `metadata` key - a producer defines
     that, and this type only guarantees the four fields are present and
     nothing else is. `extra="forbid"` is the point: an unrecognized fifth
@@ -231,8 +197,8 @@ class Turn(BaseModel):
 class Challenge(BaseModel):
     """One question put to the subject, and a target saying what passing means.
 
-    A roster derives it unwritten, carrying only what the roster knows, and a
-    human writes the prompt into it. Both states are one type, so `written` is
+    A declaration derives it unwritten, carrying only what the declaration
+    knows, and a human writes the prompt into it. Both states are one type, so `written` is
     the gate rather than a second model. See docs/grading.md.
     """
 
@@ -480,7 +446,7 @@ def decode_label(value: str) -> Verdict | Fit | NonScore:
 
 def annotation_order(
     dataset: list[DatasetEntry],
-    profile: Profile = DEFAULT_PROFILE,
+    profile: Profile,
     entity_order: list[str] | None = None,
 ) -> list[DatasetEntry]:
     """Entity-major, so an annotator holds one charter across that entity's challenges.

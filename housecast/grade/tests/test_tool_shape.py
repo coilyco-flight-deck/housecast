@@ -14,7 +14,7 @@ def challenge(challenge_id: str = "c1", **fields: Any) -> Challenge:
     return Challenge(
         id=challenge_id,
         entity="filesystem.write_file",
-        test_type="boundary",
+        test_type="paired",
         prompt="p",
         target="t",
         **fields,

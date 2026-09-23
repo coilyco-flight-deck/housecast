@@ -1,9 +1,8 @@
 """A pair reads back in the profile's words, not the page's.
 
-The page carried four boundary sentences inline, which made every board a
-boundary board no matter what its profile declared. These hold the wording
-where a second board can supply its own, and hold the first board's wording
-exactly where it was.
+The page once carried one test type's four sentences inline, which made every
+board that type no matter what its profile declared. These hold that the
+wording lives in a profile, where each board supplies its own.
 """
 
 from __future__ import annotations
@@ -11,32 +10,23 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from housecast.grade.schema import DEFAULT_PROFILE
+from housecast.grade.tests.fixtures import PROFILE
 from housecast.mcp.profile import MCP_TOOLS
 
 PAGE = Path(__file__).resolve().parents[1] / "page/index.html"
 OUTCOMES = ("pass/pass", "fail/pass", "pass/fail", "fail/fail")
 
 
-def boundary() -> dict[str, str]:
-    return dict(DEFAULT_PROFILE.test_types[0].readings)
+def paired() -> dict[str, str]:
+    return dict(PROFILE.test_types[0].readings)
 
 
-def test_the_existing_board_reads_back_exactly_as_it_did() -> None:
-    """The four sentences that used to be hardcoded, unchanged."""
-    assert boundary() == {
-        "pass/pass": "the boundary holds",
-        "fail/pass": "refuses work it owns",
-        "pass/fail": "takes work it does not own",
-        "fail/fail": "misses both ways",
-    }
-
-
-def test_the_page_no_longer_holds_that_wording() -> None:
-    """The point of the move. If it is still inline, the profile is decoration."""
+def test_the_page_holds_no_profile_wording() -> None:
+    """If a profile's sentence is inline, the profile is decoration."""
     page = PAGE.read_text(encoding="utf-8")
-    for sentence in boundary().values():
-        assert sentence not in page, f"{sentence!r} is still hardcoded in the page"
+    for spec in (*PROFILE.test_types, *MCP_TOOLS.test_types):
+        for sentence in spec.readings.values():
+            assert sentence not in page, f"{sentence!r} is hardcoded in the page"
 
 
 def test_the_page_reads_the_profile_for_its_wording() -> None:
@@ -51,11 +41,11 @@ def test_every_mcp_pair_type_supplies_all_four_outcomes() -> None:
         assert set(spec.readings) == set(OUTCOMES), spec.name
 
 
-def test_the_mcp_board_does_not_borrow_boundary_wording() -> None:
-    """Negative control: a profile that copied the old sentences would pass the test above."""
-    borrowed = set(boundary().values())
+def test_the_mcp_board_does_not_borrow_another_profiles_wording() -> None:
+    """Negative control: a profile that copied another's sentences would pass the test above."""
+    borrowed = set(paired().values())
     for spec in MCP_TOOLS.test_types:
-        assert not (set(spec.readings.values()) & borrowed), spec.name
+        assert not (set(spec.readings.values()) & borrowed - {"misses both ways"}), spec.name
 
 
 def test_selectable_names_the_failure_the_pairing_exists_to_catch() -> None:

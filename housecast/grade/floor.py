@@ -3,7 +3,7 @@
 A model is stochastic, so two runs of one variant give different per-attribute
 rates. Without that spread every reported delta is unreadable and every prose
 edit looks like it did something. The floor is a property of the board, the
-model and the roster together, so it is re-established when any of the three
+model and the subject together, so it is re-established when any of the three
 move rather than carried forward.
 
 A board whose floor is wider than the effect you care about is not a weak

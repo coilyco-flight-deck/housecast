@@ -1307,8 +1307,8 @@ function readPair(unit) {
   return { tone: tone, text: said || ("no reading for " + a + "/" + b) };
 }
 
-/* The wording is the profile's, not this page's. Four boundary sentences lived
-   here and made every board a boundary board. */
+/* The wording is the profile's, not this page's. Four sentences for one test type
+   lived here and made every board that type. */
 function readingFor(testType, outcome) {
   var types = (state.model && state.model.profile && state.model.profile.test_types) || [];
   for (var i = 0; i < types.length; i++) {

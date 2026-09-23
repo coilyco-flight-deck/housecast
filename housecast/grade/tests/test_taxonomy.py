@@ -2,12 +2,12 @@ from housecast.grade.schema import Annotation, Challenge, DatasetEntry, Fit, Hal
 from housecast.grade.taxonomy import axis_of, build, render, salient_terms
 
 
-def boundary_entry(challenge_id: str, attribute: str = "modify-live-backend") -> DatasetEntry:
+def paired_entry(challenge_id: str, attribute: str = "modify-live-backend") -> DatasetEntry:
     return DatasetEntry(
         challenge=Challenge(
             id=challenge_id,
             entity="ops",
-            test_type="boundary",
+            test_type="paired",
             prompt="p",
             target="t",
             attribute=attribute,
@@ -19,17 +19,17 @@ def boundary_entry(challenge_id: str, attribute: str = "modify-live-backend") ->
 
 
 def test_the_axis_is_structural_before_any_prose() -> None:
-    assert axis_of(boundary_entry("a")) == "boundary:modify-live-backend:out"
+    assert axis_of(paired_entry("a")) == "paired:modify-live-backend:out"
 
 
-def test_a_personality_case_keys_off_its_trait() -> None:
+def test_a_degree_case_keys_off_its_trait() -> None:
     entry = DatasetEntry(
         challenge=Challenge(
-            id="a", entity="qa", test_type="personality", prompt="p", target="t", attribute="candid"
+            id="a", entity="qa", test_type="degree", prompt="p", target="t", attribute="candid"
         ),
         output="o",
     )
-    assert axis_of(entry) == "personality:candid"
+    assert axis_of(entry) == "degree:candid"
 
 
 def test_stopwords_never_become_a_failure_key() -> None:
@@ -37,7 +37,7 @@ def test_stopwords_never_become_a_failure_key() -> None:
 
 
 def test_only_deductions_enter_the_taxonomy() -> None:
-    dataset = [boundary_entry("a"), boundary_entry("b")]
+    dataset = [paired_entry("a"), paired_entry("b")]
     annotations = {
         "a": Annotation(id="a", label=Verdict.PASS, critique="fine"),
         "b": Annotation(id="b", label=Verdict.FAIL, critique="acted on the live system"),
@@ -49,7 +49,7 @@ def test_only_deductions_enter_the_taxonomy() -> None:
 def test_an_undecided_fit_counts_as_a_deduction() -> None:
     entry = DatasetEntry(
         challenge=Challenge(
-            id="a", entity="qa", test_type="personality", prompt="p", target="t", attribute="warm"
+            id="a", entity="qa", test_type="degree", prompt="p", target="t", attribute="warm"
         ),
         output="o",
     )
@@ -58,15 +58,15 @@ def test_an_undecided_fit_counts_as_a_deduction() -> None:
 
 
 def test_an_annotation_for_a_renamed_case_is_ignored() -> None:
-    modes = build([boundary_entry("a")], {"gone": Annotation(id="gone", label=Verdict.FAIL)})
+    modes = build([paired_entry("a")], {"gone": Annotation(id="gone", label=Verdict.FAIL)})
     assert modes == []
 
 
 def test_modes_rank_by_count_then_key() -> None:
     dataset = [
-        boundary_entry("a"),
-        boundary_entry("b"),
-        boundary_entry("c", "seek-external-validation"),
+        paired_entry("a"),
+        paired_entry("b"),
+        paired_entry("c", "seek-external-validation"),
     ]
     annotations = {
         "a": Annotation(id="a", label=Verdict.FAIL, critique="restarted the service"),

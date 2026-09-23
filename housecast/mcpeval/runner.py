@@ -11,7 +11,7 @@ selection and calls it task success. Recovery, the dimension that asks whether
 an error message actually got acted on, does not exist at all without it.
 
 Everything a comparison depends on is recorded on the trial rather than inferred
-later: the roster the model was shown, the subject version, the model
+later: the tool set the model was shown, the subject version, the model
 fingerprint, and the definition digest. An unrecorded input is an uncontrolled
 variable, and this is where prompt-optimization tooling usually fails quietly -
 the prose changes, the model version moves the same week, and the improvement
@@ -108,7 +108,7 @@ class Trial:
 
 
 @dataclass(frozen=True)
-class Roster:
+class ToolSet:
     """The exact tool list the model was shown, in presentation order.
 
     Order is carried rather than sorted away, because whether a tool is selected
@@ -221,8 +221,8 @@ async def run_prompt(
     max_turns: int = MAX_TURNS,
 ) -> Trial:
     """Drive one prompt to an answer, routing every call through the real subject."""
-    roster = Roster(tools=tuple(definitions.overlay(advertised)))
-    names = roster.names
+    tool_set = ToolSet(tools=tuple(definitions.overlay(advertised)))
+    names = tool_set.names
     messages: list[dict[str, Any]] = []
     if definitions.instructions.strip():
         messages.append({"role": "system", "content": definitions.instructions})
@@ -240,7 +240,7 @@ async def run_prompt(
     try:
         for turn_index in range(1, max_turns + 1):
             turns = turn_index
-            reply = await model.turn(messages, roster.tools)
+            reply = await model.turn(messages, tool_set.tools)
             prompt_tokens += reply.prompt_tokens
             completion_tokens += reply.completion_tokens
             if not reply.tool_calls:
@@ -283,7 +283,7 @@ async def run_prompt(
         prompt_id=prompt_id,
         prompt=prompt,
         definition_digest=definitions.digest,
-        roster_digest=roster.digest,
+        roster_digest=tool_set.digest,
         roster_names=names,
         subject_version=subject_version,
         model=model.config.fingerprint(),
@@ -301,8 +301,8 @@ async def run_prompt(
 __all__ = [
     "CallRecord",
     "ModelConfig",
-    "Roster",
     "RunnerError",
+    "ToolSet",
     "Trial",
     "advertised_tools",
     "run_prompt",

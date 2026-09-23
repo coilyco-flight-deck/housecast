@@ -23,7 +23,7 @@ from housecast.grade.trial import (
 BASE = Provenance(
     board="sha256:board",
     fixture="sha256:fixture",
-    roster="sha256:roster",
+    tools="sha256:tools",
     subject_version="1.4.0",
     model="local/qwen3-coder",
     temperature=0.0,
@@ -59,10 +59,10 @@ def test_a_changed_temperature_refuses_and_names_it() -> None:
         require_poolable([trial("c1"), trial("c2", temperature=0.7)])
 
 
-def test_a_changed_roster_refuses_and_names_it() -> None:
+def test_a_changed_tool_set_refuses_and_names_it() -> None:
     """D-5. Selection depends on what else was on offer, so this is not a detail."""
-    with pytest.raises(ProvenanceError, match="roster moved"):
-        require_poolable([trial("c1"), trial("c2", roster="sha256:other")])
+    with pytest.raises(ProvenanceError, match="tools moved"):
+        require_poolable([trial("c1"), trial("c2", tools="sha256:other")])
 
 
 def test_a_changed_subject_version_refuses() -> None:

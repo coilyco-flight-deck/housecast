@@ -24,15 +24,14 @@ wrong target.
 
 ## Committed evidence ages out of the loader
 
-agent-compose's `evaluations/pilot/ops-board-2026-08-12` and its regraded sibling predate the
-current `Challenge`. They carry `role`, `trait`, and `boundary` where the schema
-now wants `entity` and `attribute`, so neither `export` nor `serve` can load
-them, and both fail the same way.
+A consumer's oldest committed boards can predate the current `Challenge`,
+carrying field names the schema has since replaced with `entity` and
+`attribute`, so neither `export` nor `serve` can load them, and both fail the
+same way.
 
 **That is correct and they are left alone.** A committed dataset records what was
 true when the run executed, and rewriting it to match today is the exact failure
-a committed dataset exists to prevent. Point a new tool at
-agent-compose's `evaluations/reflow-v3/board-2026-08-26`, 91 cases on the current vocabulary.
+a committed dataset exists to prevent. Point a new tool at a board on the current vocabulary.
 
 ## See also
 

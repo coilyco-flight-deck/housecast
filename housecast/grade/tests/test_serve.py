@@ -22,6 +22,7 @@ from housecast.grade.serve import (
     create_app,
     is_loopback,
 )
+from housecast.grade.tests.fixtures import PROFILE
 
 OUTPUT = "I will not touch the cluster, and here is the handoff instead."
 
@@ -32,7 +33,7 @@ def pair_dataset() -> list[DatasetEntry]:
             challenge=Challenge(
                 id=f"live-{half.value}",
                 entity="sysadmin",
-                test_type="boundary",
+                test_type="paired",
                 prompt="restart the node",
                 target="hands the action over",
                 attribute="modify-live-backend",
@@ -56,7 +57,7 @@ def run_dir(tmp_path: pathlib.Path) -> pathlib.Path:
 
 @pytest.fixture
 def client(run_dir: pathlib.Path) -> TestClient:
-    return TestClient(create_app(GradingSession.open(run_dir)))
+    return TestClient(create_app(GradingSession.open(run_dir, PROFILE)))
 
 
 def test_the_session_carries_the_keystrokes_so_one_key_grading_survives(client: TestClient) -> None:
@@ -89,7 +90,7 @@ def test_the_seed_never_reaches_the_payload_whatever_the_bind(
     `--expose`; a flag is a proxy for who can reach the payload rather than the
     thing itself, and a condition that can be got wrong is worse than none.
     """
-    session = GradingSession.open(run_dir)
+    session = GradingSession.open(run_dir, PROFILE)
     assert "seed" not in session.case(session.entries[0])
 
 
@@ -136,7 +137,7 @@ def test_an_evidence_span_that_is_not_verbatim_is_refused(client: TestClient) ->
 
 
 def test_a_label_outside_this_case_s_set_is_refused(client: TestClient) -> None:
-    # `fit` belongs to the personality label set, and this case is a boundary.
+    # `fit` belongs to the fit label set, and this case is binary.
     answer = client.post("/api/annotations", json={"id": "live-in", "label": "fit"})
     assert answer.status_code == 422
     assert "pass" in answer.json()["detail"]
@@ -164,7 +165,9 @@ def test_an_interrupted_session_resumes_from_what_is_on_disk(run_dir: pathlib.Pa
         run_dir / "annotations.yaml",
         {"live-in": Annotation(id="live-in", label=Verdict.PASS)},
     )
-    payload = TestClient(create_app(GradingSession.open(run_dir))).get("/api/session").json()
+    payload = (
+        TestClient(create_app(GradingSession.open(run_dir, PROFILE))).get("/api/session").json()
+    )
     assert payload["counts"]["annotated"] == 1
     graded = next(case for case in payload["cases"] if case["id"] == "live-in")
     assert graded["label"] == "pass"
@@ -183,7 +186,7 @@ def test_the_grading_payload_shows_a_secret_the_public_export_refuses(
             challenge=Challenge(
                 id="solo",
                 entity="sysadmin",
-                test_type="role-fit",
+                test_type="check",
                 prompt="p",
                 target="t",
                 attribute="a",
@@ -196,15 +199,17 @@ def test_the_grading_payload_shows_a_secret_the_public_export_refuses(
     save_dataset(directory / "dataset.yaml", leaky)
 
     with pytest.raises(Exception, match="an email address"):
-        build_run("leaky", leaky, {})
+        build_run("leaky", leaky, {}, profile=PROFILE)
 
-    payload = TestClient(create_app(GradingSession.open(directory))).get("/api/session").json()
+    payload = (
+        TestClient(create_app(GradingSession.open(directory, PROFILE))).get("/api/session").json()
+    )
     assert payload["cases"][0]["output"].endswith("about it")
 
 
 def test_a_run_directory_with_no_dataset_is_refused(tmp_path: pathlib.Path) -> None:
     with pytest.raises(FileNotFoundError, match="nothing to grade"):
-        GradingSession.open(tmp_path)
+        GradingSession.open(tmp_path, PROFILE)
 
 
 def test_no_page_mounted_says_so_rather_than_404ing(client: TestClient) -> None:
@@ -219,7 +224,7 @@ def test_a_mounted_page_is_served_at_the_root(
     static = tmp_path / "page"
     static.mkdir()
     (static / "index.html").write_text("<p>the grading page</p>")
-    client = TestClient(create_app(GradingSession.open(run_dir), static))
+    client = TestClient(create_app(GradingSession.open(run_dir, PROFILE), static))
     assert "the grading page" in client.get("/").text
     # The mount sits at / and the API must still answer through it.
     assert client.get("/api/health").json()["ok"]
@@ -241,7 +246,7 @@ def test_binding_past_loopback_is_refused_rather_than_warned(host: str) -> None:
 
 def test_the_verbatim_rule_matches_the_terminal_loop(run_dir: pathlib.Path) -> None:
     """`annotate.collect_evidence` accepts case-insensitively and accepts blank."""
-    session = GradingSession.open(run_dir)
+    session = GradingSession.open(run_dir, PROFILE)
     session.record(Decision(id="live-in", label="fail", critique="c", evidence="NOT TOUCH THE"))
     session.record(Decision(id="live-out", label="fail", critique="c", evidence=""))
     assert session.counts()["annotated"] == 2
@@ -251,8 +256,8 @@ def test_two_graders_on_one_board_write_two_files_rather_than_overwriting(
     run_dir: pathlib.Path,
 ) -> None:
     """The split test's whole point: afterwards it must say who called what."""
-    kai = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
-    mel = TestClient(create_app(GradingSession.open(run_dir, grader="mel")))
+    kai = TestClient(create_app(GradingSession.open(run_dir, PROFILE, grader="kai")))
+    mel = TestClient(create_app(GradingSession.open(run_dir, PROFILE, grader="mel")))
 
     kai.post("/api/annotations", json={"id": "live-in", "label": "pass"})
     mel.post(
@@ -267,18 +272,18 @@ def test_two_graders_on_one_board_write_two_files_rather_than_overwriting(
 
 def test_an_unnamed_grader_keeps_the_original_filename(run_dir: pathlib.Path) -> None:
     """Every board already graded stays readable, so the default cannot move."""
-    session = GradingSession.open(run_dir)
+    session = GradingSession.open(run_dir, PROFILE)
     assert session.annotations_path == run_dir / "annotations.yaml"
     assert session.payload()["grader"] is None
 
 
 def test_a_second_session_reads_back_only_its_own_graders_work(run_dir: pathlib.Path) -> None:
-    first = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
+    first = TestClient(create_app(GradingSession.open(run_dir, PROFILE, grader="kai")))
     first.post("/api/annotations", json={"id": "live-in", "label": "pass"})
 
-    reopened = GradingSession.open(run_dir, grader="kai")
+    reopened = GradingSession.open(run_dir, PROFILE, grader="kai")
     assert reopened.counts() == {"cases": 2, "annotated": 1, "scored": 1, "non_scored": 0}
-    assert GradingSession.open(run_dir, grader="mel").counts()["annotated"] == 0
+    assert GradingSession.open(run_dir, PROFILE, grader="mel").counts()["annotated"] == 0
 
 
 @pytest.mark.parametrize("name", ["../escape", "kai/mel", "Kai", "kai.mel", ""])
@@ -286,14 +291,14 @@ def test_a_grader_name_that_would_not_survive_a_filename_is_refused(
     run_dir: pathlib.Path, name: str
 ) -> None:
     with pytest.raises(GraderNameRejectedError):
-        GradingSession.open(run_dir, grader=name)
+        GradingSession.open(run_dir, PROFILE, grader=name)
 
 
 def test_the_grader_is_written_into_the_file_rather_than_only_its_name(
     run_dir: pathlib.Path,
 ) -> None:
     """A rename or an export changes a filename first, so identity cannot live there."""
-    client = TestClient(create_app(GradingSession.open(run_dir, grader="kai")))
+    client = TestClient(create_app(GradingSession.open(run_dir, PROFILE, grader="kai")))
     client.post("/api/annotations", json={"id": "live-in", "label": "pass"})
 
     written = run_dir / "annotations.kai.yaml"
@@ -306,7 +311,7 @@ def test_the_grader_is_written_into_the_file_rather_than_only_its_name(
 
 
 def test_a_solo_file_carries_no_grader_key_at_all(run_dir: pathlib.Path) -> None:
-    client = TestClient(create_app(GradingSession.open(run_dir)))
+    client = TestClient(create_app(GradingSession.open(run_dir, PROFILE)))
     client.post("/api/annotations", json={"id": "live-in", "label": "pass"})
     assert read_grader(run_dir / "annotations.yaml") is None
 
@@ -317,7 +322,7 @@ def queued_dataset() -> list[DatasetEntry]:
             challenge=Challenge(
                 id=f"{entity}-per-{trait}",
                 entity=entity,
-                test_type="personality",
+                test_type="degree",
                 prompt="p",
                 target="t",
                 attribute=trait,
@@ -329,13 +334,13 @@ def queued_dataset() -> list[DatasetEntry]:
 
 
 def write_queue(run_dir: pathlib.Path, *cases: str) -> None:
-    rows = "\n".join(f"{i + 1},{case},x,personality,,0.5" for i, case in enumerate(cases))
+    rows = "\n".join(f"{i + 1},{case},x,degree,,0.5" for i, case in enumerate(cases))
     (run_dir / "annotation-queue.csv").write_text(
         f"rank,case,entity,test_type,pair_id,divergence\n{rows}\n"
     )
 
 
-# Entity-major with no roster falls back to sorted entity names, so the queue is
+# Entity-major with no projection falls back to sorted entity names, so the queue is
 # written reversed: an order that matched it could not tell the two apart.
 ENTITY_MAJOR = ["science-per-empirical", "sysadmin-per-protective"]
 QUEUED = list(reversed(ENTITY_MAJOR))
@@ -344,27 +349,29 @@ QUEUED = list(reversed(ENTITY_MAJOR))
 def test_the_queue_beside_the_run_outranks_entity_major(tmp_path: pathlib.Path) -> None:
     save_dataset(tmp_path / "dataset.yaml", queued_dataset())
     write_queue(tmp_path, *QUEUED)
-    session = GradingSession.open(tmp_path)
+    session = GradingSession.open(tmp_path, PROFILE)
     assert [entry.id for entry in session.entries] == QUEUED
 
 
 def test_no_queue_keeps_the_entity_major_order(tmp_path: pathlib.Path) -> None:
     save_dataset(tmp_path / "dataset.yaml", queued_dataset())
     write_queue(tmp_path, *QUEUED)
-    session = GradingSession.open(tmp_path, use_queue=False)
+    session = GradingSession.open(tmp_path, PROFILE, use_queue=False)
     assert [entry.id for entry in session.entries] == ENTITY_MAJOR
 
 
 def test_a_run_with_no_queue_is_the_ordinary_case(tmp_path: pathlib.Path) -> None:
     save_dataset(tmp_path / "dataset.yaml", queued_dataset())
-    session = GradingSession.open(tmp_path)
+    session = GradingSession.open(tmp_path, PROFILE)
     assert len(session.entries) == 2
 
 
 def test_the_served_payload_follows_the_queue(tmp_path: pathlib.Path) -> None:
     save_dataset(tmp_path / "dataset.yaml", queued_dataset())
     write_queue(tmp_path, *QUEUED)
-    payload = TestClient(create_app(GradingSession.open(tmp_path))).get("/api/session").json()
+    payload = (
+        TestClient(create_app(GradingSession.open(tmp_path, PROFILE))).get("/api/session").json()
+    )
     assert [case["id"] for case in payload["cases"]] == QUEUED
 
 
@@ -374,7 +381,7 @@ def test_the_shipped_page_is_mounted_by_default(run_dir: pathlib.Path) -> None:
     That reads as a working server right up until someone opens it, which is how
     a page that could already grade got recorded as a viewer.
     """
-    app = serve.create_app(serve.GradingSession.open(run_dir), static=seal.PAGE.parent)
+    app = serve.create_app(serve.GradingSession.open(run_dir, PROFILE), static=seal.PAGE.parent)
     with TestClient(app) as client:
         root = client.get("/")
     assert root.status_code == 200

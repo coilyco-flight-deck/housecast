@@ -17,8 +17,6 @@ from housecast.grade.schema import Challenge, DatasetEntry, Half
 
 # Wire format, not a package name. Committed evidence carries it.
 ATTRIBUTES_SCHEMA = "aos-eval.attributes.v1"
-# The paired kind is the common one, so it is the default a caller may override.
-DEFAULT_TEST_TYPE = "boundary"
 
 
 @dataclass(frozen=True)
@@ -53,10 +51,7 @@ class CoverageReport:
         return (
             [f"missing derived challenge: {c}" for c in self.missing]
             + [f"pair has one half only: {pair}" for pair in self.unpaired]
-            + [
-                f"boundary case not derived from any declaration: {case}"
-                for case in self.undeclared
-            ]
+            + [f"paired case not derived from any declaration: {case}" for case in self.undeclared]
         )
 
 
@@ -92,23 +87,21 @@ def load_declaration(raw: dict[str, Any]) -> list[Attribute]:
     return attributes
 
 
-def derive_challenges(
-    attributes: list[Attribute], test_type: str = DEFAULT_TEST_TYPE
-) -> list[Challenge]:
+def derive_challenges(attributes: list[Attribute], test_type: str) -> list[Challenge]:
     """The unwritten challenges a declaration implies. A human writes the prompt."""
     derived: list[Challenge] = []
-    for boundary in attributes:
-        for half, target in ((Half.IN, boundary.inside), (Half.OUT, boundary.outside)):
+    for declared in attributes:
+        for half, target in ((Half.IN, declared.inside), (Half.OUT, declared.outside)):
             derived.append(
                 Challenge(
-                    id=f"{boundary.id}-{half.value}",
-                    entity=boundary.entity,
+                    id=f"{declared.id}-{half.value}",
+                    entity=declared.entity,
                     test_type=test_type,
-                    attribute=boundary.id,
+                    attribute=declared.id,
                     half=half,
-                    pair_id=boundary.id,
+                    pair_id=declared.id,
                     target=target,
-                    seed=boundary.seed,
+                    seed=declared.seed,
                 )
             )
     return derived

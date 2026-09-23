@@ -1,10 +1,6 @@
 """The housecast CLI: grade a board.
 
-    python -m housecast grade annotate --dataset D --out O
-
-Projecting the roster and composing a role's bundle are both agent-compose's
-job now - `agent-compose catalog snapshot --out FILE` and `agent-compose
-compose request.kdl --out DIR` - see housecast#8041.
+python -m housecast grade annotate --dataset D --out O
 """
 
 from __future__ import annotations

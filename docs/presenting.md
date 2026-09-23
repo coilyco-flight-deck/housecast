@@ -1,7 +1,7 @@
 # Presenting
 
 `housecast grade present` serves a built deck to a room, taking anonymous votes.
-## Two servers, because a flag is not a boundary
+## Two servers, because a flag is not a wall
 
 `serve` is the grader's and `present` is the room's, as separate processes, so
 the only thing dividing a private critique from an audience is which one runs.

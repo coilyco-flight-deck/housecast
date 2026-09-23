@@ -21,7 +21,6 @@ from housecast.grade.io import save_annotations
 from housecast.grade.pin import charter_parts
 from housecast.grade.schema import (
     DEDUCTIONS,
-    DEFAULT_PROFILE,
     LABEL_SETS,
     Annotation,
     DatasetEntry,
@@ -60,18 +59,18 @@ def style_for(profile: Profile, test_type: str) -> str:
     return TYPE_STYLES[profile.rank(test_type) % len(TYPE_STYLES)]
 
 
-def entity_header(console: Console, roster: dict[str, Any], entity: str) -> None:
+def entity_header(console: Console, projection: dict[str, Any], entity: str) -> None:
     """Printed once per entity, so the charter is loaded rather than implied.
 
-    The roster is a projection the deployment composes, because owns, defers,
-    and traits are its words. This layer renders lines rather than reading a
+    The projection is the deployment's own entity description, because its
+    field names are the deployment's words. This layer renders lines rather than reading a
     shape it would then have to know. See docs/grading.md.
 
     The lines come from `pin.charter_lines` so the digest covers what a grader
     is actually shown. A pin over a projection this function does not use would
     be a pin over nothing.
     """
-    display, purpose, notes = charter_parts(roster, entity)
+    display, purpose, notes = charter_parts(projection, entity)
     if not display and not purpose and not notes:
         return
     lines = [f"[bold]{display}[/bold]  {purpose}", *notes]
@@ -85,13 +84,13 @@ def render(
     total: int,
     started: float,
     profile: Profile,
-    roster: dict[str, Any] | None = None,
+    projection: dict[str, Any] | None = None,
 ) -> None:
     challenge = entry.challenge
     style = style_for(profile, challenge.test_type)
     console.clear()
-    if roster:
-        entity_header(console, roster, challenge.entity)
+    if projection:
+        entity_header(console, projection, challenge.entity)
 
     header = Table.grid(padding=(0, 2))
     header.add_column(style="bold")
@@ -147,13 +146,13 @@ def annotate_session(
     dataset: list[DatasetEntry],
     annotations: dict[str, Annotation],
     out: Path,
-    profile: Profile = DEFAULT_PROFILE,
-    roster: dict[str, Any] | None = None,
+    profile: Profile,
+    projection: dict[str, Any] | None = None,
     grader: str | None = None,
 ) -> bool:
     """Returns False when the annotator quit before finishing."""
     console = Console()
-    entity_order = list(roster.get("entity_order", [])) if roster else None
+    entity_order = list(projection.get("entity_order", [])) if projection else None
     pending = [
         entry
         for entry in annotation_order(dataset, profile, entity_order)
@@ -164,7 +163,7 @@ def annotate_session(
     for index, entry in enumerate(pending, start=1):
         keys = LABEL_SETS[entry.challenge.label_set(profile)]
         while True:
-            render(console, entry, index, len(pending), started, profile, roster)
+            render(console, entry, index, len(pending), started, profile, projection)
             key = read_key().lower()
             if key == "q":
                 return False
@@ -189,7 +188,7 @@ def summarize(
 ) -> None:
     pairs = pair_results(dataset, annotations)
     if pairs:
-        table = Table(title="boundary pairs, the scoring unit")
+        table = Table(title="pairs, the scoring unit")
         for column in ("pair", "entity", "attribute", "result"):
             table.add_column(column)
         for pair in pairs:

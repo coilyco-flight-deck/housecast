@@ -2,9 +2,8 @@
 
 A board needs three things from wherever its cases come from: the profile naming
 the test types, the entities a grader reads a charter for, and the challenges
-themselves. The role roster answers all three and is the only provider that
-exists today, which is why the interface is written now. Waiting for the second
-one means deriving the shape from two examples that already disagree.
+themselves. One provider exists today, which is why the interface is written
+now. Waiting for the second one means deriving the shape from two examples that already disagree.
 
 The core declares the protocol and implements none of it. A provider imports
 this module; this module imports no provider, which `test_import_graph.py`

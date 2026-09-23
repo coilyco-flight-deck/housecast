@@ -11,6 +11,7 @@ import pathlib
 import pytest
 
 from housecast.__main__ import main
+from housecast.grade.tests.fixtures import write_profile
 
 
 def test_a_missing_required_option_is_a_message_rather_than_a_traceback(
@@ -22,15 +23,26 @@ def test_a_missing_required_option_is_a_message_rather_than_a_traceback(
     assert "Missing option '--dataset'" in capsys.readouterr().err
 
 
-def test_the_roster_guard_reaches_the_terminal_as_one_line(
+def test_the_projection_guard_reaches_the_terminal_as_one_line(
     tmp_path: pathlib.Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    person = tmp_path / "person.json"
-    person.write_text('{"role_order": [], "roles": {}}')
+    person = tmp_path / "source.json"
+    person.write_text('{"items": []}')
     dataset = tmp_path / "dataset.yaml"
     dataset.write_text("entries: []\n")
 
-    code = main(["grade", "pin", "--dataset", str(dataset), "--roster", str(person)])
+    code = main(
+        [
+            "grade",
+            "pin",
+            "--dataset",
+            str(dataset),
+            "--entities",
+            str(person),
+            "--profile",
+            write_profile(tmp_path),
+        ]
+    )
 
     captured = capsys.readouterr().err
     assert code != 0

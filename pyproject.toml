@@ -1,7 +1,7 @@
 [project]
 name = "housecast"
 dynamic = ["version"]
-description = "Shared eval grading for agent-compose and sirens-echo."
+description = "Human-graded behavior evaluations: the grader, for any consumer."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
@@ -118,8 +118,8 @@ org = "coilyco-flight-deck"
 [tool.agentic-os.code-comments]
 excludes = [".pre-commit-config.yaml", "evaluations/**"]
 
-# Committed eval evidence is a frozen record. Its doc pointers name
-# agent-compose's evaluation documentation, which did not move in #337.
+# Committed eval evidence is a frozen record. Its doc pointers name another
+# repo's documentation, which it predates.
 [tool.agentic-os.source-doc-refs]
 excludes = ["evaluations/**"]
 

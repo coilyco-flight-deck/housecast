@@ -1,4 +1,4 @@
-"""YAML on the boundary. Every committed record enters and leaves here."""
+"""YAML at the edge. Every committed record enters and leaves here."""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ from typing import Any
 import yaml
 
 from housecast.grade.schema import (
-    DEFAULT_PROFILE,
     Annotation,
     DatasetEntry,
     Profile,
@@ -110,7 +109,7 @@ def load_annotations(path: Path) -> dict[str, Annotation]:
 
 
 class GraderNotPermittedError(ValueError):
-    """A name that is not on the board's roster of graders."""
+    """A name that is not on the board's list of graders."""
 
 
 def require_permitted_grader(profile: Profile | None, grader: str | None, path: Path) -> None:
@@ -125,7 +124,7 @@ def require_permitted_grader(profile: Profile | None, grader: str | None, path: 
     named = ", ".join(profile.graders)
     raise GraderNotPermittedError(
         f"{grader!r} may not grade {profile.name}: {path} would carry labels from a name "
-        f"that is not on its roster ({named}). The scorer is a human."
+        f"that is not on its list of graders ({named}). The scorer is a human."
     )
 
 
@@ -144,7 +143,7 @@ def save_annotations(
     `grader` is written into the file rather than left to the filename, so two
     testers stay attributable through a copy, a rename, or an export.
 
-    Pass `profile` to have the roster enforced here. Omitted, it is not, because
+    Pass `profile` to have the grader list enforced here. Omitted, it is not, because
     a caller holding no profile is not thereby claiming everyone may grade.
     `evalkit.coverage` enforces at the counting end regardless.
     """
@@ -158,8 +157,6 @@ def save_annotations(
     scratch.replace(path)
 
 
-def load_profile(path: Path | None) -> Profile:
-    """A deployment's own taxonomy, or agent-compose's when none is named."""
-    if path is None:
-        return DEFAULT_PROFILE
+def load_profile(path: Path) -> Profile:
+    """The deployment's own taxonomy. housecast ships none, so every board names one."""
     return Profile.from_dict(read_yaml(path))

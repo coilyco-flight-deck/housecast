@@ -1,6 +1,9 @@
 import pathlib
 from typing import Any
 
+from click.testing import CliRunner
+
+from housecast.grade.cli import main
 from housecast.grade.dataset import build, validate
 from housecast.grade.io import (
     load_annotations,
@@ -10,7 +13,6 @@ from housecast.grade.io import (
     save_dataset,
 )
 from housecast.grade.schema import (
-    DEFAULT_PROFILE,
     Annotation,
     Challenge,
     DatasetEntry,
@@ -18,9 +20,10 @@ from housecast.grade.schema import (
     Response,
     Verdict,
 )
+from housecast.grade.tests.fixtures import PROFILE
 
 
-def challenge(challenge_id: str, test_type: str = "personality", **fields: Any) -> Challenge:
+def challenge(challenge_id: str, test_type: str = "degree", **fields: Any) -> Challenge:
     return Challenge(
         id=challenge_id, entity="qa", test_type=test_type, prompt="p", target="t", **fields
     )
@@ -47,8 +50,13 @@ def test_a_missing_annotations_file_reads_as_nothing_graded(tmp_path: pathlib.Pa
     assert load_annotations(tmp_path / "absent.yaml") == {}
 
 
-def test_no_profile_named_means_the_agent_compose_profile() -> None:
-    assert load_profile(None) is DEFAULT_PROFILE
+def test_a_command_given_no_profile_refuses(tmp_path: pathlib.Path) -> None:
+    """housecast ships no taxonomy, so a missing --profile is a refusal, not a fallback."""
+    path = tmp_path / "dataset.yaml"
+    save_dataset(path, [DatasetEntry(challenge=challenge("a", attribute="c"), output="o")])
+    result = CliRunner().invoke(main, ["validate", "--dataset", str(path)])
+    assert result.exit_code != 0
+    assert "--profile" in result.output
 
 
 def test_a_declared_profile_is_read_from_yaml(tmp_path: pathlib.Path) -> None:
@@ -89,7 +97,7 @@ def test_the_named_epoch_is_the_one_annotated() -> None:
 
 def test_validate_reports_every_shape_problem_at_once() -> None:
     problems = validate(
-        [challenge("a", test_type="role-fit"), challenge("b", test_type="boundary")]
+        [challenge("a", test_type="check"), challenge("b", test_type="paired")], PROFILE
     )
     assert len(problems) == 4
 
@@ -97,7 +105,7 @@ def test_validate_reports_every_shape_problem_at_once() -> None:
 def test_an_empty_response_is_reported_rather_than_read_as_a_fail() -> None:
     """A blank card is not the seat failing, so a grader has to be told which one it is."""
     challenge = Challenge(
-        id="solo", entity="e", test_type="role-fit", prompt="p", target="t", attribute="a"
+        id="solo", entity="e", test_type="check", prompt="p", target="t", attribute="a"
     )
     report = build([challenge], [Response(challenge_id="solo", epoch=1, text="")])
     assert report.blank == ["solo"]
@@ -108,7 +116,7 @@ def test_an_empty_response_is_reported_rather_than_read_as_a_fail() -> None:
 
 def test_a_run_with_text_is_not_reported_blank() -> None:
     challenge = Challenge(
-        id="solo", entity="e", test_type="role-fit", prompt="p", target="t", attribute="a"
+        id="solo", entity="e", test_type="check", prompt="p", target="t", attribute="a"
     )
     report = build([challenge], [Response(challenge_id="solo", epoch=1, text="an answer")])
     assert not report.blank
