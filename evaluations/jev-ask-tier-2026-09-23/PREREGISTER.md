@@ -40,6 +40,7 @@ have allowed this call.
 * This needs the deciding rule for each row. That is a requirement on `#8024`,
   handed to platform on the record. Without it I derive `r` by re-running the
   engine once per removed rule. That runner is mine.
+  Superseded for the reject class by the label provenance amendment below.
 
 ## Setup, frozen
 * Jev `jev-1.13.0`, pinned, through Agent Proxy's `/v1/systemone` shim. What
@@ -83,6 +84,7 @@ pass, is outside tolerance.
   from the same corpus generator, label unchanged. If agreement on committed
   decisions drops by less than 15 points, Jev is judging argv by how dangerous it
   looks and not by reading the policy. Reported beside the verdict, not a gate.
+  Superseded, not run. Replaced by the policy-reading control amendment below.
 * Two-pass spread. A delta between passes is reported, and any per-item `p` moving
   more than 0.05 is counted.
 
