@@ -20,16 +20,13 @@ classifiers = [
 dependencies = ["pyyaml>=6.0"]
 
 [project.optional-dependencies]
-# The grading half is housecast.grade and the runner is evalkit. Both ride this
-# extra, so a consumer composing a bundle installs neither.
+# The grading half is housecast.grade. It rides this extra, so the engine stays
+# installable without it.
 eval = [
     "click>=8.1",
     "pydantic>=2.9",
     "rich>=13",
-    "inspect-ai>=0.3.255",
-    "openai>=2.53.0",
-    # `housecast grade serve`. Both were already in the resolution as transitive
-    # deps of inspect-ai, so naming them directly costs nothing new to install.
+    # `housecast grade serve`.
     "fastapi>=0.115",
     "uvicorn>=0.30",
 ]
@@ -68,8 +65,8 @@ path = "housecast/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 # py.typed ships so a consumer under mypy strict gets the types rather than an
-# import-untyped error. Both packages are strict-clean here.
-packages = ["housecast", "evalkit"]
+# import-untyped error. The package is strict-clean here.
+packages = ["housecast"]
 
 # The wheel was scoped and the sdist was not, so the sdist took everything
 # tracked: 239 files and 3.2 MB, of which `evaluations/` alone was 101 files and
@@ -85,11 +82,7 @@ packages = ["housecast", "evalkit"]
 # keep out.
 include = [
     "/housecast",
-    "/evalkit",
     "/docs",
-    # evalkit resolves it from the repository root, and one coverage test reads
-    # the real file rather than a fixture.
-    "/challenges.yaml",
     "/README.md",
     "/LICENSE",
     "/LICENSE-FONTS",
@@ -105,22 +98,7 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["housecast", "evalkit"]
-
-# The board coverage gate. Reporting rather than blocking on purpose: the
-# grader is a human, so blocking puts every roster edit behind an annotation
-# session. `agent-compose#329` decision 8 expects this to flip later.
-[tool.evalkit.coverage]
-blocking = false
-# Run against a roster that no longer exists, so their cases orphan permanently
-# rather than pending. The two ops boards were graded under the nine-seat
-# roster. board-2026-08-26 is ungraded and superseded by board-2026-09-01,
-# which covers all 105 cases rather than 91 (housecast#18).
-retired_runs = [
-    "evaluations/pilot/ops-board-2026-08-12",
-    "evaluations/pilot/ops-board-2026-08-12-regraded",
-    "evaluations/reflow-v3/board-2026-08-26",
-]
+files = ["housecast"]
 
 [tool.pytest.ini_options]
 testpaths = [
@@ -128,7 +106,6 @@ testpaths = [
     "housecast/grade/tests",
     "housecast/mcp/tests",
     "housecast/mcpeval/tests",
-    "evalkit/tests",
 ]
 
 [tool.agentic-os.repo-pointer-skills]

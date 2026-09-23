@@ -30,8 +30,8 @@ The header restates both halves and then names what they say together.
 * `in fail // out fail` - misses both ways
 
 That is a restatement and never a new rule, and the halves stay on screen beside
-it so it is checkable against its own data. Role-fit and personality cases carry
-no pair and render as single cards.
+it so it is checkable against its own data. A case that carries
+no pair renders as a single card.
 
 ## See also
 

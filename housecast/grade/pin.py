@@ -14,7 +14,7 @@ composed, and every grading surface checks it before showing a case.
 
 Digests are per case and per entity rather than one roll-up, because a single
 whole-run digest says a pass is invalid without saying what moved. Same reason
-`evaluations/reflow-v3/board-2026-09-01/README.md` gives for attesting a board
+agent-compose's `evaluations/reflow-v3/board-2026-09-01/README.md` gives for attesting a board
 per role rather than per bundle.
 """
 

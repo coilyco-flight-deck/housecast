@@ -128,7 +128,7 @@ class Profile:
 
         An agent that authored a board's prompts and targets can produce labels
         against them that look exactly like grades, and on 2026-09-15 one did:
-        `evaluations/autonomy-2026-09-15` carried `annotations.evie.yaml` until
+        agent-compose's `evaluations/autonomy-2026-09-15` carried `annotations.evie.yaml` until
         Kai deleted it. Nothing refused it, because the roster of who may grade
         was not written down anywhere a check could read.
 

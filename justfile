@@ -21,15 +21,15 @@ test *ARGS:
 
 # Format Python sources.
 format *ARGS:
-    @uv run --all-extras ruff format housecast evalkit "$@"
+    @uv run --all-extras ruff format housecast "$@"
 
 # Check Python formatting without rewriting.
 format-check *ARGS:
-    @uv run --all-extras ruff format --check housecast evalkit "$@"
+    @uv run --all-extras ruff format --check housecast "$@"
 
 # Run the Python linter.
 lint *ARGS:
-    @uv run --all-extras ruff check housecast evalkit "$@"
+    @uv run --all-extras ruff check housecast "$@"
 
 # Run the Python type checker.
 typecheck *ARGS:
@@ -77,29 +77,9 @@ publish *ARGS:
 publish-test *ARGS:
     @uv publish --trusted-publishing never --publish-url https://test.pypi.org/legacy/ --check-url https://test.pypi.org/simple/housecast/ "$@"
 
-# Compose one compiled bundle per role as the eval system prompts.
-evalkit-prompts *ARGS:
-    @sh scripts/eval-prompts.sh "$@"
-
-# One live request through Agent Proxy, before a full board run.
-evalkit-smoke *ARGS:
-    @sh scripts/eval-smoke.sh "$@"
-
-# Run the board through Inspect against Agent Proxy.
-evalkit-run *ARGS:
-    @sh scripts/eval-run.sh "$@"
-
-# Open the Inspect log viewer.
-evalkit-view *ARGS:
-    @uv run --extra eval inspect view --log-dir .evalkit/logs "$@"
-
 # Project a committed run into a display payload, one way only.
-evalkit-export *ARGS:
+grade-export *ARGS:
     @uv run --extra eval housecast grade export "$@"
-
-# Read an Inspect eval log and build the dataset the annotator grades.
-evalkit-filter *ARGS:
-    @uv run --extra eval python -m evalkit.filter "$@"
 
 # Serve the MCP subject under evaluation, over HTTP MCP.
 mcpeval-subject *ARGS:
@@ -125,33 +105,13 @@ mcpeval-serve *ARGS:
 mcpeval-demo *ARGS:
     @uv run --with playwright python scripts/record_mcpeval_demo.py "$@"
 
-# Ask whether response dispersion predicted the grade. `just evalkit-validity RUN/annotations.kai.yaml`.
-evalkit-validity ANNOTATIONS:
-    @uv run --extra eval python evaluations/split-candidates-2026-09-08/validity.py "{{ANNOTATIONS}}"
-
 # Cluster annotation critiques into a ranked failure taxonomy.
-evalkit-taxonomy *ARGS:
+grade-taxonomy *ARGS:
     @uv run --extra eval housecast grade taxonomy "$@"
-
-# Annotate the eval dataset by hand, one keystroke per challenge.
-evalkit-annotate *ARGS:
-    @sh scripts/eval-annotate.sh "$@"
-
-# Emit this board's profile as YAML, for a grading surface that takes --profile.
-evalkit-profile *ARGS:
-    @uv run --extra eval python -m evalkit.profile "$@"
-
-# Project the roster as entities.json, the --roster a grading surface takes.
-evalkit-entities *ARGS:
-    @sh scripts/eval-entities.sh "$@"
 
 # Pin or check the five grade inputs. `just grade-pin --dataset D --roster R`.
 grade-pin *ARGS:
     @uv run --extra eval housecast grade pin "$@"
-
-# Grade one committed run in a browser. `just grade-serve evaluations/pilot/RUN`.
-grade-serve *ARGS:
-    @sh scripts/eval-serve.sh "$@"
 
 # How often two graders split a case. `just grade-disagreement --dataset D --annotations A --annotations B --tester a --tester b`.
 grade-disagreement *ARGS:
@@ -168,7 +128,3 @@ grade-seal *ARGS:
 # Serve a built deck to a room, with anonymous voting. `just grade-present DECK`.
 grade-present *ARGS:
     @uv run --extra eval housecast grade present "$@"
-
-# Grade a JSONL of {half, response} on stdin with the autonomy grader.
-evalkit-autonomy *ARGS:
-    @uv run --extra eval python -m evalkit.autonomy "$@"

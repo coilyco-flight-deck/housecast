@@ -4,10 +4,6 @@ Coarse inventory of the major capabilities housecast ships.
 
 ## Shipped
 
-* **Attribute acts, and the overlay extending them.** Every role, personality and boundary side names
-  three runnable things; a private overlay appends estate-only acts. See [`overlay.md`](overlay.md).
-* **evalkit, the board runner.** Derives the board across seven test types, runs it through Inspect,
-  and reports the coverage gap. [`evaluation.md`](evaluation.md), [`grading-grounding.md`](grading-grounding.md).
 * **The grading half.** `housecast grade` under the `eval` extra: schema, pairing, annotation,
   taxonomy, export, `grade serve`, and `grade pin`. See [`grading.md`](grading.md).
 * **The grading page.** One card per boundary pair, both halves side by side, evidence highlighted.
