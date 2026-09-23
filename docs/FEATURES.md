@@ -16,7 +16,7 @@ Coarse inventory of the major capabilities housecast ships.
 * **The MCP tool-description loop.** `housecast mcpeval`, under `eval` and `mcp`: an HTTP MCP subject
   with flawed prose, a runner making real model calls and routing the returned calls back to it,
   deterministic grading, a concurrent run, a paired sign test, and the visual flow driving it.
-  Record: `evaluations/mcp-tool-loop-2026-09-16/`.
+  Record: agentic-os-kai `evaluations/mcp-tool-loop-2026-09-16/`.
 * **The PyPI release train.** A pushed `housecast-v*` tag gates, builds and uploads. [`publishing.md`](publishing.md).
 
 ## Not shipped

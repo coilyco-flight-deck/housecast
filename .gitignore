@@ -13,6 +13,6 @@ build/
 # Eval run cache: composed prompts, Inspect logs, datasets, annotations.
 .evalkit/
 
-# One-off experiment scratch, promoted into evaluations/ when it produces a record.
+# One-off experiment scratch, promoted into its consumer's repo once it produces a record.
 .exp/
 .mcpeval/

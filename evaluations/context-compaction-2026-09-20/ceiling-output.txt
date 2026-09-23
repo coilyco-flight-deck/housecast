@@ -1,5 +1,0 @@
-trials=100 calls=498 candidate_calls=204 pin=6
-prompt_tokens=597220 completion_tokens=83110 ratio=7.2
-result_chars=52600 mean_per_call=106
-EST result share of prompt=4.4%
-EST candidate-only share (ceiling)=2.3%

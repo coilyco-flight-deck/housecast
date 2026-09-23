@@ -67,8 +67,7 @@ shorter path.
 ## Layout
 
 * `housecast/` - the package: `digest.py`, `grade/`, `mcpeval/`, `mcp/`.
-* `evaluations/` - run evidence waiting to move to the repo that consumes it.
-  New evaluations live in their consumer's repo.
+* Evaluations live in the repo that consumes their result, never here.
 * `scripts/` - release, kit sync, and the MCP demo recorder.
 
 ## License
