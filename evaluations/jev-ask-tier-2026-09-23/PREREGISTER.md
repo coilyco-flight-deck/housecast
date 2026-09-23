@@ -130,3 +130,38 @@ No tolerance, threshold or floor moves.
 * A call whose observed decision contradicts its declared rule, such as a `never`
   under a granted parent that the engine allows (#8120), is dropped, counted, and
   reported as an engine defect. It is never used as a label.
+
+## Amendment, 2026-09-23, policy-reading control, before any corpus or tally
+The shuffled-guardfile control above is replaced. It had two defects, and the
+director seat named the second on the record.
+* The label is undefined under another guardfile. Jev never sees the deciding rule
+  `r`, so a second guardfile has no author decision for the call, and "label
+  unchanged" scored Jev against a label that guardfile never set.
+* The 15-point threshold rested on nothing. How far agreement drops also depends on
+  how similar the two guardfiles are, so a number drawn from it mixes the
+  guardfile's shape with Jev's behaviour.
+
+Replacement, the polarity flip. Everything Jev can see is the other rules in the
+same wrap as `r` (its siblings). The control inverts them and nothing else.
+* `B` is the guardfile with `r` removed and every sibling of `r` in its wrap
+  swapped between allow (`can`) and deny (`never` or `withhold`). Other wraps are
+  untouched. `B` has to parse under umbra. If a wrap cannot be inverted cleanly,
+  its items are dropped and counted.
+* `s` is the number of allow siblings minus the number of deny siblings in the
+  guardfile Jev sees in the main arm. A Jev that reads the policy moves `p` toward
+  allow as the siblings get more permissive, so it predicts
+  `sign(p_main - p_B) = sign(s)`. A Jev that ignores the policy predicts no
+  consistent direction.
+* Noise floor: the 95th percentile of per-item `|p|` change between the two main
+  passes.
+* Result: among items with `s != 0` whose `|p_main - p_B|` is above the noise floor,
+  the fraction moving in the predicted direction, with a Wilson 95% interval. If
+  the lower bound is above 0.5, Jev reads the policy. If the interval contains
+  0.5, the control is not informative. If the upper bound is below 0.5, Jev
+  inverts the policy. The fraction of items above the noise floor is reported
+  beside it.
+* Fewer than 50 qualifying items means the control is reported as not informative.
+  It stays reported and does not gate.
+
+I build `B` from the fixed guardfile with my own runner. The second guardfile I
+asked `#8024` for is withdrawn.
