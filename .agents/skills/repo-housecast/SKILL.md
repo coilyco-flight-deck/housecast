@@ -5,7 +5,7 @@ description: 'Human-graded behavior evaluations: the grader, for any consumer. T
 
 # repo-housecast
 
-Repository `coilyco-flight-deck/housecast`. Checkout at `~/projects/coilyco-flight-deck/housecast/` when resident.
+Repository `coilyco/housecast`. Checkout at `~/projects/coilyco/housecast/` when resident.
 
 - [`README.md`](../../../README.md) - what it is, quickstart, layout.
 - [`AGENTS.md`](../../../AGENTS.md) - agent-facing context for the repo.
