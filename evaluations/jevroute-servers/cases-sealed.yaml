@@ -1,0 +1,28 @@
+# Server-first sealed split. Totals only, never by question or class. Science seat
+# labels, written before any run.
+cases:
+  - {q: "who sells copper wire in eco", server: [public_coilyco_eco], tool: [find_trade]}
+  - {q: "how many players are on the eco server", server: [public_coilyco_eco], tool: [get_server_status]}
+  - {q: "restart status of the enshrouded process", server: [tailnet_coilyco_enshrouded], tool: [get_process, get_status]}
+  - {q: "open a PR from my branch into main on housecast", server: [tailnet_coilyco_forgejo], tool: [create_pull-request]}
+  - {q: "what files changed in PR 165", server: [tailnet_coilyco_forgejo], tool: [get_pull-request-file]}
+  - {q: "list the tables in the issue tracker", server: [tailnet_coilyco_teable], tool: [list_base-table, list_base]}
+  - {q: "add a checklist to my packing card", server: [tailnet_coilyco_trello], tool: [create_card-checklist]}
+  - {q: "split the costco charge between groceries and household", server: [tailnet_coilyco_lunch_money], tool: [split_transaction]}
+  - {q: "is ser8 under memory pressure", server: [tailnet_coilyco_node_stats_ser8], tool: [get_memory_info, get_node_pressure_stalls]}
+  - {q: "what's using the most bandwidth on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_network_info, get_k3s_network, get_socket_states]}
+  - {q: "error rate for the sirens-echo service this week", server: [tailnet_coilyco_signoz], tool: [signoz_aggregate_traces, signoz_query_metrics, signoz_get_service_top_operations]}
+  - {q: "pull the last 50 messages from the eco-chat channel", server: [tailnet_coilyco_discord], tool: [list_channel-message]}
+  - {q: "search bluesky for posts about eco game", server: [tailnet_coilyco_bluesky], tool: [search_posts]}
+  - {q: "what's on sale on steam that I might like", server: [tailnet_coilyco_steam], tool: [get_store_search_results]}
+  - {q: "check the browser console for errors on the dev site", server: [local_coilyco_playwright_scientist], tool: [browser_console_messages]}
+  - {q: "free up GPU memory in comfyui", server: [local_coilyco_comfyui], tool: [free_memory]}
+  - {q: "make a 3d model of a teapot from text in blender", server: [local_coilyco_blender, local_coilyco_blender_3026], tool: [generate_hyper3d_model_via_text, generate_hunyuan3d_model]}
+  - {q: "pick the best of these four names", server: [tailnet_coilyco_jev], tool: [create_choice_decision]}
+  - {q: "find an MCP server that talks to notion", server: [tailnet_coilyco_glama], tool: [search_server]}
+  - {q: "what would sirens deep reply to this", server: [tailnet_coilyco_sirens_deep], tool: [turn]}
+  - {q: "what time is it in London", server: [no_server], tool: []}
+  - {q: "summarize this article for me", server: [no_server], tool: []}
+  - {q: "order a pizza", server: [no_server], tool: []}
+  - {q: "who won the world cup in 2018", server: [no_server], tool: []}
+  - {q: "how do I center a div", server: [no_server], tool: []}

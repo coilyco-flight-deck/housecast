@@ -1,0 +1,53 @@
+# Server-first dev split. `server` and `tool` list every acceptable answer. Labels are the
+# science seat's, written before any run. no_server means no MCP server fits.
+cases:
+  - {q: "where can I buy limestone", server: [public_coilyco_eco], tool: [find_trade]}
+  - {q: "how do I craft a steel axe in eco", server: [public_coilyco_eco], tool: [get_recipes]}
+  - {q: "who is the mayor on the eco server", server: [public_coilyco_eco], tool: [get_government]}
+  - {q: "is the enshrouded server up", server: [tailnet_coilyco_enshrouded], tool: [get_status]}
+  - {q: "who's playing enshrouded right now", server: [tailnet_coilyco_enshrouded], tool: [get_players]}
+  - {q: "when was the last enshrouded backup", server: [tailnet_coilyco_enshrouded], tool: [get_backups]}
+  - {q: "open PRs on housecast", server: [tailnet_coilyco_forgejo], tool: [list_pull-request]}
+  - {q: "did CI pass on my last push to eco-app", server: [tailnet_coilyco_forgejo], tool: [get_commit-status, list_commit-status, list_action-run]}
+  - {q: "show me the README of agent-proxy", server: [tailnet_coilyco_forgejo], tool: [get_repository-content]}
+  - {q: "merge PR 162 on housecast", server: [tailnet_coilyco_forgejo], tool: [merge_pull-request]}
+  - {q: "what's the latest release of aterm", server: [tailnet_coilyco_forgejo], tool: [list_repository-release, get_repository-release]}
+  - {q: "file a tracker record for the flaky eco test", server: [tailnet_coilyco_teable], tool: [create_record]}
+  - {q: "look up tracker record 8221", server: [tailnet_coilyco_teable], tool: [get_record, list_record]}
+  - {q: "add a card to my groceries list in trello", server: [tailnet_coilyco_trello], tool: [create_card]}
+  - {q: "what cards are on my trello board", server: [tailnet_coilyco_trello], tool: [list_board-card, list_my-board]}
+  - {q: "how much did I spend on restaurants last month", server: [tailnet_coilyco_lunch_money], tool: [spending_summary, list_transactions]}
+  - {q: "what's my budget for groceries", server: [tailnet_coilyco_lunch_money], tool: [list_budgets]}
+  - {q: "categorize that Amazon charge as household", server: [tailnet_coilyco_lunch_money], tool: [categorize_transaction, update_transaction]}
+  - {q: "is kai-server running out of disk", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_disk_info, get_filesystem_pressure]}
+  - {q: "which pods are crashlooping on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_k3s_pods, get_k3s_events]}
+  - {q: "what's eating memory on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_memory_info, get_top_processes, get_k3s_container_memory]}
+  - {q: "show error logs for agent-proxy in the last hour", server: [tailnet_coilyco_signoz], tool: [signoz_search_logs, signoz_aggregate_logs]}
+  - {q: "are any alerts firing", server: [tailnet_coilyco_signoz], tool: [signoz_list_alerts]}
+  - {q: "slowest endpoints on the eco-app service", server: [tailnet_coilyco_signoz], tool: [signoz_get_service_top_operations, signoz_aggregate_traces]}
+  - {q: "what did people say in the eco-chat channel today", server: [tailnet_coilyco_discord], tool: [list_channel-message, search_guild-message]}
+  - {q: "search discord for messages about the wipe", server: [tailnet_coilyco_discord], tool: [search_guild-message]}
+  - {q: "what's on my bluesky timeline", server: [tailnet_coilyco_bluesky], tool: [get_home_timeline]}
+  - {q: "who followed me on bluesky recently", server: [tailnet_coilyco_bluesky], tool: [list_followers, list_notifications]}
+  - {q: "what games have I played recently on steam", server: [tailnet_coilyco_steam], tool: [get_recently_played]}
+  - {q: "how much is Factorio on steam", server: [tailnet_coilyco_steam], tool: [get_store_app_details, get_store_search_results]}
+  - {q: "take a screenshot of localhost:3000", server: [local_coilyco_playwright_scientist], tool: [browser_navigate, browser_take_screenshot]}
+  - {q: "fill in the signup form on the staging site", server: [local_coilyco_playwright_scientist], tool: [browser_fill_form, browser_navigate]}
+  - {q: "generate an image of a frog in a lab coat", server: [local_coilyco_comfyui], tool: [generate_image, run_template]}
+  - {q: "is comfyui running", server: [local_coilyco_comfyui], tool: [server_info, system_stats]}
+  - {q: "what objects are in my blender scene", server: [local_coilyco_blender, local_coilyco_blender_3026], tool: [get_scene_info]}
+  - {q: "download a wood texture from polyhaven into blender", server: [local_coilyco_blender, local_coilyco_blender_3026], tool: [search_polyhaven_assets, download_polyhaven_asset]}
+  - {q: "render a viewport screenshot from blender on the tower", server: [local_coilyco_blender_3026], tool: [get_viewport_screenshot]}
+  - {q: "should we ship this now, yes or no", server: [tailnet_coilyco_jev], tool: [create_noul_decision, create_choice_decision]}
+  - {q: "rank these three options for me", server: [tailnet_coilyco_jev], tool: [create_choice_decision, create_score_decision]}
+  - {q: "get a second opinion from deepseek on this plan", server: [tailnet_coilyco_chat], tool: [create_chat_completion]}
+  - {q: "find an MCP server for postgres", server: [tailnet_coilyco_glama], tool: [search_server]}
+  - {q: "is there a published skill for writing changelogs", server: [tailnet_coilyco_skillsmp], tool: [search_skills]}
+  - {q: "ask sirens echo what it would say to a new member", server: [tailnet_coilyco_sirens_echo], tool: [turn]}
+  - {q: "what's the weather in Seattle", server: [no_server], tool: []}
+  - {q: "write me a haiku about frogs", server: [no_server], tool: []}
+  - {q: "what's 17 times 23", server: [no_server], tool: []}
+  - {q: "book me a flight to Tokyo", server: [no_server], tool: []}
+  - {q: "send an email to my landlord", server: [no_server], tool: []}
+  - {q: "how many blocks need to be between trees in eco", server: [no_server], tool: []}
+  - {q: "explain what a kubernetes operator is", server: [no_server], tool: []}

@@ -1,0 +1,18 @@
+# Front question sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "who sells sand and who sells gravel", multi: true}
+  - {q: "is the server up, and when's the next culture goal", multi: true}
+  - {q: "grab the last 20 discord messages and draft a trello card from them", multi: true}
+  - {q: "what's my rent category total, plus my savings balance", multi: true}
+  - {q: "pollution level? sea level?", multi: true}
+  - {q: "open a PR for my branch and then ping me when CI finishes", multi: true}
+  - {q: "who's been playing most this week and who joined today", multi: true}
+  - {q: "turn off comfyui and restart blender", multi: true}
+  - {q: "who sells sand", multi: false}
+  - {q: "price history for flour and wheat flour substitutes", multi: false}
+  - {q: "how many ingredients does a stove take", multi: false}
+  - {q: "am I overcharging for my bread", multi: false}
+  - {q: "who runs the shop by spawn", multi: false}
+  - {q: "what's the biggest currency by supply", multi: false}
+  - {q: "rock and roll playlist for mining sessions", multi: false}
+  - {q: "compare copper and iron prices over the last week", multi: false}
