@@ -1,0 +1,2 @@
+Fri Sep 25 05:22:00 UTC 2026
+PREDICTION e02 (before run; sirens-echo 9e03ab1 no-server-pick): eco-only direct_right dev 60-72, holdout 30-37, direct_wrong 0; full roster: 5-15 fewer from contests, direct_wrong 0-1.

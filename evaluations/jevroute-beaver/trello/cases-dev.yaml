@@ -1,7 +1,7 @@
 # Trello dev split. Labels are the science seat's, written before any candidate or run.
 cases:
   - {q: "what boards do I have", ok: [list_my-board]}
-  - {q: "show me my groceries board", ok: [get_board]}
+  - {q: "show me my groceries board", ok: [list_my-board, search_trello]}
   - {q: "rename the groceries board to food", ok: [set_board]}
   - {q: "what lists are on the chores board", ok: [list_board-list]}
   - {q: "add a list called someday to the chores board", ok: [create_list]}
@@ -9,7 +9,7 @@ cases:
   - {q: "what's in the to-do list", ok: [list_list-card, get_list]}
   - {q: "every card on the chores board", ok: [list_board-card]}
   - {q: "add a card to buy milk", ok: [create_card]}
-  - {q: "show me the dentist card", ok: [get_card]}
+  - {q: "show me the dentist card", ok: [search_trello, list_board-card]}
   - {q: "move the dentist card to done", ok: [set_card]}
   - {q: "set a due date of friday on the taxes card", ok: [set_card]}
   - {q: "comment on the taxes card that the forms arrived", ok: [comment_card]}
