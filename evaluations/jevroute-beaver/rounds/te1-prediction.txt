@@ -1,0 +1,2 @@
+Fri Sep 25 05:55:32 UTC 2026
+PREDICTION te1 (before run): live control dev 9-14/21, holdout 5-7/10; 1a/1b dev 15-19, holdout 7-9; 1c hedges (dev <= control+2); cw 0-1.

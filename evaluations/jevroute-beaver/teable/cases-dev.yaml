@@ -1,0 +1,24 @@
+# Teable dev split. Labels are the science seat's, written before any candidate or run.
+# A withheld operation accepts no_tool or its NOT AVAILABLE stub, which redirects.
+cases:
+  - {q: "file a tracker record about the flaky eco test", ok: [create_record]}
+  - {q: "add a comment to record 8221 with the new numbers", ok: [create_record]}
+  - {q: "open a new issue for the broken badge on housecast", ok: [create_record]}
+  - {q: "close tracker record 8229", ok: [edit_record]}
+  - {q: "change the priority of record 8245 to P1", ok: [edit_record]}
+  - {q: "mark record 8250 as in progress", ok: [edit_record]}
+  - {q: "show me tracker record 8221", ok: [get_record]}
+  - {q: "what does record 8236 say", ok: [get_record]}
+  - {q: "list the open issues for housecast", ok: [list_record]}
+  - {q: "find records that mention jevroute", ok: [list_record]}
+  - {q: "what's on the science board", ok: [list_record, list_table-view]}
+  - {q: "which bases are in teable", ok: [list_base]}
+  - {q: "what tables does the issue tracker have", ok: [list_base-table]}
+  - {q: "what fields does the issues table have", ok: [list_table-field]}
+  - {q: "what views exist on the issues table", ok: [list_table-view]}
+  - {q: "is the teable MCP up, and what version", ok: [mcp_beaver_info]}
+  - {q: "delete record 8199", ok: [no_tool, delete_record]}
+  - {q: "add a new column called severity", ok: [no_tool, create_table-field]}
+  - {q: "rename the status field", ok: [no_tool, edit_table-field]}
+  - {q: "turn the roles column into a text field", ok: [no_tool, convert_table-field]}
+  - {q: "open a pull request for this fix", ok: [no_tool]}

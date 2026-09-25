@@ -1,0 +1,12 @@
+# Teable sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "make a new tracker entry for the trello label gap", ok: [create_record]}
+  - {q: "leave a note on record 8229 about tiers", ok: [create_record]}
+  - {q: "bump record 8236 to P1", ok: [edit_record]}
+  - {q: "read record 8250", ok: [get_record]}
+  - {q: "search the tracker for beaver", ok: [list_record]}
+  - {q: "what bases can I see", ok: [list_base]}
+  - {q: "views on the issues table", ok: [list_table-view]}
+  - {q: "fields in the science table", ok: [list_table-field]}
+  - {q: "add a select field for owner", ok: [no_tool, create_table-field]}
+  - {q: "schedule a meeting about the tracker", ok: [no_tool]}
