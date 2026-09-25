@@ -1,0 +1,10 @@
+te2-control-18400 dev run1: pass 14/21  pass_any 18  correct 19/21  confident_wrong 0  errors 0
+te2-control-18400 dev run2: pass 13/21  pass_any 18  correct 19/21  confident_wrong 0  errors 0
+te2-control-18400 holdout run1: pass 7/10  pass_any 8  correct 8/10  confident_wrong 0  errors 0
+te2-control-18400 holdout run2: pass 7/10  pass_any 8  correct 8/10  confident_wrong 0  errors 0
+te2-control-18400 tools_sha256 ddcb5c1c3048  n_tools 13  out evaluations/jevroute-beaver/rounds/te2-control-18400
+te2-r2-c99486fd dev run1: pass 13/21  pass_any 16  correct 19/21  confident_wrong 0  errors 0
+te2-r2-c99486fd dev run2: pass 12/21  pass_any 16  correct 19/21  confident_wrong 0  errors 0
+te2-r2-c99486fd holdout run1: pass 6/10  pass_any 7  correct 9/10  confident_wrong 0  errors 0
+te2-r2-c99486fd holdout run2: pass 5/10  pass_any 7  correct 9/10  confident_wrong 1  errors 0
+te2-r2-c99486fd tools_sha256 425fc22243c3  n_tools 13  out evaluations/jevroute-beaver/rounds/te2-r2-c99486fd

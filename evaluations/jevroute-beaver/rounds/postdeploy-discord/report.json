@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30087/mcp",
+  "label": "post-deploy discord live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "edb19add82c3afe56733fc05d9119b3047c446c23d6c3bb6a81d7507e0f88a05",
+  "n_tools": 8,
+  "callsite": "evaluations/jevroute-beaver/discord/callsite.yaml",
+  "callsite_sha256": "f053dcebf8f467805e0b54694fee6375fe129bbfe352f1e44bbc2a09e5758265",
+  "started_utc": "2026-09-25T05:58:25Z"
+ },
+ "splits": {
+  "holdout": [
+   {
+    "n": 10,
+    "pass": 8,
+    "pass_any": 8,
+    "correct": 10,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 10,
+    "pass": 8,
+    "pass_any": 8,
+    "correct": 10,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}
