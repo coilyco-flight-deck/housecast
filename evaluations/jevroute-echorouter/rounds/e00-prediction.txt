@@ -1,0 +1,2 @@
+Fri Sep 25 05:15:32 UTC 2026
+PREDICTION e00 (before run; Echo router wording from sirens-echo 0506b64, eco-only roster, eco c34fc24 tools): right_route dev 72-76/77, holdout 38-40/40; direct_right dev 60-72, holdout 30-37; direct_wrong 0-2; baseline for comparison is my v1 call site r08 pass 73,72 / 34,35.

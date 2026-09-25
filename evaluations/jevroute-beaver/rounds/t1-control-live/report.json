@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30084/mcp",
+  "label": "t1 trello control-live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "f3e780bcc5445a6ae3f65142b4bcbf194e89a7855debc3302250d578ef66937c",
+  "n_tools": 37,
+  "callsite": "evaluations/jevroute-beaver/trello/callsite.yaml",
+  "callsite_sha256": "e9d43707b565b24a355208d219eaa51e48914e88137cc47e5101e68071c4d812",
+  "started_utc": "2026-09-25T05:16:08Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 40,
+    "pass": 18,
+    "pass_any": 19,
+    "correct": 38,
+    "confident_wrong": 1,
+    "errors": 0
+   },
+   {
+    "n": 40,
+    "pass": 19,
+    "pass_any": 20,
+    "correct": 37,
+    "confident_wrong": 1,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 20,
+    "pass": 12,
+    "pass_any": 12,
+    "correct": 18,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 20,
+    "pass": 12,
+    "pass_any": 13,
+    "correct": 18,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

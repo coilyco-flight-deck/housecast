@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18201/mcp",
+  "label": "t1 trello 1a-7dbe59f7",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "dbcab85455ddd4914c9c4eb40ffc4a0fcd0723d923e14997af0764a75c3aa6e8",
+  "n_tools": 37,
+  "callsite": "evaluations/jevroute-beaver/trello/callsite.yaml",
+  "callsite_sha256": "e9d43707b565b24a355208d219eaa51e48914e88137cc47e5101e68071c4d812",
+  "started_utc": "2026-09-25T05:16:10Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 40,
+    "pass": 25,
+    "pass_any": 28,
+    "correct": 38,
+    "confident_wrong": 1,
+    "errors": 0
+   },
+   {
+    "n": 40,
+    "pass": 24,
+    "pass_any": 25,
+    "correct": 38,
+    "confident_wrong": 1,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 20,
+    "pass": 15,
+    "pass_any": 16,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 20,
+    "pass": 15,
+    "pass_any": 15,
+    "correct": 20,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}
