@@ -1,0 +1,42 @@
+# Trello dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "what boards do I have", ok: [list_my-board]}
+  - {q: "show me my groceries board", ok: [get_board]}
+  - {q: "rename the groceries board to food", ok: [set_board]}
+  - {q: "what lists are on the chores board", ok: [list_board-list]}
+  - {q: "add a list called someday to the chores board", ok: [create_list]}
+  - {q: "archive the done list", ok: [set_list]}
+  - {q: "what's in the to-do list", ok: [list_list-card, get_list]}
+  - {q: "every card on the chores board", ok: [list_board-card]}
+  - {q: "add a card to buy milk", ok: [create_card]}
+  - {q: "show me the dentist card", ok: [get_card]}
+  - {q: "move the dentist card to done", ok: [set_card]}
+  - {q: "set a due date of friday on the taxes card", ok: [set_card]}
+  - {q: "comment on the taxes card that the forms arrived", ok: [comment_card]}
+  - {q: "what's happened on the taxes card lately", ok: [list_card-action]}
+  - {q: "who is on the taxes card", ok: [list_card-member]}
+  - {q: "who can see the chores board", ok: [list_board-member]}
+  - {q: "what labels does the chores board have", ok: [list_board-label]}
+  - {q: "make a red label called urgent on the chores board", ok: [create_board-label]}
+  - {q: "delete the stale label on the chores board", ok: [delete_board-label]}
+  - {q: "tag the taxes card as urgent", ok: [add_card-label]}
+  - {q: "take the urgent label off the taxes card", ok: [remove_card-label]}
+  - {q: "add a packing checklist to the trip card", ok: [create_card-checklist]}
+  - {q: "add passport to the packing checklist", ok: [create_checklist-item]}
+  - {q: "tick off passport on the packing checklist", ok: [set_card-checkitem]}
+  - {q: "what's left on the packing checklist", ok: [list_checklist-item, get_checklist]}
+  - {q: "which checklists are on the trip card", ok: [list_card-checklist]}
+  - {q: "every checklist on the travel board", ok: [list_board-checklist]}
+  - {q: "rename the packing checklist to carry-on", ok: [set_checklist]}
+  - {q: "delete the old packing checklist", ok: [delete_checklist]}
+  - {q: "remove sunscreen from the checklist", ok: [delete_checklist-item]}
+  - {q: "attach the flight confirmation link to the trip card", ok: [create_card-attachment]}
+  - {q: "what's attached to the trip card", ok: [list_card-attachment]}
+  - {q: "remove the old hotel link from the trip card", ok: [delete_card-attachment]}
+  - {q: "custom fields on the trip card", ok: [list_card-custom-field]}
+  - {q: "find any card mentioning passport", ok: [search_trello]}
+  - {q: "what version of the trello MCP bridge is this", ok: [mcp_beaver_info]}
+  - {q: "set up a webhook for board changes", ok: [no_tool]}
+  - {q: "invite my partner to the chores board", ok: [no_tool]}
+  - {q: "permanently delete the dentist card", ok: [no_tool, set_card]}
+  - {q: "email me when the taxes card is due", ok: [no_tool]}

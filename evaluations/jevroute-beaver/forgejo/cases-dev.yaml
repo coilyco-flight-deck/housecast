@@ -1,0 +1,43 @@
+# Forgejo dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "open PRs on housecast", ok: [list_pull-request]}
+  - {q: "show me PR 162 on housecast", ok: [get_pull-request]}
+  - {q: "what files does PR 165 touch", ok: [get_pull-request-file]}
+  - {q: "which commits are in PR 170", ok: [get_pull-request-commit]}
+  - {q: "open a PR from jevroute-servers into main", ok: [create_pull-request]}
+  - {q: "merge PR 168", ok: [merge_pull-request]}
+  - {q: "close PR 160 without merging", ok: [close_pull-request]}
+  - {q: "reopen the PR I closed yesterday", ok: [reopen_pull-request]}
+  - {q: "change the title of PR 169", ok: [edit_pull-request]}
+  - {q: "did CI pass on commit 66fe704", ok: [get_commit-status, list_commit-status]}
+  - {q: "list the Actions runs on eco-app", ok: [list_action-run]}
+  - {q: "details of Actions run 380", ok: [get_action-run]}
+  - {q: "which jobs ran in Actions run 380", ok: [list_action-run-job]}
+  - {q: "kick off the release workflow on aos", ok: [dispatch_workflow]}
+  - {q: "what's the latest release of aterm", ok: [list_repository-release, get_repository-release]}
+  - {q: "cut a v0.2.0 release on housecast", ok: [create_release]}
+  - {q: "fix the typo in the v0.1.4 release notes", ok: [edit_release]}
+  - {q: "list tags on agent-compose", ok: [list_repository-tag]}
+  - {q: "list branches on deploy", ok: [list_repository-branch]}
+  - {q: "is the jevroute-servers branch still there", ok: [get_repository-branch]}
+  - {q: "recent commits on eco-app main", ok: [list_repository-commit]}
+  - {q: "show me the README of agent-proxy", ok: [get_repository-content]}
+  - {q: "what's in the docs folder of housecast", ok: [list_repository-content, list_repository-tree]}
+  - {q: "find every python file in the eco-app repo", ok: [list_repository-tree]}
+  - {q: "what labels does the sirens-echo repo use", ok: [list_repository-label]}
+  - {q: "tell me about the housecast repo", ok: [get_repository]}
+  - {q: "turn off the wiki on housecast", ok: [edit_repository]}
+  - {q: "make a new repo called voice-lab in the coilyco org", ok: [create_organization-repository]}
+  - {q: "which repos are in the coilyco org", ok: [list_organization-repository]}
+  - {q: "who is in the coilyco org", ok: [list_organization-member]}
+  - {q: "details for the coilyco organization", ok: [get_organization]}
+  - {q: "what orgs am I in", ok: [list_current-user-organization]}
+  - {q: "list all organizations on the server", ok: [list_organization]}
+  - {q: "search for repos with eco in the name", ok: [search_repository]}
+  - {q: "list every repo on the server", ok: [list_repository, search_repository]}
+  - {q: "which repos are tagged mcp", ok: [search_topic]}
+  - {q: "what version of the forgejo MCP server is this", ok: [mcp_beaver_info]}
+  - {q: "file an issue on housecast about flaky tests", ok: [no_tool]}
+  - {q: "search the code for the word systemone", ok: [no_tool]}
+  - {q: "delete the old-experiments repo", ok: [no_tool]}
+  - {q: "add a reviewer to PR 170", ok: [no_tool, edit_pull-request]}

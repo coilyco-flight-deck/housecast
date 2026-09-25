@@ -1,0 +1,14 @@
+forgejo dev run1: pass 25/41  pass_any 29  correct 36/41  confident_wrong 1  errors 0
+forgejo dev run2: pass 24/41  pass_any 27  correct 35/41  confident_wrong 1  errors 0
+forgejo holdout run1: pass 9/20  pass_any 13  correct 18/20  confident_wrong 0  errors 0
+forgejo holdout run2: pass 10/20  pass_any 13  correct 18/20  confident_wrong 0  errors 0
+forgejo sealed run1: pass 8/20  pass_any 10  correct 18/20  confident_wrong 0  errors 0
+forgejo sealed run2: pass 8/20  pass_any 11  correct 18/20  confident_wrong 0  errors 0
+forgejo tools_sha256 2316a55f7aeb  n_tools 41  out evaluations/jevroute-beaver/rounds/b00-forgejo-live
+trello dev run1: pass 19/40  pass_any 19  correct 38/40  confident_wrong 0  errors 0
+trello dev run2: pass 19/40  pass_any 19  correct 37/40  confident_wrong 0  errors 0
+trello holdout run1: pass 12/20  pass_any 13  correct 18/20  confident_wrong 0  errors 0
+trello holdout run2: pass 12/20  pass_any 13  correct 18/20  confident_wrong 0  errors 0
+trello sealed run1: pass 8/20  pass_any 8  correct 17/20  confident_wrong 0  errors 0
+trello sealed run2: pass 8/20  pass_any 8  correct 17/20  confident_wrong 0  errors 0
+trello tools_sha256 f3e780bcc544  n_tools 37  out evaluations/jevroute-beaver/rounds/b00-trello-live

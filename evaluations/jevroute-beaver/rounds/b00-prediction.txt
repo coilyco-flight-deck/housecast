@@ -1,0 +1,2 @@
+Fri Sep 25 04:51:42 UTC 2026
+PREDICTION b00 (before run, live templated descriptions, v1-shape call site): forgejo dev pass_any 18-28/41, holdout 8-14/20; trello dev 18-28/40, holdout 8-14/20; confident_wrong 0-3 each.

@@ -1,0 +1,22 @@
+# Forgejo sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "list every open PR in agent-compose", ok: [list_pull-request]}
+  - {q: "what changed in PR 12 on tally", ok: [get_pull-request-file, get_pull-request-commit]}
+  - {q: "send PR 88 on deploy through", ok: [merge_pull-request]}
+  - {q: "abandon my stale PR on factorio-mods", ok: [close_pull-request]}
+  - {q: "make a pull request for branch fix-typo on website", ok: [create_pull-request]}
+  - {q: "latest workflow runs for deploy", ok: [list_action-run]}
+  - {q: "commit statuses on housecast main", ok: [list_commit-status, get_commit-status]}
+  - {q: "trigger the publish workflow on housecast", ok: [dispatch_workflow]}
+  - {q: "show the v1.0 release of aterm", ok: [get_repository-release]}
+  - {q: "what's at src/eco_mcp_app/server.py on eco-app main", ok: [get_repository-content]}
+  - {q: "full file tree of voice-corpus", ok: [list_repository-tree]}
+  - {q: "tags on eco-mods", ok: [list_repository-tag]}
+  - {q: "what does the coilyco org look like", ok: [get_organization]}
+  - {q: "repos under coilysiren", ok: [list_user-repository, list_organization-repository]}
+  - {q: "labels available on housecast", ok: [list_repository-label]}
+  - {q: "is the default branch of deploy main", ok: [get_repository]}
+  - {q: "change the title of PR 55 on lore to wip", ok: [edit_pull-request]}
+  - {q: "which build of the beaver bridge is serving forgejo", ok: [mcp_beaver_info]}
+  - {q: "transfer the website repo to coilysiren", ok: [no_tool]}
+  - {q: "star the housecast repo", ok: [no_tool]}
