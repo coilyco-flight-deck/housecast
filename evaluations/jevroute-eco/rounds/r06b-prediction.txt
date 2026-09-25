@@ -1,0 +1,2 @@
+Fri Sep 25 03:56:52 UTC 2026
+PREDICTION r06b (v6 on ddf8521, before run): confident_wrong 0 every run; pass >= v1 control on every split, gain concentrated on no_tool questions (+0..+3 per split).
