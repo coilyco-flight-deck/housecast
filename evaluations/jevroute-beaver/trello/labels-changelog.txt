@@ -1,0 +1,11 @@
+# Trello label changes
+
+* 2026-09-25 05:24 UTC, before scoring round 2. The sysadmin-senior seat read the
+  grants: get_board is GET /boards/{id} and get_card is GET /cards/{id}, so a request
+  that names a board or card without an id starts with a list or a search. The science
+  seat applied that fact to every name-only board and card question.
+  * dev "show me my groceries board": get_board -> list_my-board, search_trello
+  * dev "show me the dentist card": get_card -> search_trello, list_board-card
+  * holdout "details of the car card": get_card -> search_trello, list_board-card
+  * sealed "open the garden board": get_board -> list_my-board, search_trello
+  Round 1 rescored from raw: rounds/t1-rescored-labels2.txt.

@@ -1,0 +1,21 @@
+- archive the done list | ok=['set_list'] | 2a 0.89/0.88 ru no_tool 0.08 | 2b 0.97/0.97 ru no_tool 0.03
+- what's in the to-do list | ok=['list_list-card', 'get_list'] | 2a 0.57/0.62 ru list_board-list 0.22 | 2b 1.00/1.00 ru list_board-card 0.00
+- show me the dentist card | ok=['search_trello', 'list_board-card'] | 2a 0.64/0.63 ru get_card 0.23 | 2b 0.59/0.67 ru get_card 0.30
+- what's happened on the taxes card lately | ok=['list_card-action'] | 2a 0.82/0.87 ru no_tool 0.07 | 2b 0.81/0.85 ru no_tool 0.07
+- who is on the taxes card | ok=['list_card-member'] | 2a 0.84/0.84 ru search_trello 0.09 | 2b 0.78/0.83 ru search_trello 0.11
+- who can see the chores board | ok=['list_board-member'] | 2a 0.81/0.79 ru no_tool 0.08 | 2b 0.75/0.74 ru list_my-board 0.14
+- delete the stale label on the chores board | ok=['delete_board-label'] | 2a 0.82/0.87 ru remove_card-label 0.11 | 2b 0.79/0.81 ru remove_card-label 0.12
+- tag the taxes card as urgent | ok=['add_card-label'] | 2a 0.60/0.64 ru set_card 0.30 | 2b 0.60/0.56 ru set_card 0.30
+- what's left on the packing checklist | ok=['list_checklist-item', 'get_checklist'] | 2a 0.83/0.84 ru search_trello 0.05 | 2b 0.82/0.83 ru no_tool 0.06
+- which checklists are on the trip card | ok=['list_card-checklist'] | 2a 0.73/0.79 ru list_board-checklist 0.13 | 2b 0.75/0.73 ru list_board-checklist 0.14
+- rename the packing checklist to carry-on | ok=['set_checklist'] | 2a 0.89/0.92 ru no_tool 0.05 | 2b 0.90/0.90 ru no_tool 0.04
+- remove sunscreen from the checklist | ok=['delete_checklist-item'] | 2a 0.89/0.92 ru set_card-checkitem 0.06 | 2b 0.89/0.89 ru set_card-checkitem 0.07
+- what's attached to the trip card | ok=['list_card-attachment'] | 2a 0.89/0.88 ru get_card 0.07 | 2b 0.89/0.84 ru get_card 0.07
+- what version of the trello MCP bridge is this | ok=['mcp_beaver_info'] | 2a 0.69/0.74 ru no_tool 0.31 | 2b 0.68/0.72 ru no_tool 0.32
+- email me when the taxes card is due | ok=['no_tool'] | 2a 0.71/0.73 ru set_card 0.14 | 2b 0.71/0.74 ru set_card 0.13
+holdout ctl run1: {'no_tool_mass': 5, 'right_under': 1, 'wrong': 3}
+holdout ctl run2: {'no_tool_mass': 4, 'right_under': 0, 'wrong': 3}
+holdout 2a run1: {'no_tool_mass': 1, 'right_under': 2, 'wrong': 1}
+holdout 2a run2: {'no_tool_mass': 3, 'right_under': 1, 'wrong': 1}
+holdout 2b run1: {'no_tool_mass': 1, 'right_under': 2, 'wrong': 1}
+holdout 2b run2: {'no_tool_mass': 1, 'right_under': 2, 'wrong': 1}

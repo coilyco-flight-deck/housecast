@@ -14,7 +14,7 @@ cases:
   - {q: "which cards are in the waiting column", ok: [list_list-card]}
   - {q: "search trello for insurance", ok: [search_trello]}
   - {q: "who's on the projects board", ok: [list_board-member]}
-  - {q: "details of the car card", ok: [get_card]}
+  - {q: "details of the car card", ok: [search_trello, list_board-card]}
   - {q: "new list for the garden board called seeds", ok: [create_list]}
   - {q: "labels on the garden board", ok: [list_board-label]}
   - {q: "unarchive the done list", ok: [set_list]}

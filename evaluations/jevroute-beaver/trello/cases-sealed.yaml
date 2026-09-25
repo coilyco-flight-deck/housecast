@@ -1,7 +1,7 @@
 # Trello sealed split. Totals only, never by question. Science seat labels.
 cases:
   - {q: "which trello boards are mine", ok: [list_my-board]}
-  - {q: "open the garden board", ok: [get_board]}
+  - {q: "open the garden board", ok: [list_my-board, search_trello]}
   - {q: "all cards across the garden board", ok: [list_board-card]}
   - {q: "add a card to water the tomatoes", ok: [create_card]}
   - {q: "push the tomato card to next week's list", ok: [set_card]}

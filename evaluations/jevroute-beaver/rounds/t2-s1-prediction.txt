@@ -1,0 +1,2 @@
+Fri Sep 25 05:24:48 UTC 2026
+PREDICTION t2/s1 (before run): trello 2a dev 29-33/40 holdout 15-17/20 (rescored 1a 29,26 / 15,14); 2b dev +1-3 over 2a, holdout within +-1. forgejo s1: server pass on forgejo-labelled server cases rises from live; overall server pass within +-3 of s00.

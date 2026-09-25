@@ -1,0 +1,16 @@
+t1-control-live dev.run1: pass 18 pass_any 19 cw 1
+t1-control-live dev.run2: pass 19 pass_any 20 cw 1
+t1-1a-7dbe59f7 dev.run1: pass 26 pass_any 29 cw 0
+t1-1a-7dbe59f7 dev.run2: pass 25 pass_any 26 cw 0
+t1-1b-03d49261 dev.run1: pass 25 pass_any 27 cw 0
+t1-1b-03d49261 dev.run2: pass 26 pass_any 28 cw 0
+t1-1c-74e04295 dev.run1: pass 21 pass_any 24 cw 0
+t1-1c-74e04295 dev.run2: pass 21 pass_any 22 cw 0
+t1-control-live holdout.run1: pass 11 pass_any 11 cw 1
+t1-control-live holdout.run2: pass 11 pass_any 12 cw 1
+t1-1a-7dbe59f7 holdout.run1: pass 14 pass_any 15 cw 1
+t1-1a-7dbe59f7 holdout.run2: pass 14 pass_any 14 cw 1
+t1-1b-03d49261 holdout.run1: pass 13 pass_any 14 cw 1
+t1-1b-03d49261 holdout.run2: pass 13 pass_any 14 cw 1
+t1-1c-74e04295 holdout.run1: pass 13 pass_any 13 cw 1
+t1-1c-74e04295 holdout.run2: pass 12 pass_any 12 cw 1

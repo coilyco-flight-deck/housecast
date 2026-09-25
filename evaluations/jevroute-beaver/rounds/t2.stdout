@@ -1,0 +1,15 @@
+t2-control-live dev run1: pass 20/40  pass_any 20  correct 38/40  confident_wrong 0  errors 0
+t2-control-live dev run2: pass 19/40  pass_any 20  correct 37/40  confident_wrong 0  errors 0
+t2-control-live holdout run1: pass 10/20  pass_any 11  correct 17/20  confident_wrong 1  errors 0
+t2-control-live holdout run2: pass 11/20  pass_any 13  correct 17/20  confident_wrong 1  errors 0
+t2-control-live tools_sha256 f3e780bcc544  n_tools 37  out evaluations/jevroute-beaver/rounds/t2-control-live
+t2-2a-751c6897 dev run1: pass 24/40  pass_any 25  correct 40/40  confident_wrong 0  errors 0
+t2-2a-751c6897 dev run2: pass 25/40  pass_any 27  correct 40/40  confident_wrong 0  errors 0
+t2-2a-751c6897 holdout run1: pass 16/20  pass_any 16  correct 19/20  confident_wrong 1  errors 0
+t2-2a-751c6897 holdout run2: pass 15/20  pass_any 15  correct 19/20  confident_wrong 1  errors 0
+t2-2a-751c6897 tools_sha256 f7e8bf831eb8  n_tools 37  out evaluations/jevroute-beaver/rounds/t2-2a-751c6897
+t2-2b-c7f7191e dev run1: pass 27/40  pass_any 28  correct 40/40  confident_wrong 0  errors 0
+t2-2b-c7f7191e dev run2: pass 26/40  pass_any 28  correct 40/40  confident_wrong 0  errors 0
+t2-2b-c7f7191e holdout run1: pass 16/20  pass_any 16  correct 19/20  confident_wrong 1  errors 0
+t2-2b-c7f7191e holdout run2: pass 16/20  pass_any 16  correct 19/20  confident_wrong 1  errors 0
+t2-2b-c7f7191e tools_sha256 3cf703c0df88  n_tools 37  out evaluations/jevroute-beaver/rounds/t2-2b-c7f7191e
