@@ -1,0 +1,2 @@
+Fri Sep 25 04:24:30 UTC 2026
+PRE-REGISTERED before any sealed-2 run: final prose = eco-app c34fc24, call site v1. The 3627bde control runs on sealed-2 for comparison only and cannot change the pick. PREDICTION: sealed-2 pass_any 25-28/30 on c34fc24, confident_wrong 0; control within +-2.

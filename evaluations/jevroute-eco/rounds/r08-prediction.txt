@@ -1,0 +1,2 @@
+Fri Sep 25 04:24:07 UTC 2026
+PREDICTION r08 (5b, eco-app c34fc24 on :4054, v1 call site, before run): dev pass_any 73-76 (control 72,72), holdout 35-38 (control 36,34); hewn logs and limestone clear; Spectres stays below 0.9; confident_wrong 0. Control re-run on :4053 same session.
