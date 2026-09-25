@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18724/mcp",
+  "label": "chat FINAL 1d sealed",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "259639196a10e4d245456aaf17d5fc0fb5ddfa6d2148bff6bf455c3960c46094",
+  "n_tools": 3,
+  "callsite": "evaluations/jevroute-beaver/chat/callsite.yaml",
+  "callsite_sha256": "2930ee6256df77f9eb39a0a50b0a85a3e97e7d2512741f6505e99969802d4979",
+  "started_utc": "2026-09-25T06:28:05Z"
+ },
+ "splits": {
+  "sealed": [
+   {
+    "n": 5,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 3,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 5,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 3,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "create_choice_decision": "Questions asking to pick exactly one option like 'which approach should we take' belong here. For yes or no decisions use create_noul_decision.",
+ "create_noul_decision": "Yes or no decision questions with a model and state object like 'should I merge this' belong here. For picking one named option use create_choice_decision.",
+ "create_score_decision": "Rating questions on an ordered scale like 'how risky is this on a scale' belong here. For picking one named option use create_choice_decision.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

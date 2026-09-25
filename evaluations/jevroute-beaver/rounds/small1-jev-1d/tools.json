@@ -1,0 +1,6 @@
+{
+ "create_choice_decision": "Owns 'which of these three approaches' and 'pick A, B, or C'. Picks exactly one named option from caller provided alternatives, each with its own description. Use create_noul_decision for yes or no answers and create_score_decision for ordered scales.",
+ "create_noul_decision": "Owns 'should we ship, yes or no', 'is this email spam', 'is it safe to restart', 'go or no-go'. Answers a yes or no question with a probability of yes. Use create_choice_decision for named options beyond yes and no.",
+ "create_score_decision": "Owns 'rate this bug's severity from low to critical', 'how likely, low medium or high', 'how risky on a scale of 1 to 5'. Rates on an ordered scale of 2 to 10 caller listed levels from low to high. Use create_choice_decision for unordered named options.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

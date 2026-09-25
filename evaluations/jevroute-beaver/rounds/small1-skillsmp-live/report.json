@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30081/mcp",
+  "label": "",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "7e808a31dec487ba5fb48603e3501e27d149431f7345bfd9815e00c0a1894830",
+  "n_tools": 2,
+  "callsite": "evaluations/jevroute-beaver/skillsmp/callsite.yaml",
+  "callsite_sha256": "e560f1ee3e2ed3f6c9e2d5cbdbff2a4a196ca06b635e7941471c0eb13af03ef3",
+  "started_utc": "2026-09-25T06:27:43Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 6,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 6,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 3,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 3,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

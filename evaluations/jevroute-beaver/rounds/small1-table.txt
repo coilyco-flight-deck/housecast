@@ -1,0 +1,22 @@
+== glama
+  1a    dev [5, 5] (D=10) holdout [3, 3] (H=6) cw 0 errors 0 sha 6af0ce14def2
+  1b    dev [5, 5] (D=10) holdout [3, 3] (H=6) cw 0 errors 0 sha 0b27a2f93605
+  1c    dev [5, 5] (D=10) holdout [3, 3] (H=6) cw 0 errors 0 sha 117b0408c2d2
+  live  dev [4, 4] (D=8) holdout [2, 2] (H=4) cw 0 errors 0 sha 0bf37fef883b
+== jev
+  1a    dev [7, 7] (D=14) holdout [3, 2] (H=5) cw 2 errors 0 sha 08ed7e378d65
+  1b    dev [7, 7] (D=14) holdout [2, 2] (H=4) cw 2 errors 0 sha dbef6daf0f6a
+  1c    dev [5, 5] (D=10) holdout [3, 3] (H=6) cw 0 errors 0 sha 59037fcfb9a7
+  1d    dev [7, 7] (D=14) holdout [3, 3] (H=6) cw 2 errors 0 sha 60f18d346d34
+  live  dev [1, 1] (D=2) holdout [0, 0] (H=0) cw 0 errors 0 sha 1e771252c393
+== chat
+  1a    dev [4, 4] (D=8) holdout [2, 2] (H=4) cw 0 errors 0 sha 1dca65750b7e
+  1b    dev [4, 4] (D=8) holdout [2, 2] (H=4) cw 2 errors 0 sha 3acaaccbbcd8
+  1c    dev [2, 3] (D=5) holdout [2, 2] (H=4) cw 0 errors 0 sha b1332d43c33a
+  1d    dev [5, 5] (D=10) holdout [2, 2] (H=4) cw 0 errors 0 sha 259639196a10
+  live  dev [2, 1] (D=3) holdout [0, 1] (H=1) cw 1 errors 0 sha 7d2634e8790d
+== skillsmp
+  1a    dev [3, 3] (D=6) holdout [2, 2] (H=4) cw 0 errors 0 sha 0086961b4b5f
+  1b    dev [3, 3] (D=6) holdout [2, 2] (H=4) cw 0 errors 0 sha d43455c464b6
+  1c    dev [3, 3] (D=6) holdout [2, 2] (H=4) cw 0 errors 0 sha 373ea46aeb0b
+  live  dev [3, 3] (D=6) holdout [2, 2] (H=4) cw 0 errors 0 sha 7e808a31dec4

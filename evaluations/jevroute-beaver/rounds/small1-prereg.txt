@@ -1,0 +1,10 @@
+Fri Sep 25 06:27:42 UTC 2026
+PRE-REGISTERED by sysadmin-senior, per server: final = candidate with best holdout summed over both runs and 0 confident-wrong. Ties within 1 go to summed dev. If no candidate beats live holdout by more than 1, dev decides, as long as holdout >= live. If every candidate is worse than live on holdout, keep live. Sealed runs once on the final.
+Science reading, fixed before any run:
+1. eligible = candidates with confident_wrong 0 on dev and holdout in both runs.
+2. H = holdout pass_any summed over 2 runs; D = dev pass_any summed over 2 runs; L = live H.
+3. If max H (eligible) > L + 1: shortlist = eligible with H >= maxH - 1; pick max D (tie: max H, then candidate label order).
+4. Else: shortlist = eligible with H >= L; pick max D (same tie order); if shortlist is empty, keep live.
+5. Sealed runs once on the final if a candidate was picked. No sealed run for a server that keeps live.
+PREDICTION: jev and chat 1d win on dev but may not beat live on holdout by more than 1; glama and skillsmp gains are 1-3 on holdout.
+RULE APPLIED 06:28 UTC: glama 1a (all tie H6>L4+1, D tie, label order). jev 1c (only eligible; 1a/1b/1d cw 2). chat 1d (shortlist 1a,1c,1d H4>L1+1, max D 10). skillsmp 1a (no candidate beats L=4, all H=L and D=6 tie, label order; identical to live).

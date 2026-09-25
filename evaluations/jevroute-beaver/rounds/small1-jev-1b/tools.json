@@ -1,0 +1,6 @@
+{
+ "create_choice_decision": "Returns a single option choice with probabilities per named option and criteria descriptions from a typed model and state object. Try 'which approach should we take' or 'pick the best of these three'.",
+ "create_noul_decision": "Returns a yes or no decision with probabilities and confidence for a typed model and state object. Try 'should I merge this' or 'is this safe to restart'.",
+ "create_score_decision": "Returns an ordered scale rating from 2 to 10 levels with probabilities and confidence for a typed model and state object. Try 'how risky is this on a scale' or 'rate the severity'.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

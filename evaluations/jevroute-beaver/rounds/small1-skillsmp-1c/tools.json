@@ -1,0 +1,4 @@
+{
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_skills": "Keyword skill questions like 'is there a skill for PDF editing' or 'find skills about Kubernetes' belong here. No neighbouring tool exists in this server."
+}
