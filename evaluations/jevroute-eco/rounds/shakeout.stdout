@@ -1,0 +1,10 @@
+r00-local-5fe5c42                  dev 66% / 71% cw0  holdout 57% / 62% cw0  sealed -  ALL 63.2% / 68.4% cw0 n=234
+sealed-r00-live                    dev -  holdout -  sealed 55% / 65% cw0  ALL 55.0% / 65.0% cw0 n=80
+r01-17d6ddc                        dev 77% / 86% cw0  holdout 71% / 79% cw0  sealed -  ALL 75.2% / 83.3% cw0 n=234
+sealed-r01-17d6ddc                 dev -  holdout -  sealed 82% / 85% cw0  ALL 82.5% / 85.0% cw0 n=80
+r02-ff7a8b3                        dev 87% / 93% cw0  holdout 85% / 90% cw0  sealed -  ALL 86.3% / 91.9% cw0 n=234
+sealed-r02-ff7a8b3                 dev -  holdout -  sealed 85% / 90% cw0  ALL 85.0% / 90.0% cw0 n=80
+r03-5c5bfe1                        dev 90% / 95% cw0  holdout 84% / 90% cw0  sealed 84% / 88% cw0  ALL 86.9% / 92.0% cw0 n=314
+r03b-5c65bfc                       dev 91% / 94% cw0  holdout 88% / 92% cw0  sealed 85% / 90% cw0  ALL 88.5% / 92.7% cw0 n=314
+r04-5c65bfc-callsite               dev 90% / 95% cw0  holdout 89% / 91% cw0  sealed 85% / 90% cw0  ALL 88.5% / 92.7% cw0 n=314
+r06-ddf8521-callsite               dev 92% / 94% cw0  holdout 85% / 90% cw0  sealed 89% / 90% cw0  ALL 89.2% / 92.0% cw0 n=314
