@@ -1,0 +1,4 @@
+dev run1: {'direct_right_arg_tools': 8, 'filled_right': 5, 'declined': 3, 'declined_correctly': 3, 'filled_wrong': 0} wrong=[]
+dev run2: {'direct_right_arg_tools': 8, 'filled_right': 5, 'declined': 3, 'declined_correctly': 3, 'filled_wrong': 0} wrong=[]
+holdout run1: {'direct_right_arg_tools': 4, 'filled_right': 3, 'declined': 1, 'declined_correctly': 1, 'filled_wrong': 0} wrong=[]
+holdout run2: {'direct_right_arg_tools': 4, 'filled_right': 3, 'declined': 1, 'declined_correctly': 1, 'filled_wrong': 0} wrong=[]
