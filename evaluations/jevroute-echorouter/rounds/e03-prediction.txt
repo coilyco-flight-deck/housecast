@@ -1,0 +1,2 @@
+Fri Sep 25 05:39:42 UTC 2026
+PREDICTION e03 (before run; sirens-echo 557d539 tiers, general = exa wikipedia jev): dev direct_right 45-55/77, holdout 18-24/40, direct_wrong 0-1 (capital-of-France label), beaver_info contests 2-6 per dev run.

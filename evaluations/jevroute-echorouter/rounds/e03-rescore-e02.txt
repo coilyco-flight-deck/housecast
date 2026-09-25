@@ -1,0 +1,4 @@
+dev.run1: right_route 73/77  direct_right 54  direct_wrong 0  contested 4
+dev.run2: right_route 73/77  direct_right 55  direct_wrong 1  contested 4
+holdout.run1: right_route 38/40  direct_right 23  direct_wrong 0  contested 3
+holdout.run2: right_route 38/40  direct_right 22  direct_wrong 0  contested 3
