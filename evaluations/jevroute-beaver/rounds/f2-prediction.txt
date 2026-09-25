@@ -1,0 +1,2 @@
+Fri Sep 25 05:10:43 UTC 2026
+PREDICTION f2 (before run): dev pass_any 32-37/41 for 2a/2b (1b rescored 30,29); holdout 15-18/20 (1b 16,16); given dev-worded redraft prompt, dev gain > holdout gain; cw 0-1.

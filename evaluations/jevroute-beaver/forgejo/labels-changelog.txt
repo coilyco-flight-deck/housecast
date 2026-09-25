@@ -8,3 +8,11 @@
     returns topic names and counts, while search_repository with topic=true returns repos.
   * holdout "find repos about agents": search_repository, search_topic -> search_repository,
     by the same endpoint fact. The science seat applied this one unasked.
+
+* 2026-09-25 05:10 UTC, before scoring round 2. Raised by the sysadmin-senior seat,
+  accepted by the science seat.
+  * dev "what's in the docs folder of housecast": list_repository-content,
+    list_repository-tree -> get_repository-content, list_repository-tree.
+    GET /contents returns the repo root only, while get_repository-content with
+    filepath=docs returns that directory's entries. Round 1 is rescored from raw
+    under these labels in rounds/f1-rescored-labels2.txt.

@@ -1,0 +1,15 @@
+f2-control-live dev run1: pass 25/41  pass_any 28  correct 36/41  confident_wrong 1  errors 0
+f2-control-live dev run2: pass 23/41  pass_any 26  correct 37/41  confident_wrong 1  errors 0
+f2-control-live holdout run1: pass 9/20  pass_any 12  correct 18/20  confident_wrong 0  errors 0
+f2-control-live holdout run2: pass 9/20  pass_any 13  correct 18/20  confident_wrong 0  errors 0
+f2-control-live tools_sha256 2316a55f7aeb  n_tools 41  out evaluations/jevroute-beaver/rounds/f2-control-live
+f2a-38534092 dev run1: pass 34/41  pass_any 35  correct 41/41  confident_wrong 0  errors 0
+f2a-38534092 dev run2: pass 34/41  pass_any 34  correct 41/41  confident_wrong 0  errors 0
+f2a-38534092 holdout run1: pass 13/20  pass_any 15  correct 19/20  confident_wrong 0  errors 0
+f2a-38534092 holdout run2: pass 13/20  pass_any 16  correct 19/20  confident_wrong 0  errors 0
+f2a-38534092 tools_sha256 f6a48ded4060  n_tools 41  out evaluations/jevroute-beaver/rounds/f2a-38534092
+f2b-45d6ae03 dev run1: pass 34/41  pass_any 36  correct 41/41  confident_wrong 0  errors 0
+f2b-45d6ae03 dev run2: pass 35/41  pass_any 35  correct 41/41  confident_wrong 0  errors 0
+f2b-45d6ae03 holdout run1: pass 13/20  pass_any 15  correct 19/20  confident_wrong 0  errors 0
+f2b-45d6ae03 holdout run2: pass 15/20  pass_any 17  correct 19/20  confident_wrong 0  errors 0
+f2b-45d6ae03 tools_sha256 247c1aaf4c1d  n_tools 41  out evaluations/jevroute-beaver/rounds/f2b-45d6ae03

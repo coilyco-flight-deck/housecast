@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18104/mcp",
+  "label": "f2a deploy 38534092",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "f6a48ded40603228472cd0e219a4512d746f4bacb9cac6a437d64284e4969c46",
+  "n_tools": 41,
+  "callsite": "evaluations/jevroute-beaver/forgejo/callsite.yaml",
+  "callsite_sha256": "cfe616468007f65a22de710c9c2b4667a153076fc6835564a177bb4106e416cf",
+  "started_utc": "2026-09-25T05:10:47Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 41,
+    "pass": 34,
+    "pass_any": 35,
+    "correct": 41,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 41,
+    "pass": 34,
+    "pass_any": 34,
+    "correct": 41,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 20,
+    "pass": 13,
+    "pass_any": 15,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 20,
+    "pass": 13,
+    "pass_any": 16,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

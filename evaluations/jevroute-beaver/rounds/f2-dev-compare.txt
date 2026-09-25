@@ -1,0 +1,23 @@
+dev questions failing in either run of 2a or 2b. ok-mass run1/run2, runner-up from run1.
+- open PRs on housecast | ok=['list_pull-request']
+    2a 0.88/0.89 win list_pull-request@0.87 ru create_pull-request 0.07 | 2b 0.93/0.92 win list_pull-request@0.93 ru create_pull-request 0.04
+- what's the latest release of aterm | ok=['list_repository-release', 'get_repository-release']
+    2a 0.83/0.86 win list_repository-release@0.82 ru search_repository 0.11 | 2b 0.90/0.88 win list_repository-release@0.88 ru search_repository 0.06
+- fix the typo in the v0.1.4 release notes | ok=['edit_release']
+    2a 0.86/0.85 win edit_release@0.85 ru no_tool 0.08 | 2b 0.85/0.84 win edit_release@0.84 ru no_tool 0.09
+- is the jevroute-servers branch still there | ok=['get_repository-branch']
+    2a 0.92/0.93 win get_repository-branch@0.91 ru no_tool 0.06 | 2b 0.73/0.75 win get_repository-branch@0.72 ru list_repository-branch 0.14
+- tell me about the housecast repo | ok=['get_repository']
+    2a 0.79/0.78 win get_repository@0.78 ru search_repository 0.14 | 2b 0.83/0.81 win get_repository@0.82 ru search_repository 0.12
+- turn off the wiki on housecast | ok=['no_tool']
+    2a 0.65/0.66 win no_tool@0.64 ru get_repository 0.22 | 2b 0.72/0.70 win no_tool@0.7 ru get_repository 0.17
+- which repos are tagged mcp | ok=['search_repository']
+    2a 0.86/0.89 win search_repository@0.85 ru no_tool 0.06 | 2b 0.91/0.92 win search_repository@0.89 ru no_tool 0.04
+- what version of the forgejo MCP server is this | ok=['mcp_beaver_info']
+    2a 0.90/0.88 win mcp_beaver_info@0.89 ru no_tool 0.10 | 2b 0.88/0.85 win mcp_beaver_info@0.86 ru no_tool 0.12
+holdout ctl run1: {'no_tool_mass': 5, 'right_under': 1, 'wrong': 2}
+holdout ctl run2: {'no_tool_mass': 5, 'right_under': 0, 'wrong': 2}
+holdout 2a run1: {'no_tool_mass': 4, 'right_under': 0, 'wrong': 1}
+holdout 2a run2: {'no_tool_mass': 3, 'right_under': 0, 'wrong': 1}
+holdout 2b run1: {'no_tool_mass': 4, 'right_under': 0, 'wrong': 1}
+holdout 2b run2: {'no_tool_mass': 2, 'right_under': 0, 'wrong': 1}

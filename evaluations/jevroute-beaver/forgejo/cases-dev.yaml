@@ -22,7 +22,7 @@ cases:
   - {q: "is the jevroute-servers branch still there", ok: [get_repository-branch]}
   - {q: "recent commits on eco-app main", ok: [list_repository-commit]}
   - {q: "show me the README of agent-proxy", ok: [get_repository-content]}
-  - {q: "what's in the docs folder of housecast", ok: [list_repository-content, list_repository-tree]}
+  - {q: "what's in the docs folder of housecast", ok: [get_repository-content, list_repository-tree]}
   - {q: "find every python file in the eco-app repo", ok: [list_repository-tree]}
   - {q: "what labels does the sirens-echo repo use", ok: [list_repository-label]}
   - {q: "tell me about the housecast repo", ok: [get_repository]}
