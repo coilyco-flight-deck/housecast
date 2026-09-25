@@ -1,0 +1,15 @@
+== cases-signoz-dev
+  mass 0.85 top [('signoz', 0.85), ('no_server', 0.11)] | show error logs from eco-app in the last hour
+  mass 0.86 top [('signoz', 0.86), ('no_server', 0.09)] | what's the p95 latency on agent-proxy today
+  mass 0.80 top [('signoz', 0.8), ('no_server', 0.13)] | which services are reporting telemetry
+  mass 0.84 top [('signoz', 0.84), ('no_server', 0.07)] | any alerts firing right now
+  mass 0.01 top [('sirens_echo', 0.48), ('local_coilyco_playwright_scientist', 0.34)] | open the sirens-echo dashboard
+  mass 0.87 top [('signoz', 0.87), ('no_server', 0.12)] | pull up trace abc123 from this morning
+  mass 0.65 top [('signoz', 0.65), ('no_server', 0.14)] | slowest endpoints on the forgejo web service
+  mass 0.76 top [('signoz', 0.76), ('no_server', 0.16)] | how many 502s did the proxy return overnight
+== cases-nodestats-dev
+  mass 0.37 top [('signoz', 0.42), ('node_stats_ser8', 0.37)] | which pods are crashlooping on ser8
+  mass 0.30 top [('signoz', 0.45), ('node_stats_kai_server', 0.3)] | any k3s warning events on kai-server
+  mass 0.22 top [('no_server', 0.6), ('node_stats_kai_server', 0.22)] | what cron jobs run on kai-server's cluster
+  mass 0.81 top [('signoz', 0.81), ('no_server', 0.14)] | show error logs from eco-app over the last hour
+  mass 0.69 top [('signoz', 0.69), ('no_server', 0.15)] | latency of agent-proxy requests today

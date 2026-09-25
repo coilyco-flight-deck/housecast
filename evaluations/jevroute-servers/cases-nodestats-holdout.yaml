@@ -1,0 +1,11 @@
+# node_stats-targeted server questions, holdout. Totals only to the prose author.
+cases:
+  - {q: "how much disk is left on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_disk_info, get_filesystem_pressure]}
+  - {q: "which workloads use the most cpu on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_resource_usage, get_k3s_process_attribution, get_top_processes]}
+  - {q: "network throughput on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_network_info, get_k3s_network]}
+  - {q: "are any containers near their memory limit on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_container_memory]}
+  - {q: "what namespaces exist on the ser8 cluster", server: [tailnet_coilyco_node_stats_ser8], tool: [get_k3s_namespaces]}
+  - {q: "is dns resolving on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_resolver]}
+  - {q: "are any alerts firing in signoz", server: [tailnet_coilyco_signoz], tool: [signoz_list_alerts]}
+  - {q: "what did the logs say when eco-app crashed", server: [tailnet_coilyco_signoz], tool: [signoz_search_logs]}
+  - {q: "how's the steam deck doing", server: [no_server], tool: []}

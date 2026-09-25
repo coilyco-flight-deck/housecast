@@ -1,0 +1,13 @@
+# Signoz-targeted server questions, dev. Labelled before any candidate, science seat.
+cases:
+  - {q: "show error logs from eco-app in the last hour", server: [tailnet_coilyco_signoz], tool: [signoz_search_logs, signoz_aggregate_logs]}
+  - {q: "what's the p95 latency on agent-proxy today", server: [tailnet_coilyco_signoz], tool: [signoz_aggregate_traces, signoz_query_metrics, signoz_get_service_top_operations]}
+  - {q: "which services are reporting telemetry", server: [tailnet_coilyco_signoz], tool: [signoz_list_services]}
+  - {q: "any alerts firing right now", server: [tailnet_coilyco_signoz], tool: [signoz_list_alerts]}
+  - {q: "open the sirens-echo dashboard", server: [tailnet_coilyco_signoz], tool: [signoz_list_dashboards, signoz_get_dashboard]}
+  - {q: "pull up trace abc123 from this morning", server: [tailnet_coilyco_signoz], tool: [signoz_get_trace_details, signoz_search_traces]}
+  - {q: "slowest endpoints on the forgejo web service", server: [tailnet_coilyco_signoz], tool: [signoz_get_service_top_operations, signoz_aggregate_traces]}
+  - {q: "how many 502s did the proxy return overnight", server: [tailnet_coilyco_signoz], tool: [signoz_aggregate_logs, signoz_aggregate_traces, signoz_query_metrics]}
+  - {q: "what's using the most memory on kai-server right now", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_memory_info, get_top_processes, get_k3s_container_memory]}
+  - {q: "did CI pass on housecast main", server: [tailnet_coilyco_forgejo], tool: [get_commit-status, list_commit-status, list_action-run]}
+  - {q: "what did people say about the outage in discord", server: [tailnet_coilyco_discord], tool: [search_guild-message, list_channel-message]}

@@ -1,0 +1,11 @@
+# Signoz-targeted server questions, holdout. Totals only to the prose author.
+cases:
+  - {q: "grep the logs for timeout errors from jev calls", server: [tailnet_coilyco_signoz], tool: [signoz_search_logs]}
+  - {q: "request rate for sirens-echo over the last day", server: [tailnet_coilyco_signoz], tool: [signoz_query_metrics, signoz_aggregate_traces]}
+  - {q: "history of the disk alert", server: [tailnet_coilyco_signoz], tool: [signoz_get_alert_history, signoz_get_alert]}
+  - {q: "which metrics does eco-app emit", server: [tailnet_coilyco_signoz], tool: [signoz_list_metrics]}
+  - {q: "trace a slow teable request end to end", server: [tailnet_coilyco_signoz], tool: [signoz_search_traces, signoz_get_trace_details]}
+  - {q: "where do alert notifications get sent", server: [tailnet_coilyco_signoz], tool: [signoz_list_notification_channels]}
+  - {q: "is ser8 swapping", server: [tailnet_coilyco_node_stats_ser8], tool: [get_memory_info, get_node_pressure_stalls]}
+  - {q: "open PRs on agent-proxy", server: [tailnet_coilyco_forgejo], tool: [list_pull-request]}
+  - {q: "file a record about the flaky alert", server: [tailnet_coilyco_teable], tool: [create_record]}
