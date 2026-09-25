@@ -1,0 +1,12 @@
+# Teable holdout split. Reported to the prose author as totals only. Science seat labels.
+cases:
+  - {q: "log a bug about the 502s from agent proxy", ok: [create_record]}
+  - {q: "reply on record 8245 that forgejo is live", ok: [create_record]}
+  - {q: "set record 8252 to closed", ok: [edit_record]}
+  - {q: "pull up record 8249", ok: [get_record]}
+  - {q: "any open P0 records", ok: [list_record]}
+  - {q: "records filed for sirens-echo", ok: [list_record]}
+  - {q: "list the tables in the tracker base", ok: [list_base-table]}
+  - {q: "what columns are on the comments table", ok: [list_table-field]}
+  - {q: "remove record 8100 permanently", ok: [no_tool, delete_record]}
+  - {q: "email the record to kai", ok: [no_tool]}
