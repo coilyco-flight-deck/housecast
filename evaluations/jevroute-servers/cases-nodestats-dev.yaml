@@ -4,7 +4,7 @@ cases:
   - {q: "which pods are crashlooping on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_k3s_pods, get_k3s_events]}
   - {q: "cpu load on kai-server right now", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_cpu_info, get_system_snapshot, get_top_processes]}
   - {q: "what's eating memory on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_memory_info, get_top_processes, get_k3s_container_memory]}
-  - {q: "any k3s warning events on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_events]}
+  - {q: "any k3s warning events on kai-server", server: [tailnet_coilyco_node_stats_kai_server, tailnet_coilyco_signoz], tool: [get_k3s_events, signoz_search_logs, signoz_aggregate_logs]}
   - {q: "which persistent volumes are nearly full on ser8", server: [tailnet_coilyco_node_stats_ser8], tool: [get_k3s_volume_usage, get_k3s_storage_claims]}
   - {q: "what cron jobs run on kai-server's cluster", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_scheduled_work]}
   - {q: "is the node healthy", server: [tailnet_coilyco_node_stats_kai_server, tailnet_coilyco_node_stats_ser8], tool: [get_k3s_node_health, get_system_snapshot]}

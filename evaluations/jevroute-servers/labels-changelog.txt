@@ -1,0 +1,12 @@
+# Server-routing label changes
+
+* 2026-09-25 06:11 UTC, after signoz round 1. The sysadmin-senior seat supplied the
+  endpoint fact: SigNoz ingests Kubernetes events from both clusters as logs
+  (k8sEvents preset on kai-server, chart default on ser8, 24h aggregate shows BackOff,
+  Unhealthy and so on), but it has no kubelet or cluster metrics, so no live pod state.
+  * "any k3s warning events on kai-server" (cases-nodestats-dev and cases-holdout):
+    node_stats_kai_server -> node_stats_kai_server or signoz, tools get_k3s_events or
+    signoz_search_logs / signoz_aggregate_logs.
+  * "which pods are crashlooping on ser8" stays node_stats only. It asks about current pod
+    state, which SigNoz cannot see.
+  Signoz round 1 is rescored from raw: evaluations/jevroute-beaver/rounds/sz1-rescored.txt.
