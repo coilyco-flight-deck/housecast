@@ -1,0 +1,10 @@
+{
+ "get_channel-message": "Ask 'what does this message link say' or 'what does message 1234567890 in channel 9876543210 say', then use list_channel-message for recent messages in the same channel.",
+ "get_current-user": "Ask 'who is the bot' or 'what is my bot avatar', then use list_current-user-guild for servers the bot can access.",
+ "list_channel-message": "Ask 'what are the recent messages in general' or 'what was said after this message', then use get_channel-message for one specific message.",
+ "list_current-user-guild": "Ask 'what servers is the bot in' or 'how many members does each server have', then use list_guild-channel for channels in one server.",
+ "list_guild-active-thread": "Ask 'what active threads are in Sirens' or 'which threads are not archived', then use list_channel-message for messages in a thread.",
+ "list_guild-channel": "Ask 'what channels does this server have' or 'is there a general channel', then use list_channel-message for messages in one channel.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_guild-message": "Ask 'who mentioned @DJ in Sirens' or 'what messages say release party', then use get_channel-message for one matching message."
+}

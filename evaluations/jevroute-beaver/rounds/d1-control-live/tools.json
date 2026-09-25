@@ -1,0 +1,10 @@
+{
+ "get_channel-message": "Use this when the user wants to get channel-message through the configured upstream service.",
+ "get_current-user": "Use this when the user wants to get current-user through the configured upstream service.",
+ "list_channel-message": "Use this when the user wants to list channel-message through the configured upstream service.",
+ "list_current-user-guild": "Use this when the user wants to list current-user-guild through the configured upstream service.",
+ "list_guild-active-thread": "Use this when the user wants to list guild-active-thread through the configured upstream service.",
+ "list_guild-channel": "Use this when the user wants to list guild-channel through the configured upstream service.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_guild-message": "Use this when the user wants to search guild-message through the configured upstream service."
+}

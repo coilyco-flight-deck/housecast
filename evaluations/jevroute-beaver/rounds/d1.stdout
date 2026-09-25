@@ -1,0 +1,20 @@
+d1-control-live dev run1: pass 13/20  pass_any 14  correct 19/20  confident_wrong 0  errors 0
+d1-control-live dev run2: pass 13/20  pass_any 14  correct 20/20  confident_wrong 0  errors 0
+d1-control-live holdout run1: pass 7/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d1-control-live holdout run2: pass 7/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d1-control-live tools_sha256 21d6a8f8197e  n_tools 8  out evaluations/jevroute-beaver/rounds/d1-control-live
+d1-1a-ff7e1271 dev run1: pass 17/20  pass_any 17  correct 20/20  confident_wrong 0  errors 0
+d1-1a-ff7e1271 dev run2: pass 17/20  pass_any 17  correct 20/20  confident_wrong 0  errors 0
+d1-1a-ff7e1271 holdout run1: pass 8/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d1-1a-ff7e1271 holdout run2: pass 8/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d1-1a-ff7e1271 tools_sha256 edb19add82c3  n_tools 8  out evaluations/jevroute-beaver/rounds/d1-1a-ff7e1271
+d1-1b-d10be633 dev run1: pass 16/20  pass_any 17  correct 19/20  confident_wrong 0  errors 0
+d1-1b-d10be633 dev run2: pass 16/20  pass_any 17  correct 18/20  confident_wrong 0  errors 0
+d1-1b-d10be633 holdout run1: pass 8/10  pass_any 8  correct 9/10  confident_wrong 0  errors 0
+d1-1b-d10be633 holdout run2: pass 8/10  pass_any 8  correct 9/10  confident_wrong 0  errors 0
+d1-1b-d10be633 tools_sha256 abd365321564  n_tools 8  out evaluations/jevroute-beaver/rounds/d1-1b-d10be633
+d1-1c-2c50e776 dev run1: pass 8/20  pass_any 8  correct 17/20  confident_wrong 0  errors 0
+d1-1c-2c50e776 dev run2: pass 8/20  pass_any 8  correct 16/20  confident_wrong 0  errors 0
+d1-1c-2c50e776 holdout run1: pass 3/10  pass_any 4  correct 8/10  confident_wrong 0  errors 0
+d1-1c-2c50e776 holdout run2: pass 3/10  pass_any 3  correct 9/10  confident_wrong 0  errors 0
+d1-1c-2c50e776 tools_sha256 5e34ab9f5098  n_tools 8  out evaluations/jevroute-beaver/rounds/d1-1c-2c50e776

@@ -1,0 +1,2 @@
+Fri Sep 25 05:47:58 UTC 2026
+PREDICTION d1 (before run): candidates dev 15-19/20 (live 14,14), holdout 8-10/10 (live 7,8); 1a (questions only) weakest on neighbour splits; cw 0-1.
