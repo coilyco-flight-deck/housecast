@@ -1,0 +1,2 @@
+b00-trello-live sealed.run1: pass 8 pass_any 8 cw 0
+b00-trello-live sealed.run2: pass 8 pass_any 8 cw 0

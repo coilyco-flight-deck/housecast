@@ -1,0 +1,5 @@
+holdout run1: pass 16/20  pass_any 17  correct 19/20  confident_wrong 0  errors 0
+holdout run2: pass 16/20  pass_any 17  correct 19/20  confident_wrong 0  errors 0
+sealed run1: pass 12/20  pass_any 12  correct 18/20  confident_wrong 0  errors 0
+sealed run2: pass 10/20  pass_any 11  correct 18/20  confident_wrong 0  errors 0
+tools_sha256 606fdb9568fb  n_tools 37  out evaluations/jevroute-beaver/rounds/t3a-final-09a2005a
