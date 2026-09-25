@@ -10,6 +10,8 @@ unparseable = "unparseable"
 RTO = "RTO"
 # machine-kai-ser8 is a machine name that appears in preserved run output.
 ser = "ser"
+# Player chat shorthand quoted verbatim in the Jev routing cases.
+wth = "wth"
 
 # Commit refs, sha256 prefixes and trace ids are hex, so a letter run inside one
 # is not a misspelling. The second pattern is the same fact for a prefixed id

@@ -97,6 +97,10 @@ mcpeval-run *ARGS:
 mcpeval-compare *ARGS:
     @uv run --extra eval --extra mcp housecast mcpeval compare "$@"
 
+# Jev tool-routing bench: one Jev choice per question over an MCP subject's tools/list.
+jevroute *ARGS:
+    @uv run --extra mcp python -m housecast.jevroute.bench "$@"
+
 # The visual flow: task, run, triaged queue, prose editor, comparison.
 mcpeval-serve *ARGS:
     @uv run --extra eval --extra mcp housecast mcpeval serve "$@"

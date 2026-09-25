@@ -1,0 +1,43 @@
+# Holdout split. The prose author does not open it, so a dev-only fit shows as a gap.
+# Labels are the science seat's, written before any baseline run.
+cases:
+  - {q: "anyone got clay for sale", ok: [find_trade]}
+  - {q: "what's a normal price for an iron ingot", ok: [get_market, fair_price]}
+  - {q: "cheapest place to get nails?", ok: [find_trade]}
+  - {q: "has glass gotten more expensive", ok: [get_market]}
+  - {q: "would I turn a profit baking bread", ok: [price_recipe]}
+  - {q: "what goes into a pipe", ok: [get_recipes]}
+  - {q: "what recipes use the carpentry table", ok: [get_recipes]}
+  - {q: "what's the Mining skill good for", ok: [get_skills, get_recipes]}
+  - {q: "which shop has the most customers", ok: [get_stores]}
+  - {q: "tell me when someone sells a tractor", ok: [trade_watchers]}
+  - {q: "list all of Aziraphale's trades last week", ok: [get_trades, get_stores]}
+  - {q: "who's on right now", ok: [get_server_status]}
+  - {q: "how long until the meteor", ok: [get_server_status]}
+  - {q: "what's the CO2 level", ok: [get_climate]}
+  - {q: "how many cod are in the ocean", ok: [get_species]}
+  - {q: "is the forest biome shrinking", ok: [get_region]}
+  - {q: "how much pollution are the smelters putting out", ok: [get_climate, get_world]}
+  - {q: "who's president", ok: [get_government]}
+  - {q: "are there laws about hunting", ok: [get_government]}
+  - {q: "election results?", ok: [get_civics, get_government]}
+  - {q: "how many settlements are there", ok: [get_civics]}
+  - {q: "whose land is at 500, 300", ok: [get_map]}
+  - {q: "how much does the treasury take in taxes", ok: [get_economy]}
+  - {q: "exchange rate between Racines and Spectres", ok: [get_currency, find_trade]}
+  - {q: "how many currencies have been minted", ok: [get_currency]}
+  - {q: "who joined today", ok: [get_social]}
+  - {q: "what's everyone crafting lately", ok: [get_crafting_atlas]}
+  - {q: "which skills are most common on the server", ok: [get_progression]}
+  - {q: "what's our culture score", ok: [get_milestones]}
+  - {q: "how do I get my fridge to have power", ok: [no_tool]}
+  - {q: "steam keeps kicking me out", ok: [no_tool]}
+  - {q: "what is a tapir", ok: [explain_item, get_species]}
+  - {q: "can you make me admin", ok: [no_tool]}
+  - {q: "any tips for a new player", ok: [no_tool]}
+  - {q: "how many buildings went up this week", ok: [get_world]}
+  - {q: "any other eco servers I could join", ok: [list_public_servers]}
+  - {q: "is 20 a fair price for a crane", ok: [fair_price, get_market]}
+  - {q: "what would a steam engine cost me to craft", ok: [price_recipe]}
+  - {q: "wipe date?", ok: [no_tool]}
+  - {q: "how many people voted", ok: [get_civics]}
