@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18722/mcp",
+  "label": "",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "3acaaccbbcd8b27c4e7109a04f0e3715b0b1ea730a3d58bb41744b6d98043cc2",
+  "n_tools": 3,
+  "callsite": "evaluations/jevroute-beaver/chat/callsite.yaml",
+  "callsite_sha256": "2930ee6256df77f9eb39a0a50b0a85a3e97e7d2512741f6505e99969802d4979",
+  "started_utc": "2026-09-25T06:27:43Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 8,
+    "pass": 4,
+    "pass_any": 4,
+    "correct": 6,
+    "confident_wrong": 1,
+    "errors": 0
+   },
+   {
+    "n": 8,
+    "pass": 4,
+    "pass_any": 4,
+    "correct": 6,
+    "confident_wrong": 1,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 5,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 5,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18732/mcp",
+  "label": "",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "d43455c464b616271d14de081f8761208768ffc7621f5254ee5ea680136d3679",
+  "n_tools": 2,
+  "callsite": "evaluations/jevroute-beaver/skillsmp/callsite.yaml",
+  "callsite_sha256": "e560f1ee3e2ed3f6c9e2d5cbdbff2a4a196ca06b635e7941471c0eb13af03ef3",
+  "started_utc": "2026-09-25T06:27:43Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 6,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 6,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 3,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 3,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

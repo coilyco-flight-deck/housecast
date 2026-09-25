@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18731/mcp",
+  "label": "skillsmp FINAL 1a sealed",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "0086961b4b5f3c9b75ad24a54378d1f19a6e258602e16383ce1750bfb13a5010",
+  "n_tools": 2,
+  "callsite": "evaluations/jevroute-beaver/skillsmp/callsite.yaml",
+  "callsite_sha256": "e560f1ee3e2ed3f6c9e2d5cbdbff2a4a196ca06b635e7941471c0eb13af03ef3",
+  "started_utc": "2026-09-25T06:28:06Z"
+ },
+ "splits": {
+  "sealed": [
+   {
+    "n": 3,
+    "pass": 1,
+    "pass_any": 1,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 3,
+    "pass": 1,
+    "pass_any": 1,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

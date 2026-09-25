@@ -1,0 +1,6 @@
+{
+ "get_server": "'what tools does the github-mcp server expose', 'details of listing x/y', 'show repo and license for acme/widget' returns one Glama registry listing by namespace and slug with description, repository, tools, license, and attributes.",
+ "list_attributes": "'what attributes can I filter by', 'which tags does Glama use to classify servers', 'show me the registry categories' returns the attribute tags used to classify servers in the Glama registry.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_server": "'is there an MCP server for Postgres', 'find MCP servers for Notion', 'search for Kubernetes MCP' returns matching server listings from the Glama registry with paging."
+}

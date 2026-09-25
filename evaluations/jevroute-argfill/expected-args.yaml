@@ -1,0 +1,24 @@
+# Expected argument per eco case whose acceptable tools take an argument. The science
+# seat wrote these before running any matcher. item: display name, or null to decline.
+cases:
+  - {q: "where can I buy limestone", item: "Limestone"}
+  - {q: "wth are the prices of hewn logs?", item: "Hewn Log"}
+  - {q: "who is selling iron bars cheapest right now", item: "Iron Bar"}
+  - {q: "how has the price of copper plates changed this week", item: "Copper Plate"}
+  - {q: "is anyone buying wheat", item: "Wheat"}
+  - {q: "what should I stock in my store to make money", item: null}
+  - {q: "is 3 coins each a good price for lumber", item: "Lumber"}
+  - {q: "is it worth crafting boards to sell or should I just sell the logs", item: "Board"}
+  - {q: "how much does it cost me to make a steel axe at current prices", item: "Steel Axe"}
+  - {q: "what's the most traded item on the server", item: null}
+  - {q: "can I buy bricks in one store and resell them in another for profit", item: "Brick"}
+  - {q: "is there a place to convert reihtnog dollars?", currency: "reihtnog"}
+  - {q: "who holds the most Spectres", currency: "Spectres"}
+  - {q: "anyone got clay for sale", item: "Clay"}
+  - {q: "what's a normal price for an iron ingot", item: null}  # no Iron Ingot item, Eco says Iron Bar
+  - {q: "cheapest place to get nails?", item: "Nail"}
+  - {q: "has glass gotten more expensive", item: "Glass"}
+  - {q: "would I turn a profit baking bread", item: "Bread"}
+  - {q: "exchange rate between Racines and Spectres", currency: null}
+  - {q: "is 20 a fair price for a crane", item: "Crane"}
+  - {q: "what would a steam engine cost me to craft", item: "Steam Engine"}

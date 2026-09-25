@@ -1,0 +1,5 @@
+{
+ "create_chat_completion": "'get a second opinion from another model', 'ask DeepSeek to draft this', 'have a different model family review this' returns a free-text reply from a chosen model route via Agent Proxy.",
+ "list_models": "'which models can I use', 'what routes are there', 'list available Agent Proxy model routes' returns the live model routes available through Agent Proxy.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

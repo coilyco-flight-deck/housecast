@@ -1,0 +1,8 @@
+glama-1a sealed run1: pass 2/5  pass_any 2  correct 3/5  confident_wrong 0  errors 0
+glama-1a sealed run2: pass 2/5  pass_any 2  correct 3/5  confident_wrong 0  errors 0
+jev-1c sealed run1: pass 4/5  pass_any 4  correct 5/5  confident_wrong 0  errors 0
+jev-1c sealed run2: pass 4/5  pass_any 4  correct 5/5  confident_wrong 0  errors 0
+chat-1d sealed run1: pass 3/5  pass_any 3  correct 3/5  confident_wrong 0  errors 0
+chat-1d sealed run2: pass 3/5  pass_any 3  correct 3/5  confident_wrong 0  errors 0
+skillsmp-1a sealed run1: pass 1/3  pass_any 1  correct 2/3  confident_wrong 0  errors 0
+skillsmp-1a sealed run2: pass 1/3  pass_any 1  correct 2/3  confident_wrong 0  errors 0

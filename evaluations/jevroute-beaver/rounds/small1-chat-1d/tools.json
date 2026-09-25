@@ -1,0 +1,5 @@
+{
+ "create_chat_completion": "Owns 'get a second opinion from another model', 'ask DeepSeek to draft this', 'have a different model family review this'. Returns free text from a chosen model route. Use list_models to see available routes. Yes or no verdicts, picks, and ratings belong to the Jev server.",
+ "list_models": "Owns 'which models can I use', 'is there an evaluation route for ministral', 'what routes does Agent Proxy have'. Lists model routes that exist right now. Use create_chat_completion to send messages to a listed route.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

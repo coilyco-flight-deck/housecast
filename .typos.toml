@@ -12,6 +12,8 @@ RTO = "RTO"
 ser = "ser"
 # Player chat shorthand quoted verbatim in the Jev routing cases.
 wth = "wth"
+# Eco item names in the jevroute argument vocabulary.
+Floatation = "Floatation"
 
 # Commit refs, sha256 prefixes and trace ids are hex, so a letter run inside one
 # is not a misspelling. The second pattern is the same fact for a prefixed id
