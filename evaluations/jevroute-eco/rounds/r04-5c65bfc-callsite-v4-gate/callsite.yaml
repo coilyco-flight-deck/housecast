@@ -1,0 +1,13 @@
+# Call-site v4: a same-request yes/no gate replaces the no_tool option. The gate reads
+# eco-app's own tool descriptions from state. Science seat draft, 2026-09-25.
+instructions: >-
+  A player in the Sirens Eco community asked the message in state. Which single
+  Eco data tool best answers it?
+context: >-
+  Questions come from the Sirens Eco server's Discord and in-game chat. An
+  unqualified question is about the game Eco on the Sirens server.
+gate_sees_tools: true
+gate: >-
+  Can one of available_tools answer the player's message from its data? No for
+  game mechanics and how-to, client crashes and bug reports, wipe or patch
+  schedules, requests addressed to a specific person, and messages not about Eco.

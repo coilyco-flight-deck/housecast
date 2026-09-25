@@ -1,0 +1,2 @@
+Fri Sep 25 03:48:55 UTC 2026
+PREDICTION (before run): sealed pass r00-prose 20-26/40, r01 24-30, r02 26-33. r03 (5c5bfe1): dev 67-72/77, holdout 33-37/40, sealed within +-3 of r02 sealed. Risk: get_progression leveling question drops.

@@ -1,0 +1,14 @@
+run1: {'tool_pass': 132, 'tool_n': 137, 'tool_conf_wrong': 0, 'nt_fallback': 12, 'nt_n': 18}
+  no_tool question routed with confidence: ('get_server_status', 0.96, 'when do you next wipe?')
+  no_tool question routed with confidence: ('get_server_status', 0.98, 'game crashes on launch under proton')
+  no_tool question routed with confidence: ('get_server_status', 0.99, 'steam keeps kicking me out')
+  no_tool question routed with confidence: ('get_server_status', 0.91, 'wipe date?')
+  no_tool question routed with confidence: ('get_server_status', 1.0, 'my game froze on the loading screen')
+  no_tool question routed with confidence: ('get_recipes', 0.92, 'how do I get more calories')
+run2: {'tool_pass': 132, 'tool_n': 137, 'tool_conf_wrong': 0, 'nt_fallback': 12, 'nt_n': 18}
+  no_tool question routed with confidence: ('get_server_status', 0.97, 'when do you next wipe?')
+  no_tool question routed with confidence: ('get_server_status', 0.97, 'game crashes on launch under proton')
+  no_tool question routed with confidence: ('get_server_status', 0.99, 'steam keeps kicking me out')
+  no_tool question routed with confidence: ('get_server_status', 0.91, 'wipe date?')
+  no_tool question routed with confidence: ('get_server_status', 1.0, 'my game froze on the loading screen')
+  no_tool question routed with confidence: ('get_recipes', 0.93, 'how do I get more calories')

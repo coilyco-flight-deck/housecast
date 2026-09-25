@@ -1,0 +1,2 @@
+Fri Sep 25 03:51:11 UTC 2026
+PREDICTION r04 (before run; eco-app 5c65bfc frozen on :4051): v1 control reproduces r03b within +-3. v4 gate: Spectres correct; tool-case confidence rises on holdout and sealed (+2..+5 each); no_tool cases hold or lose up to 2; confident_wrong 0-2.

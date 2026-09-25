@@ -1,0 +1,31 @@
+{
+ "meta": {
+  "mcp_url": "https://eco-app.coilysiren.me/mcp",
+  "label": "sealed on r00 prose (live 5fe5c42)",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "2bc8b529b45d32c33ac97757d08dbe0cc6db339265193cb6e53b5be1de4b3915",
+  "n_tools": 25,
+  "callsite": "evaluations/jevroute-eco/callsite.yaml",
+  "callsite_sha256": "76ac2a9f58cb15bad89914ec9f779794036bae792363fc9d5cc6ba6368fe05f5",
+  "started_utc": "2026-09-25T03:48:56Z"
+ },
+ "splits": {
+  "sealed": [
+   {
+    "n": 40,
+    "pass": 21,
+    "correct": 36,
+    "confident_wrong": 0,
+    "errors": 2
+   },
+   {
+    "n": 40,
+    "pass": 23,
+    "correct": 38,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}
