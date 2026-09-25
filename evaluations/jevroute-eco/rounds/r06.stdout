@@ -1,0 +1,14 @@
+callsite-v5-fallback dev run1: pass 71/77  pass_any 66  correct 71/77  confident_wrong 2  errors 0
+callsite-v5-fallback dev run2: pass 71/77  pass_any 66  correct 71/77  confident_wrong 2  errors 0
+callsite-v5-fallback holdout run1: pass 37/40  pass_any 35  correct 37/40  confident_wrong 2  errors 0
+callsite-v5-fallback holdout run2: pass 38/40  pass_any 35  correct 38/40  confident_wrong 2  errors 0
+callsite-v5-fallback sealed run1: pass 37/40  pass_any 33  correct 37/40  confident_wrong 1  errors 0
+callsite-v5-fallback sealed run2: pass 37/40  pass_any 33  correct 37/40  confident_wrong 1  errors 0
+callsite-v5-fallback tools_sha256 e33723e173f2  n_tools 25  out evaluations/jevroute-eco/rounds/r06-ddf8521-callsite-v5-fallback
+callsite dev run1: pass 71/77  pass_any 73  correct 76/77  confident_wrong 0  errors 0
+callsite dev run2: pass 70/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite holdout run1: pass 34/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite holdout run2: pass 34/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite sealed run1: pass 35/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite sealed run2: pass 36/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite tools_sha256 e33723e173f2  n_tools 25  out evaluations/jevroute-eco/rounds/r06-ddf8521-callsite

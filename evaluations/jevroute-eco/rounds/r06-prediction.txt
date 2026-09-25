@@ -1,0 +1,2 @@
+Fri Sep 25 03:56:26 UTC 2026
+PREDICTION r06 (eco-app ddf8521 on :4052, before run): v5 confident_wrong 0-2 per run across splits; v5 dev 72-75, holdout 36-39, sealed 37-39; v1 control within +-3 of r04 v1 (70/69, 36/35, 34/34); true status questions stay >=0.9 under v1.
