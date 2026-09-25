@@ -1,0 +1,7 @@
+# Chat sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "ask a model outside the claude family what it thinks", ok: [create_chat_completion]}
+  - {q: "list the available model routes", ok: [list_models]}
+  - {q: "get ornith's take on this bug report", ok: [create_chat_completion]}
+  - {q: "which build of the chat bridge is serving", ok: [mcp_beaver_info]}
+  - {q: "rate this from 1 to 5", ok: [no_tool]}

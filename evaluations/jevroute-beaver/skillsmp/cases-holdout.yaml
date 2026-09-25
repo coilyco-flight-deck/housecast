@@ -1,0 +1,5 @@
+# Skillsmp holdout split. Totals only to the prose author. Science seat labels.
+cases:
+  - {q: "any skills for kubernetes debugging", ok: [search_skills]}
+  - {q: "is the skillsmp bridge up", ok: [mcp_beaver_info]}
+  - {q: "publish my skill to the directory", ok: [no_tool]}

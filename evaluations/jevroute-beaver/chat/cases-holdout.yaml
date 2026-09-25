@@ -1,0 +1,7 @@
+# Chat holdout split. Totals only to the prose author. Science seat labels.
+cases:
+  - {q: "run this prompt through the deepseek route", ok: [create_chat_completion]}
+  - {q: "what routes does the proxy offer", ok: [list_models]}
+  - {q: "is the chat bridge alive", ok: [mcp_beaver_info]}
+  - {q: "pick the best option of these three", ok: [no_tool]}
+  - {q: "transcribe this audio file", ok: [no_tool]}

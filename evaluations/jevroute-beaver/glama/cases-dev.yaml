@@ -1,0 +1,11 @@
+# Glama dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "find an MCP server for postgres", ok: [search_server]}
+  - {q: "is there an MCP server that talks to notion", ok: [search_server]}
+  - {q: "search the registry for kubernetes servers", ok: [search_server]}
+  - {q: "tell me more about the github MCP server listing", ok: [get_server]}
+  - {q: "what tools does that server expose", ok: [get_server]}
+  - {q: "what attributes can I filter registry servers by", ok: [list_attributes]}
+  - {q: "which version of the glama bridge is this", ok: [mcp_beaver_info]}
+  - {q: "install the postgres MCP server for me", ok: [no_tool]}
+  - {q: "publish my server to glama", ok: [no_tool]}

@@ -1,0 +1,69 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30085/mcp",
+  "label": "glama live templated",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "0bf37fef883bdcc437f82c3d35593d8ab17d9f4a47a9d202f4cf97a90830c207",
+  "n_tools": 4,
+  "callsite": "evaluations/jevroute-beaver/glama/callsite.yaml",
+  "callsite_sha256": "f70cc6e5f8e74f10d3ea6b6e09182c3d825e4fdd6548272fee43cb363778867f",
+  "started_utc": "2026-09-25T06:23:08Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 9,
+    "pass": 4,
+    "pass_any": 4,
+    "correct": 6,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "pass": 4,
+    "pass_any": 4,
+    "correct": 6,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 5,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 5,
+    "pass": 2,
+    "pass_any": 2,
+    "correct": 2,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "sealed": [
+   {
+    "n": 5,
+    "pass": 1,
+    "pass_any": 1,
+    "correct": 3,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 5,
+    "pass": 1,
+    "pass_any": 1,
+    "correct": 3,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

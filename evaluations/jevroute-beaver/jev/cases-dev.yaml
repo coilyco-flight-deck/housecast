@@ -1,0 +1,11 @@
+# Jev dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "should we ship this now, yes or no", ok: [create_noul_decision]}
+  - {q: "is this email spam", ok: [create_noul_decision]}
+  - {q: "pick the best of these four names", ok: [create_choice_decision]}
+  - {q: "which of these three plans should I take first", ok: [create_choice_decision]}
+  - {q: "rate this bug's severity from low to critical", ok: [create_score_decision]}
+  - {q: "how likely is it this ships on time, low medium or high", ok: [create_score_decision]}
+  - {q: "what version of the jev bridge is running", ok: [mcp_beaver_info]}
+  - {q: "write me a summary of this plan", ok: [no_tool]}
+  - {q: "what's 17 times 23", ok: [no_tool]}

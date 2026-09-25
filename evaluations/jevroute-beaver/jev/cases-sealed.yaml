@@ -1,0 +1,7 @@
+# Jev sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "is this PR safe to merge, yes or no", ok: [create_noul_decision]}
+  - {q: "which of these five titles fits best", ok: [create_choice_decision]}
+  - {q: "grade this essay from poor to excellent", ok: [create_score_decision]}
+  - {q: "classify this record as bug, feature, or chore", ok: [create_choice_decision]}
+  - {q: "translate this into french", ok: [no_tool]}
