@@ -1,0 +1,2 @@
+Fri Sep 25 05:17:50 UTC 2026
+PREDICTION e01 (before run; full 18-server Echo roster, eco tools c34fc24, router 0506b64): right_route and direct_right both at or below e00 (53,53/27,28 and 11,11/1,1); none still the main thief; some eco questions pulled to wikipedia/exa/gbif.
