@@ -1,0 +1,19 @@
+OK   tool=find_trade got='Limestone' want='Limestone' | where can I buy limestone
+OK   tool=get_market got='Hewn Log' want='Hewn Log' | wth are the prices of hewn logs?
+OK   tool=find_trade got='Iron Bar' want='Iron Bar' | who is selling iron bars cheapest right now
+OK   tool=get_market got='Copper Plate' want='Copper Plate' | how has the price of copper plates changed this week
+OK   tool=find_trade got='Wheat' want='Wheat' | is anyone buying wheat
+OK   tool=find_trade got=None want=None | what should I stock in my store to make money
+OK   tool=get_market got='Lumber' want='Lumber' | is 3 coins each a good price for lumber
+OK   tool=price_recipe got='Board' want='Board' | is it worth crafting boards to sell or should I just sell the logs
+OK   tool=price_recipe got='Steel Axe' want='Steel Axe' | how much does it cost me to make a steel axe at current prices
+OK   tool=get_market got=None want=None | what's the most traded item on the server
+OK   tool=find_trade got='Brick' want='Brick' | can I buy bricks in one store and resell them in another for profit
+OK   tool=find_trade got='Clay' want='Clay' | anyone got clay for sale
+OK   tool=get_market got=None want=None | what's a normal price for an iron ingot
+OK   tool=find_trade got='Nail' want='Nail' | cheapest place to get nails?
+OK   tool=get_market got='Glass' want='Glass' | has glass gotten more expensive
+OK   tool=price_recipe got='Bread' want='Bread' | would I turn a profit baking bread
+OK   tool=get_market got='Crane' want='Crane' | is 20 a fair price for a crane
+OK   tool=price_recipe got='Steam Engine' want='Steam Engine' | what would a steam engine cost me to craft
+right or correctly declined: 18/18

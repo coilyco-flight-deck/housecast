@@ -1,0 +1,2 @@
+Fri Sep 25 06:32:05 UTC 2026
+PREDICTION (game-dev's, before run): matcher-alone 18/18; direct routes dev 6/8 filled right, 0 wrong; holdout 3/4 unchanged.

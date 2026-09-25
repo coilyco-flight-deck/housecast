@@ -1,4 +1,4 @@
-"""Replay sirens-echo 6f413d5 matchVocab against eco questions and score argument fills.
+"""Replay sirens-echo matchVocab (6f413d5, or 25fdb2e with ignore) and score argument fills.
 
 Mirrors argextract.go: lowercase whole words, a message word may carry a trailing s or
 es, the longest matching form wins, a tie between entries at that length declines.
@@ -12,6 +12,8 @@ from pathlib import Path
 import yaml
 
 HERE = Path(__file__).parent
+SHOP_WORDS = ("store", "shop", "market")  # eco-app 31308ee, find_trade and get_market only
+IGNORE = {"find_trade": SHOP_WORDS, "get_market": SHOP_WORDS}
 TOOL_ARG = {"find_trade": ("item", "name"), "get_market": ("item", "id"),
             "price_recipe": ("product", "id"), "get_currency": ("currency", "name")}
 
@@ -29,12 +31,15 @@ def contains(ws, form):
                for s in range(len(ws) - len(form) + 1))
 
 
-def match(message, entries):
+def match(message, entries, ignore=()):
+    skip = {" ".join(words(x)) for x in ignore}
     ws, best, best_len, tied = words(message), None, 0, False
     for e in entries:
         length = 0
         for form in [e["name"], e["id"], *e["aliases"]]:
             fw = words(form)
+            if " ".join(fw) in skip:
+                continue
             if len(fw) > length and contains(ws, fw):
                 length = len(fw)
         if length == 0:
@@ -46,7 +51,7 @@ def match(message, entries):
     return None if best_len == 0 or tied else best
 
 
-def main(route_dir):
+def main(route_dir, use_ignore=False):
     items = json.loads((HERE / "items-vocab-736e8be.json").read_text())["entries"]
     expected = {c["q"]: c for c in yaml.safe_load((HERE / "expected-args.yaml").read_text())["cases"]}
     for split in ("dev", "holdout"):
@@ -65,7 +70,7 @@ def main(route_dir):
                     want = exp.get("currency")
                     want_ok = want is None
                 else:
-                    e = match(r["q"], items)
+                    e = match(r["q"], items, IGNORE.get(r["tool"], ()) if use_ignore else ())
                     got, want = (e["name"] if e else None), exp.get("item")
                     want_ok = got == want
                 if got is None:
@@ -80,4 +85,4 @@ def main(route_dir):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], use_ignore="--ignore" in sys.argv)
