@@ -1,0 +1,67 @@
+{
+ "meta": {
+  "inventory": "evaluations/jevroute-beaver/forgejo/inventory-s1b.json",
+  "server_prose": "live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "n_servers": 22
+ },
+ "splits": {
+  "cases-forgejo-dev": [
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 8,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 8,
+    "e2e_strict": 7,
+    "median_sec": 0.57,
+    "errors": 0
+   },
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 8,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 8,
+    "e2e_strict": 6,
+    "median_sec": 0.63,
+    "errors": 0
+   }
+  ],
+  "cases-forgejo-holdout": [
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 7,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 6,
+    "e2e_strict": 4,
+    "median_sec": 0.48,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 6,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 7,
+    "e2e_strict": 4,
+    "median_sec": 0.47,
+    "errors": 0
+   }
+  ]
+ }
+}

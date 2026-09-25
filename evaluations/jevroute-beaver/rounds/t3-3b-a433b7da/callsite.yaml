@@ -1,0 +1,9 @@
+# Call site for routing inside one beaver server, v1 shape. Science seat, 2026-09-25.
+instructions: >-
+  A user asked the message in state. Which single tool on this server best
+  answers it? Pick no_tool when no tool here can do it.
+context: >-
+  The user is working with Kai's Trello boards.
+extra_options:
+  no_tool: >-
+    No tool on this server does this.

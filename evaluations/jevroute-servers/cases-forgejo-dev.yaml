@@ -1,0 +1,13 @@
+# Forgejo-targeted server questions, dev. Labelled before any run, science seat.
+cases:
+  - {q: "what's the newest tag on quire", server: [tailnet_coilyco_forgejo], tool: [list_repository-tag, list_repository-release]}
+  - {q: "open pull requests on scoop-bucket", server: [tailnet_coilyco_forgejo], tool: [list_pull-request]}
+  - {q: "did the build pass on homebrew-tap main", server: [tailnet_coilyco_forgejo], tool: [get_commit-status, list_commit-status, list_action-run]}
+  - {q: "show me the justfile in voice-corpus", server: [tailnet_coilyco_forgejo], tool: [get_repository-content]}
+  - {q: "merge PR 41 on codesurf", server: [tailnet_coilyco_forgejo], tool: [merge_pull-request]}
+  - {q: "what branches exist on galaxy-gen", server: [tailnet_coilyco_forgejo], tool: [list_repository-branch]}
+  - {q: "recent commits to umbra", server: [tailnet_coilyco_forgejo], tool: [list_repository-commit]}
+  - {q: "run the release workflow on steam-ops", server: [tailnet_coilyco_forgejo], tool: [dispatch_workflow]}
+  - {q: "file a bug about the broken release notes", server: [tailnet_coilyco_teable], tool: [create_record]}
+  - {q: "how many errors did the forgejo runner log today", server: [tailnet_coilyco_signoz], tool: [signoz_search_logs, signoz_aggregate_logs]}
+  - {q: "is the forgejo pod healthy on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_pods, get_k3s_workloads]}
