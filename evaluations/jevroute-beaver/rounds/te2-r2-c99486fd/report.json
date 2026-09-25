@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18404/mcp",
+  "label": "te2 teable r2-c99486fd",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "425fc22243c3ec164df09261c08809c86e0dccb2e3cb915208bf581522adb4ae",
+  "n_tools": 13,
+  "callsite": "evaluations/jevroute-beaver/teable/callsite.yaml",
+  "callsite_sha256": "e202267403819502ad28d10a25c53bd88a0eb9857e2a6b4c54ed3a85841b02b6",
+  "started_utc": "2026-09-25T05:58:28Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 21,
+    "pass": 13,
+    "pass_any": 16,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 21,
+    "pass": 12,
+    "pass_any": 16,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 10,
+    "pass": 6,
+    "pass_any": 7,
+    "correct": 9,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 10,
+    "pass": 5,
+    "pass_any": 7,
+    "correct": 9,
+    "confident_wrong": 1,
+    "errors": 0
+   }
+  ]
+ }
+}
