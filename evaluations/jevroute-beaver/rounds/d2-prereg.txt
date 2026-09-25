@@ -1,0 +1,4 @@
+Fri Sep 25 05:50:09 UTC 2026
+PRE-REGISTERED rule (sysadmin-senior, sent before this run): 2b is final if 'open that pinned message someone linked' holds at or near 1a's 0.80 AND 'show me message 12345 in eco-chat' stays above 0.9; otherwise 1a. Science seat reading of 'at or near', fixed now: ok_mass >= 0.75 in both runs. 'above 0.9': ok_mass >= 0.9 in both runs. Sealed runs once on the winner. PREDICTION: 2b keeps pinned 0.70-0.85 and message-12345 0.92-0.96.
+Fri Sep 25 05:50:22 UTC 2026
+RULE APPLIED: 2b pinned 0.26, 0.30 < 0.75 -> final = 1a (ff7e1271). Aggregate favoured 2b (dev 19,18 vs 17,17; holdout 9,9 vs 8,8); the pre-registered rule governs. Sealed runs once on 1a. PREDICTION: sealed 8-10/10 (live 7,7).

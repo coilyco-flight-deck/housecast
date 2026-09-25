@@ -1,0 +1,10 @@
+d2-1a-ff7e1271 dev run1: pass 17/20  pass_any 17  correct 20/20  confident_wrong 0  errors 0
+d2-1a-ff7e1271 dev run2: pass 17/20  pass_any 17  correct 20/20  confident_wrong 0  errors 0
+d2-1a-ff7e1271 holdout run1: pass 8/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d2-1a-ff7e1271 holdout run2: pass 8/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+d2-1a-ff7e1271 tools_sha256 edb19add82c3  n_tools 8  out evaluations/jevroute-beaver/rounds/d2-1a-ff7e1271
+d2-2b-c224ab23 dev run1: pass 17/20  pass_any 19  correct 19/20  confident_wrong 0  errors 0
+d2-2b-c224ab23 dev run2: pass 18/20  pass_any 18  correct 19/20  confident_wrong 0  errors 0
+d2-2b-c224ab23 holdout run1: pass 8/10  pass_any 9  correct 10/10  confident_wrong 0  errors 0
+d2-2b-c224ab23 holdout run2: pass 8/10  pass_any 9  correct 10/10  confident_wrong 0  errors 0
+d2-2b-c224ab23 tools_sha256 725ecc5e24cc  n_tools 8  out evaluations/jevroute-beaver/rounds/d2-2b-c224ab23

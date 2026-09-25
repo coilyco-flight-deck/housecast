@@ -1,0 +1,10 @@
+{
+ "get_channel-message": "Returns one specific message by channel id and message id. Ask 'what does this message link say' or 'what message has this id'.",
+ "get_current-user": "\"What is the bot's Discord username and id?\" \"What is my bot's avatar?\" \"Which Discord account is the bot logged into?\"",
+ "list_channel-message": "\"What were the last messages in general?\" \"What are the recent messages in announcements?\" \"What did people say after message 1234567890?\"",
+ "list_current-user-guild": "\"What servers is the bot in?\" \"Which Discord servers can this bot see?\" \"How many members are in each server the bot is in?\"",
+ "list_guild-active-thread": "\"What threads are active in the Sirens server?\" \"What active threads are in support?\" \"Are there any active discussion threads right now?\"",
+ "list_guild-channel": "\"What channels are in the Sirens server?\" \"Is there a general channel?\" \"Where is the announcements channel in Sirens?\"",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_guild-message": "\"Who mentioned @DJ in Sirens?\" \"What messages say 'release party'?\" \"What messages are pinned in general?\""
+}
