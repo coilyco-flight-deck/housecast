@@ -90,18 +90,30 @@ def build_request(
 ) -> dict[str, Any]:
     return {
         "model": model,
-        "state": {"player_message": q, "context": callsite.get("context", "")},
+        "state": {
+            "player_message": q,
+            "context": callsite.get("context", ""),
+            **({"available_tools": criteria} if callsite.get("gate_sees_tools") else {}),
+        },
         "questions": {
             "tool": {
                 "type": "choice",
                 "instructions": callsite["instructions"],
                 "criteria": criteria,
-            }
+            },
+            # A gated call site asks the yes/no in the same request: no extra round trip.
+            **(
+                {"gate": {"type": "noul", "instructions": callsite["gate"]}}
+                if "gate" in callsite
+                else {}
+            ),
         },
     }
 
 
-def score(case: dict[str, Any], answer: dict[str, Any], threshold: float) -> dict[str, Any]:
+def score(
+    case: dict[str, Any], answer: dict[str, Any], threshold: float, fallback: bool = False
+) -> dict[str, Any]:
     tool = answer.get("answers", {}).get("tool", {})
     probs: dict[str, float] = tool.get("probabilities") or {}
     if not probs:
@@ -118,19 +130,37 @@ def score(case: dict[str, Any], answer: dict[str, Any], threshold: float) -> dic
         }
     win = max(probs, key=lambda k: probs[k])
     conf = tool.get("confidence")
-    correct = win in case["ok"]
+    gate = answer.get("answers", {}).get("gate", {}).get("noul")
+    if gate is not None:
+        # The gate says no: the answer is no_tool, as sure as the gate is. Otherwise the
+        # route is only as sure as the less sure of the two answers.
+        win, conf = ("no_tool", round(1 - gate, 3)) if gate < 0.5 else (win, min(gate, conf or 0))
     sure = conf is not None and conf >= threshold
+    chosen = win
+    if fallback and not sure:
+        # Below the threshold the router calls no tool: the Jev contract's fallback.
+        win = "no_tool"
+    correct = win in case["ok"]
+    # Probability of landing on any acceptable route, the metric the winner's confidence
+    # understates when two tools are both right.
+    mass = sum(v for k, v in probs.items() if k in case["ok"])
+    if gate is not None:
+        mass = (1 - gate) * ("no_tool" in case["ok"]) + gate * mass
     runner_up = sorted(probs.items(), key=lambda kv: -kv[1])[1:2]
     return {
         "q": case["q"],
         "ok": case["ok"],
         "win": win,
-        "p": round(probs[win], 3),
+        "p": round(probs.get(win, 0.0), 3),
+        "gate": gate,
         "conf": conf,
         "runner_up": runner_up[0] if runner_up else None,
         "correct": correct,
-        "pass": correct and sure,
+        "chosen": chosen,
+        "pass": correct and (sure or fallback),
         "confident_wrong": sure and not correct,
+        "ok_mass": round(mass, 3),
+        "pass_any": mass >= threshold,
     }
 
 
@@ -139,6 +169,7 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "n": n,
         "pass": sum(r["pass"] for r in rows),
+        "pass_any": sum(r.get("pass_any", False) for r in rows),
         "correct": sum(r["correct"] for r in rows),
         "confident_wrong": sum(r["confident_wrong"] for r in rows),
         "errors": sum(1 for r in rows if r.get("error")),
@@ -185,14 +216,16 @@ def run(a: argparse.Namespace) -> int:
             reqs = [build_request(c["q"], criteria, callsite, a.model) for c in cases]
             with ThreadPoolExecutor(a.par) as ex:
                 answers = list(ex.map(post_jev, reqs))
-            rows = [score(c, ans, a.threshold) for c, ans in zip(cases, answers, strict=True)]
+            fb = bool(callsite.get("fallback_is_no_tool"))
+            rows = [score(c, ans, a.threshold, fb) for c, ans in zip(cases, answers, strict=True)]
             with (out / f"{split}.run{rep}.jsonl").open("w") as fh:
                 for r, ans in zip(rows, answers, strict=True):
                     fh.write(json.dumps({**r, "raw": ans}) + "\n")
             s = summarize(rows)
             report["splits"].setdefault(split, []).append(s)
             print(
-                f"{split} run{rep}: pass {s['pass']}/{s['n']}  correct {s['correct']}/{s['n']}"
+                f"{split} run{rep}: pass {s['pass']}/{s['n']}  pass_any {s['pass_any']}"
+                f"  correct {s['correct']}/{s['n']}"
                 f"  confident_wrong {s['confident_wrong']}  errors {s['errors']}"
             )
     (out / "report.json").write_text(json.dumps(report, indent=1) + "\n")

@@ -1,0 +1,8 @@
+== dev
+  + get_civics@0.79 -> get_civics@0.98  ok=['get_civics']  | how many homesteads are there
+  + no_tool@0.89 -> no_tool@0.9  ok=['no_tool']  | is beekeeping broken?
+== holdout
+  + get_climate@0.85 -> get_climate@0.95  ok=['get_climate', 'get_world']  | how much pollution are the smelters putting out
+  - get_progression@0.91 -> get_progression@0.89  ok=['get_progression']  | which skills are most common on the server
+  + no_tool@0.89 -> no_tool@0.91  ok=['no_tool']  | how do I get my fridge to have power
+  - get_world@0.91 -> get_world@0.87  ok=['get_world']  | how many buildings went up this week

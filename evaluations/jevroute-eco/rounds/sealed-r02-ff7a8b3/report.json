@@ -1,0 +1,31 @@
+{
+ "meta": {
+  "mcp_url": "http://localhost:4049/mcp",
+  "label": "sealed on r02 prose",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "78da5aaeaea34b29f99a5dd2c0d47f651278f77a89e9a70df77d35dfe6451476",
+  "n_tools": 25,
+  "callsite": "evaluations/jevroute-eco/callsite.yaml",
+  "callsite_sha256": "76ac2a9f58cb15bad89914ec9f779794036bae792363fc9d5cc6ba6368fe05f5",
+  "started_utc": "2026-09-25T03:48:59Z"
+ },
+ "splits": {
+  "sealed": [
+   {
+    "n": 40,
+    "pass": 34,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 40,
+    "pass": 34,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

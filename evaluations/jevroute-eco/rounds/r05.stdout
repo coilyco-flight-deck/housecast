@@ -1,0 +1,7 @@
+dev run1: pass 71/77  pass_any 66  correct 71/77  confident_wrong 2  errors 0
+dev run2: pass 71/77  pass_any 66  correct 71/77  confident_wrong 2  errors 0
+holdout run1: pass 35/40  pass_any 34  correct 35/40  confident_wrong 2  errors 0
+holdout run2: pass 38/40  pass_any 35  correct 38/40  confident_wrong 2  errors 0
+sealed run1: pass 37/40  pass_any 33  correct 37/40  confident_wrong 1  errors 0
+sealed run2: pass 37/40  pass_any 33  correct 37/40  confident_wrong 1  errors 0
+tools_sha256 0b9a196a308f  n_tools 25  out evaluations/jevroute-eco/rounds/r05-5c65bfc-callsite-v5

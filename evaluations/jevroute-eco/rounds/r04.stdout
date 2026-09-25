@@ -1,0 +1,14 @@
+callsite dev run1: pass 70/77  pass_any 73  correct 76/77  confident_wrong 0  errors 0
+callsite dev run2: pass 69/77  pass_any 73  correct 76/77  confident_wrong 0  errors 0
+callsite holdout run1: pass 36/40  pass_any 37  correct 40/40  confident_wrong 0  errors 0
+callsite holdout run2: pass 35/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite sealed run1: pass 34/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite sealed run2: pass 34/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite tools_sha256 0b9a196a308f  n_tools 25  out evaluations/jevroute-eco/rounds/r04-5c65bfc-callsite
+callsite-v4-gate dev run1: pass 46/77  pass_any 46  correct 76/77  confident_wrong 0  errors 0
+callsite-v4-gate dev run2: pass 47/77  pass_any 47  correct 76/77  confident_wrong 0  errors 0
+callsite-v4-gate holdout run1: pass 13/40  pass_any 13  correct 38/40  confident_wrong 0  errors 0
+callsite-v4-gate holdout run2: pass 12/40  pass_any 12  correct 38/40  confident_wrong 0  errors 0
+callsite-v4-gate sealed run1: pass 17/40  pass_any 18  correct 39/40  confident_wrong 0  errors 0
+callsite-v4-gate sealed run2: pass 18/40  pass_any 19  correct 39/40  confident_wrong 0  errors 0
+callsite-v4-gate tools_sha256 0b9a196a308f  n_tools 25  out evaluations/jevroute-eco/rounds/r04-5c65bfc-callsite-v4-gate

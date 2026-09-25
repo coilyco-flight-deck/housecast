@@ -1,0 +1,43 @@
+# Sealed split, written 2026-09-25 before round 3. Reported as totals only, never by
+# question or class, so prose cannot be steered toward it. Labels are the science seat's.
+cases:
+  - {q: "who sells sand", ok: [find_trade]}
+  - {q: "I have 200 hewn logs, who will buy them", ok: [find_trade]}
+  - {q: "where do I find the lowest price on copper wire", ok: [find_trade]}
+  - {q: "have wool prices gone up or down lately", ok: [get_market]}
+  - {q: "price history for flour", ok: [get_market]}
+  - {q: "am I overcharging for my bread", ok: [fair_price]}
+  - {q: "would making leather pay off with what hides cost", ok: [price_recipe]}
+  - {q: "how many ingredients does a stove take", ok: [get_recipes]}
+  - {q: "what's the recipe for a campfire", ok: [get_recipes]}
+  - {q: "what does the Masonry skill unlock", ok: [get_skills, get_recipes]}
+  - {q: "which store has the widest selection", ok: [get_stores]}
+  - {q: "who runs the shop by spawn", ok: [get_stores, get_map]}
+  - {q: "notify me if anyone posts cheap steel", ok: [trade_watchers]}
+  - {q: "full list of trades for wheat seed", ok: [get_trades]}
+  - {q: "server population right now?", ok: [get_server_status]}
+  - {q: "what day is it in the cycle / how long till impact", ok: [get_server_status]}
+  - {q: "is the ocean getting higher", ok: [get_climate]}
+  - {q: "how bad is the ground pollution", ok: [get_climate]}
+  - {q: "who cut down the most trees", ok: [get_world, get_crafting_atlas]}
+  - {q: "how many foxes are there", ok: [get_species]}
+  - {q: "which ecoregion is the world closest to", ok: [get_region]}
+  - {q: "who is the current treasurer", ok: [get_government]}
+  - {q: "what's the tax law right now", ok: [get_government]}
+  - {q: "how did the last vote go", ok: [get_civics, get_government]}
+  - {q: "who owns the most land", ok: [get_map]}
+  - {q: "how much money has the government spent", ok: [get_economy]}
+  - {q: "how many loans are out", ok: [get_economy]}
+  - {q: "what's the biggest currency by supply", ok: [get_currency]}
+  - {q: "who's been playing the most this week", ok: [get_social]}
+  - {q: "what tech are people unlocking fastest", ok: [get_progression]}
+  - {q: "how many culture goals have we hit", ok: [get_milestones]}
+  - {q: "what is copper ore used for in the real world", ok: [explain_item]}
+  - {q: "how do I stop my house being ugly", ok: [no_tool]}
+  - {q: "my game froze on the loading screen", ok: [no_tool]}
+  - {q: "when is the next server restart", ok: [no_tool, get_server_status]}
+  - {q: "hey scuba can you check your truck", ok: [no_tool]}
+  - {q: "how do I get more calories", ok: [no_tool]}
+  - {q: "what's the best build for a new player's first house", ok: [no_tool]}
+  - {q: "which crafting tables have been busiest", ok: [get_crafting_atlas]}
+  - {q: "list the eco servers you know about", ok: [list_public_servers]}

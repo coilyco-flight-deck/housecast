@@ -1,0 +1,2 @@
+Fri Sep 25 03:50:08 UTC 2026
+PREDICTION r03b (5c65bfc, call-site v1, before run): Spectres flips to get_currency (<0.9 likely); dev 69-72, holdout 32-36, sealed 32-36.
