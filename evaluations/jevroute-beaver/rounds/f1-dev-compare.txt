@@ -1,0 +1,37 @@
+ok-mass per question, run1/run2. * = passes both runs. winner shown when it is not acceptable.
+- open PRs on housecast | ok=['list_pull-request']
+    ctl 0.20/0.17  win=create_pull-request | 1a 0.19/0.19  win=create_pull-request | 1b 0.04/0.04  win=create_pull-request | 1c 0.12/0.13  win=create_pull-request
+- show me PR 162 on housecast | ok=['get_pull-request']
+    ctl 0.93/0.95* | 1a 0.89/0.90  | 1b 0.94/0.91* | 1c 0.92/0.92*
+- what's the latest release of aterm | ok=['list_repository-release', 'get_repository-release']
+    ctl 0.62/0.60  | 1a 0.40/0.40  | 1b 0.42/0.44  | 1c 0.33/0.43  win=no_tool
+- fix the typo in the v0.1.4 release notes | ok=['edit_release']
+    ctl 0.96/0.96* | 1a 0.89/0.92  | 1b 0.87/0.87  | 1c 0.92/0.94*
+- list branches on deploy | ok=['list_repository-branch']
+    ctl 0.88/0.91  | 1a 0.88/0.89  | 1b 0.90/0.89  | 1c 0.88/0.88
+- is the jevroute-servers branch still there | ok=['get_repository-branch']
+    ctl 0.28/0.28  win=list_repository-branch | 1a 0.38/0.34  win=list_repository-branch | 1b 0.55/0.59  | 1c 0.35/0.38  win=list_repository-branch
+- show me the README of agent-proxy | ok=['get_repository-content']
+    ctl 0.90/0.90* | 1a 0.86/0.86  | 1b 0.86/0.89  | 1c 0.89/0.88
+- what's in the docs folder of housecast | ok=['list_repository-content', 'list_repository-tree']
+    ctl 0.91/0.91* | 1a 0.15/0.17  win=get_repository-content | 1b 0.15/0.11  win=get_repository-content | 1c 0.43/0.50  win=get_repository-content
+- tell me about the housecast repo | ok=['get_repository']
+    ctl 0.64/0.69  | 1a 0.88/0.88  | 1b 0.76/0.74  | 1c 0.83/0.87
+- turn off the wiki on housecast | ok=['no_tool']
+    ctl 0.54/0.48  | 1a 0.18/0.10  win=edit_repository | 1b 0.08/0.10  win=edit_repository | 1c 0.69/0.68
+- what orgs am I in | ok=['list_current-user-organization']
+    ctl 0.55/0.51  | 1a 0.71/0.67  | 1b 0.22/0.19  win=list_user-organization | 1c 0.40/0.42  win=list_user-organization
+- which repos are tagged mcp | ok=['search_repository']
+    ctl 0.76/0.74  | 1a 0.83/0.84  | 1b 0.82/0.87  | 1c 0.66/0.76
+- what version of the forgejo MCP server is this | ok=['mcp_beaver_info']
+    ctl 0.85/0.82  | 1a 0.89/0.82  | 1b 0.85/0.86  | 1c 0.89/0.87
+
+questions passing both runs in every candidate: 28 of 41
+holdout ctl run1: {'no_tool_mass': 5, 'right_under': 0, 'wrong': 2}
+holdout ctl run2: {'no_tool_mass': 5, 'right_under': 0, 'wrong': 2}
+holdout 1a run1: {'no_tool_mass': 5, 'right_under': 0, 'wrong': 1}
+holdout 1a run2: {'no_tool_mass': 4, 'right_under': 0, 'wrong': 1}
+holdout 1b run1: {'no_tool_mass': 3, 'right_under': 0, 'wrong': 1}
+holdout 1b run2: {'no_tool_mass': 3, 'right_under': 0, 'wrong': 1}
+holdout 1c run1: {'no_tool_mass': 4, 'right_under': 0, 'wrong': 2}
+holdout 1c run2: {'no_tool_mass': 5, 'right_under': 0, 'wrong': 1}

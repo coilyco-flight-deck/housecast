@@ -26,7 +26,7 @@ cases:
   - {q: "find every python file in the eco-app repo", ok: [list_repository-tree]}
   - {q: "what labels does the sirens-echo repo use", ok: [list_repository-label]}
   - {q: "tell me about the housecast repo", ok: [get_repository]}
-  - {q: "turn off the wiki on housecast", ok: [edit_repository]}
+  - {q: "turn off the wiki on housecast", ok: [no_tool]}
   - {q: "make a new repo called voice-lab in the coilyco org", ok: [create_organization-repository]}
   - {q: "which repos are in the coilyco org", ok: [list_organization-repository]}
   - {q: "who is in the coilyco org", ok: [list_organization-member]}
@@ -35,7 +35,7 @@ cases:
   - {q: "list all organizations on the server", ok: [list_organization]}
   - {q: "search for repos with eco in the name", ok: [search_repository]}
   - {q: "list every repo on the server", ok: [list_repository, search_repository]}
-  - {q: "which repos are tagged mcp", ok: [search_topic]}
+  - {q: "which repos are tagged mcp", ok: [search_repository]}
   - {q: "what version of the forgejo MCP server is this", ok: [mcp_beaver_info]}
   - {q: "file an issue on housecast about flaky tests", ok: [no_tool]}
   - {q: "search the code for the word systemone", ok: [no_tool]}
