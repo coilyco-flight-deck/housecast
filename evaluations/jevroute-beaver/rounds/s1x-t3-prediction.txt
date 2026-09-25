@@ -1,0 +1,2 @@
+Fri Sep 25 05:32:00 UTC 2026
+PREDICTION s1x/t3 (before run): forgejo-targeted server pass, control lowest on unfamiliar repo names; candidates within +-2 of each other; steals 0-1. Trello 3a/3b vs 2b in-run: dev +1-4, holdout within +-1.

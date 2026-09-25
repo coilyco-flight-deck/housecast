@@ -1,0 +1,11 @@
+# Forgejo-targeted server questions, holdout. Totals only to the prose author.
+cases:
+  - {q: "latest release of enshrouded-tools", server: [tailnet_coilyco_forgejo], tool: [list_repository-release, get_repository-release]}
+  - {q: "who reviewed PR 7 on lunch-money-k8s", server: [tailnet_coilyco_forgejo], tool: [get_pull-request]}
+  - {q: "read the Dockerfile from agent-proxy", server: [tailnet_coilyco_forgejo], tool: [get_repository-content]}
+  - {q: "which workflow runs failed on tally this week", server: [tailnet_coilyco_forgejo], tool: [list_action-run]}
+  - {q: "create a repo called fishtank under coilyco", server: [tailnet_coilyco_forgejo], tool: [create_organization-repository]}
+  - {q: "cut v2.3.0 on factory-game-v3", server: [tailnet_coilyco_forgejo], tool: [create_release]}
+  - {q: "what's tracked for the housecast repo in the tracker", server: [tailnet_coilyco_teable], tool: [list_record]}
+  - {q: "trace a slow request through the forgejo web service", server: [tailnet_coilyco_signoz], tool: [signoz_search_traces, signoz_get_trace_details]}
+  - {q: "is ser8 low on disk for the git runner", server: [tailnet_coilyco_node_stats_ser8], tool: [get_disk_info, get_filesystem_pressure]}
