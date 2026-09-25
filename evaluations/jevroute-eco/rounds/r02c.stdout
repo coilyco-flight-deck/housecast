@@ -1,0 +1,10 @@
+v3a dev run1: pass 65/77  correct 77/77  confident_wrong 0  errors 0
+v3a dev run2: pass 65/77  correct 77/77  confident_wrong 0  errors 0
+v3a holdout run1: pass 31/40  correct 40/40  confident_wrong 0  errors 0
+v3a holdout run2: pass 32/40  correct 40/40  confident_wrong 0  errors 0
+v3a tools_sha256 78da5aaeaea3  n_tools 25  out evaluations/jevroute-eco/rounds/r02c-ff7a8b3-callsite-v3a
+v3b dev run1: pass 66/77  correct 76/77  confident_wrong 0  errors 0
+v3b dev run2: pass 67/77  correct 76/77  confident_wrong 0  errors 0
+v3b holdout run1: pass 34/40  correct 40/40  confident_wrong 0  errors 0
+v3b holdout run2: pass 34/40  correct 40/40  confident_wrong 0  errors 0
+v3b tools_sha256 78da5aaeaea3  n_tools 25  out evaluations/jevroute-eco/rounds/r02c-ff7a8b3-callsite-v3b

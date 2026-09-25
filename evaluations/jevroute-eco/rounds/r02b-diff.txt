@@ -1,0 +1,12 @@
+== dev
+  - get_species@0.94 -> get_species@0.88  ok=['get_species', 'explain_item']  | what's a bison
+  + get_currency@0.82 -> get_currency@0.9  ok=['get_currency', 'find_trade']  | is there a place to convert reihtnog dollars?
+  ~ no_tool@0.47 -> get_currency@0.54  ok=['get_currency']  | who holds the most Spectres
+  - no_tool@0.91 -> no_tool@0.87  ok=['no_tool']  | how do I claim land with a stake
+== holdout
+  + fair_price@0.89 -> fair_price@0.9  ok=['get_market', 'fair_price']  | what's a normal price for an iron ingot
+  - get_trades@0.91 -> get_trades@0.8  ok=['get_trades', 'get_stores']  | list all of Aziraphale's trades last week
+  + get_currency@0.8 -> get_currency@0.96  ok=['get_currency', 'find_trade']  | exchange rate between Racines and Spectres
+  + no_tool@0.89 -> no_tool@0.92  ok=['no_tool']  | how do I get my fridge to have power
+  - get_species@0.92 -> get_species@0.87  ok=['explain_item', 'get_species']  | what is a tapir
+  - get_world@0.91 -> get_world@0.86  ok=['get_world']  | how many buildings went up this week

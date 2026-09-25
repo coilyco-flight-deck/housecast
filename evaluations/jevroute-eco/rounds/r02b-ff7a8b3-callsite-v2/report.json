@@ -1,0 +1,45 @@
+{
+ "meta": {
+  "mcp_url": "http://localhost:4049/mcp",
+  "label": "r02b call-site v2, eco-app ff7a8b3 on :4049",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "78da5aaeaea34b29f99a5dd2c0d47f651278f77a89e9a70df77d35dfe6451476",
+  "n_tools": 25,
+  "started_utc": "2026-09-25T03:46:56Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 77,
+    "pass": 66,
+    "correct": 77,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 77,
+    "pass": 63,
+    "correct": 77,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 40,
+    "pass": 33,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 40,
+    "pass": 31,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

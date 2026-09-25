@@ -1,0 +1,16 @@
+# Call-site v2: no_tool narrowed, player-invented names named. Differs from v1 in
+# `context` and `extra_options.no_tool` only. Science seat draft, 2026-09-25.
+instructions: >-
+  A player in the Sirens Eco community asked the message in state. Which single
+  Eco data tool best answers it? Pick no_tool when no tool's data can answer it.
+context: >-
+  Questions come from the Sirens Eco server's Discord and in-game chat. An
+  unqualified question is about the game Eco on the Sirens server. Players
+  invent the names of currencies, stores, and settlements, so an unfamiliar
+  capitalized name usually means one of those.
+extra_options:
+  no_tool: >-
+    No Eco data tool answers this. Game mechanics and how-to, client crashes and
+    bug reports, wipe or patch schedules, requests addressed to a specific
+    person, and messages not about Eco. An unfamiliar name alone is not a
+    reason to pick this.
