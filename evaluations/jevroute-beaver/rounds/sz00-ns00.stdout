@@ -1,0 +1,8 @@
+cases-signoz-dev run1: n 11  front_any 11  front_cw 0  server_any 3  server_strict 3  server_cw 0  tool_cw 1  e2e_any 2  e2e_strict 1  median_sec 0.64  errors 0
+cases-signoz-dev run2: n 11  front_any 11  front_cw 0  server_any 3  server_strict 3  server_cw 0  tool_cw 1  e2e_any 2  e2e_strict 1  median_sec 0.35  errors 0
+cases-signoz-holdout run1: n 9  front_any 8  front_cw 0  server_any 2  server_strict 2  server_cw 0  tool_cw 0  e2e_any 1  e2e_strict 1  median_sec 0.36  errors 0
+cases-signoz-holdout run2: n 9  front_any 9  front_cw 0  server_any 2  server_strict 2  server_cw 0  tool_cw 0  e2e_any 1  e2e_strict 1  median_sec 0.33  errors 0
+cases-nodestats-dev run1: n 11  front_any 11  front_cw 0  server_any 6  server_strict 5  server_cw 0  tool_cw 1  e2e_any 4  e2e_strict 1  median_sec 0.35  errors 0
+cases-nodestats-dev run2: n 11  front_any 11  front_cw 0  server_any 6  server_strict 5  server_cw 0  tool_cw 1  e2e_any 4  e2e_strict 1  median_sec 0.48  errors 0
+cases-nodestats-holdout run1: n 9  front_any 9  front_cw 0  server_any 4  server_strict 4  server_cw 0  tool_cw 0  e2e_any 4  e2e_strict 2  median_sec 0.47  errors 0
+cases-nodestats-holdout run2: n 9  front_any 9  front_cw 0  server_any 4  server_strict 4  server_cw 0  tool_cw 0  e2e_any 4  e2e_strict 2  median_sec 0.48  errors 0
