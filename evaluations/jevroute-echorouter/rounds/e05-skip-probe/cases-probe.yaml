@@ -1,0 +1,4 @@
+cases:
+  - {q: "is the server up", ok: [get_server_status]}
+  - {q: "when does the meteor hit", ok: [get_server_status]}
+  - {q: "how many people are online", ok: [get_server_status]}
