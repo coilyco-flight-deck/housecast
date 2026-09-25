@@ -1,0 +1,33 @@
+# Front question dev split: does one message hold more than one request. multi is true
+# when answering needs two or more separate lookups or actions. Science seat labels.
+cases:
+  - {q: "where can I buy limestone and who is the mayor", multi: true}
+  - {q: "is the server up? also how many deer are left", multi: true}
+  - {q: "price of iron bars, and what do I need to make a steel axe", multi: true}
+  - {q: "open PRs on housecast and any alerts firing", multi: true}
+  - {q: "add milk to my trello list then tell me my grocery budget", multi: true}
+  - {q: "check disk on kai-server and ser8", multi: true}
+  - {q: "who won the election and what laws passed after it", multi: true}
+  - {q: "what's the CO2 level. separately, who owns the deed by the lake", multi: true}
+  - {q: "can you screenshot localhost:3000 and file a tracker record about the broken header", multi: true}
+  - {q: "how much did I spend on food last month and am I over budget on it", multi: true}
+  - {q: "1) is enshrouded up 2) who's on", multi: true}
+  - {q: "tell me who's selling bricks, then set a watcher for cheap nails", multi: true}
+  - {q: "merge PR 162 and close 160", multi: true}
+  - {q: "what's the meteor countdown and what's the eco server version", multi: true}
+  - {q: "search discord for wipe talk and post a summary to bluesky", multi: true}
+  - {q: "where can I buy limestone", multi: false}
+  - {q: "who is selling iron bars cheapest right now", multi: false}
+  - {q: "what's the difference between basic and scholar upgrades", multi: false}
+  - {q: "can I buy bricks in one store and resell them in another for profit", multi: false}
+  - {q: "who are the biggest traders this cycle", multi: false}
+  - {q: "is there a place to convert reihtnog dollars?", multi: false}
+  - {q: "how many contracts and loans are active", multi: false}
+  - {q: "if I set up a huckleberry farm would the town laws stop me from harvesting?", multi: false}
+  - {q: "show me the README of agent-proxy", multi: false}
+  - {q: "which pods are crashlooping on ser8", multi: false}
+  - {q: "how much stuff has been crafted and mined this week", multi: false}
+  - {q: "sort my transactions by amount and category", multi: false}
+  - {q: "black and white photo of a frog, 1024 by 1024", multi: false}
+  - {q: "what's the price trend for iron bars this week and last week", multi: false}
+  - {q: "who owns and runs the store called Shiny Rocks", multi: false}

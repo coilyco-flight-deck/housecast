@@ -1,0 +1,95 @@
+{
+ "meta": {
+  "inventory": "evaluations/jevroute-servers/inventory.json",
+  "server_prose": "skill",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "n_servers": 22
+ },
+ "splits": {
+  "cases-dev": [
+   {
+    "n": 50,
+    "front_any": 49,
+    "front_cw": 0,
+    "server_any": 30,
+    "server_strict": 29,
+    "server_cw": 1,
+    "tool_cw": 0,
+    "e2e_any": 27,
+    "e2e_strict": 21,
+    "median_sec": 0.36,
+    "errors": 1
+   },
+   {
+    "n": 50,
+    "front_any": 50,
+    "front_cw": 0,
+    "server_any": 31,
+    "server_strict": 28,
+    "server_cw": 1,
+    "tool_cw": 0,
+    "e2e_any": 28,
+    "e2e_strict": 20,
+    "median_sec": 0.34,
+    "errors": 0
+   }
+  ],
+  "cases-holdout": [
+   {
+    "n": 25,
+    "front_any": 25,
+    "front_cw": 0,
+    "server_any": 13,
+    "server_strict": 12,
+    "server_cw": 0,
+    "tool_cw": 1,
+    "e2e_any": 13,
+    "e2e_strict": 8,
+    "median_sec": 0.38,
+    "errors": 0
+   },
+   {
+    "n": 25,
+    "front_any": 25,
+    "front_cw": 0,
+    "server_any": 13,
+    "server_strict": 13,
+    "server_cw": 0,
+    "tool_cw": 1,
+    "e2e_any": 12,
+    "e2e_strict": 10,
+    "median_sec": 0.32,
+    "errors": 0
+   }
+  ],
+  "cases-sealed": [
+   {
+    "n": 25,
+    "front_any": 25,
+    "front_cw": 0,
+    "server_any": 14,
+    "server_strict": 13,
+    "server_cw": 1,
+    "tool_cw": 0,
+    "e2e_any": 11,
+    "e2e_strict": 10,
+    "median_sec": 0.33,
+    "errors": 0
+   },
+   {
+    "n": 25,
+    "front_any": 25,
+    "front_cw": 0,
+    "server_any": 14,
+    "server_strict": 13,
+    "server_cw": 1,
+    "tool_cw": 0,
+    "e2e_any": 11,
+    "e2e_strict": 10,
+    "median_sec": 0.45,
+    "errors": 0
+   }
+  ]
+ }
+}

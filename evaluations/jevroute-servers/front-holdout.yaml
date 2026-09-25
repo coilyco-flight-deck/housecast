@@ -1,0 +1,18 @@
+# Front question holdout split. Totals only to any prose author. Science seat labels.
+cases:
+  - {q: "who sells clay, and has glass gotten pricier", multi: true}
+  - {q: "is ser8 ok? and what alerts fired overnight", multi: true}
+  - {q: "list my trello boards then add a card called taxes", multi: true}
+  - {q: "how many foxes are left and is the forest shrinking", multi: true}
+  - {q: "what did I spend on steam games, and which ones have I actually played", multi: true}
+  - {q: "who's president; what's the tax law", multi: true}
+  - {q: "check CI on eco-app and merge it if green", multi: true}
+  - {q: "what's everyone crafting and who's been online most", multi: true}
+  - {q: "anyone got clay for sale", multi: false}
+  - {q: "what goes into a pipe", multi: false}
+  - {q: "how much disk and memory is the enshrouded server using", multi: false}
+  - {q: "list all of Aziraphale's trades last week", multi: false}
+  - {q: "what's the exchange rate between Racines and Spectres", multi: false}
+  - {q: "who's on right now", multi: false}
+  - {q: "search and replace isn't working in my blender script", multi: false}
+  - {q: "fish and chips recipe", multi: false}

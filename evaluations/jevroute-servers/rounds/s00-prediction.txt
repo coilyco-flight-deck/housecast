@@ -1,0 +1,2 @@
+Fri Sep 25 04:17:36 UTC 2026
+PREDICTION s00 (before run, 22 servers, live server prose with skill fallback): server_any dev 38-46/50, holdout 18-23/25, sealed 18-23/25; e2e_any 70-85% of server_any; front_any 50-58 of 62 front cases per run plus most single server cases; median two-call latency 0.3-0.8s; server_cw 0-3.

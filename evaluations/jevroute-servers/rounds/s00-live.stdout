@@ -1,0 +1,12 @@
+cases-dev run1: n 50  front_any 50  front_cw 0  server_any 33  server_strict 31  server_cw 0  tool_cw 0  e2e_any 29  e2e_strict 23  median_sec 0.36  errors 0
+cases-dev run2: n 50  front_any 50  front_cw 0  server_any 35  server_strict 32  server_cw 0  tool_cw 0  e2e_any 30  e2e_strict 24  median_sec 0.36  errors 0
+cases-holdout run1: n 25  front_any 25  front_cw 0  server_any 17  server_strict 16  server_cw 0  tool_cw 1  e2e_any 15  e2e_strict 13  median_sec 0.39  errors 0
+cases-holdout run2: n 25  front_any 25  front_cw 0  server_any 16  server_strict 16  server_cw 0  tool_cw 0  e2e_any 15  e2e_strict 12  median_sec 0.34  errors 0
+cases-sealed run1: n 25  front_any 25  front_cw 0  server_any 17  server_strict 16  server_cw 0  tool_cw 0  e2e_any 13  e2e_strict 12  median_sec 0.47  errors 0
+cases-sealed run2: n 25  front_any 25  front_cw 0  server_any 19  server_strict 17  server_cw 0  tool_cw 0  e2e_any 15  e2e_strict 12  median_sec 0.45  errors 0
+front-dev run1: n 30  front_any 25  front_cw 1  median_sec 0.17  errors 0
+front-dev run2: n 30  front_any 25  front_cw 1  median_sec 0.22  errors 0
+front-holdout run1: n 16  front_any 15  front_cw 0  median_sec 0.33  errors 0
+front-holdout run2: n 16  front_any 14  front_cw 0  median_sec 0.2  errors 0
+front-sealed run1: n 16  front_any 13  front_cw 0  median_sec 0.19  errors 0
+front-sealed run2: n 16  front_any 13  front_cw 0  median_sec 0.36  errors 0

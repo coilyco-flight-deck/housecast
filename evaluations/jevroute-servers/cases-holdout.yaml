@@ -1,0 +1,28 @@
+# Server-first holdout split. Totals only to any prose author. Science seat labels,
+# written before any run.
+cases:
+  - {q: "cheapest place to buy iron bars in eco", server: [public_coilyco_eco], tool: [find_trade]}
+  - {q: "how polluted is the eco world", server: [public_coilyco_eco], tool: [get_climate]}
+  - {q: "how much disk is the enshrouded save using", server: [tailnet_coilyco_enshrouded], tool: [get_savegame, get_disk]}
+  - {q: "list branches on the deploy repo", server: [tailnet_coilyco_forgejo], tool: [list_repository-branch]}
+  - {q: "why did the last workflow run fail on housecast", server: [tailnet_coilyco_forgejo], tool: [get_action-run, list_action-run, list_action-run-job]}
+  - {q: "close my stale PR on eco-mods", server: [tailnet_coilyco_forgejo], tool: [close_pull-request]}
+  - {q: "mark tracker record 8229 closed", server: [tailnet_coilyco_teable], tool: [edit_record]}
+  - {q: "move the dentist card to done in trello", server: [tailnet_coilyco_trello], tool: [set_card]}
+  - {q: "what subscriptions am I paying for every month", server: [tailnet_coilyco_lunch_money], tool: [list_recurring_items]}
+  - {q: "net worth across my accounts", server: [tailnet_coilyco_lunch_money], tool: [list_assets, list_plaid_accounts]}
+  - {q: "cpu load on ser8 right now", server: [tailnet_coilyco_node_stats_ser8], tool: [get_cpu_info, get_system_snapshot, get_top_processes]}
+  - {q: "any k3s warning events on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_events]}
+  - {q: "trace the slow request id from this morning", server: [tailnet_coilyco_signoz], tool: [signoz_get_trace_details, signoz_search_traces]}
+  - {q: "which dashboards do we have for the proxy", server: [tailnet_coilyco_signoz], tool: [signoz_list_dashboards]}
+  - {q: "what threads are active in the sirens discord", server: [tailnet_coilyco_discord], tool: [list_guild-active-thread]}
+  - {q: "show me the replies to my last bluesky post", server: [tailnet_coilyco_bluesky], tool: [get_post_thread, get_author_feed]}
+  - {q: "do I own Satisfactory", server: [tailnet_coilyco_steam], tool: [get_owned_games, get_account_licenses]}
+  - {q: "click the login button on the page I have open", server: [local_coilyco_playwright_scientist], tool: [browser_click]}
+  - {q: "install the controlnet custom node in comfy", server: [local_coilyco_comfyui], tool: [install_node]}
+  - {q: "run this python in blender to add a cube", server: [local_coilyco_blender, local_coilyco_blender_3026], tool: [execute_blender_code]}
+  - {q: "how likely is it this bug is in the proxy, low medium or high", server: [tailnet_coilyco_jev], tool: [create_score_decision]}
+  - {q: "which models can I route to through agent proxy", server: [tailnet_coilyco_chat], tool: [list_models]}
+  - {q: "translate this paragraph into french", server: [no_server], tool: []}
+  - {q: "remind me tomorrow at 9", server: [no_server], tool: []}
+  - {q: "what's a good recipe for dinner tonight", server: [no_server], tool: []}

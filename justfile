@@ -101,6 +101,14 @@ mcpeval-compare *ARGS:
 jevroute *ARGS:
     @uv run --extra mcp python -m housecast.jevroute.bench "$@"
 
+# Server-first Jev routing: pick an MCP server, then a tool, plus the multi-request question.
+jevroute-servers *ARGS:
+    @uv run --extra mcp python -m housecast.jevroute.servers "$@"
+
+# Snapshot every MCP server's description and tools for jevroute-servers.
+jevroute-inventory *ARGS:
+    @uv run --extra mcp python -m housecast.jevroute.inventory "$@"
+
 # The visual flow: task, run, triaged queue, prose editor, comparison.
 mcpeval-serve *ARGS:
     @uv run --extra eval --extra mcp housecast mcpeval serve "$@"
