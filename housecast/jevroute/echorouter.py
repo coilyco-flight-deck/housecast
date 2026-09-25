@@ -103,6 +103,43 @@ def score_no_server(case: dict[str, Any], reply: dict[str, Any]) -> dict[str, An
     }
 
 
+def score_tiered(case: dict[str, Any], reply: dict[str, Any], general: set[str]) -> dict[str, Any]:
+    """sirens-echo 557d539: a domain pick at >= CONTESTED keeps general servers out."""
+    picks = []
+    for key, answer in reply.get("answers", {}).items():
+        if not key.startswith(PICK_PREFIX):
+            continue
+        tool, p = top(answer)
+        if tool not in (None, NO_TOOL):
+            picks.append((p, key[len(PICK_PREFIX) :], tool))
+    domain = sorted((x for x in picks if x[1] not in general), reverse=True)
+    field = domain if domain and domain[0][0] >= CONTESTED else sorted(picks, reverse=True)
+    tp, server, tool = field[0] if field else (0.0, None, None)
+    rival_p, rival = (
+        (field[1][0], f"{field[1][1]}:{field[1][2]}") if len(field) > 1 else (0.0, None)
+    )
+    declined = tool is None
+    want_decline = NO_TOOL in case["ok"]
+    right_route = (declined and want_decline) or (
+        not declined and server == case["server"] and tool in case["ok"]
+    )
+    direct = not declined and tp >= THRESHOLD and rival_p < CONTESTED
+    return {
+        "q": case["q"],
+        "ok": case["ok"],
+        "server": server,
+        "tool": tool,
+        "tool_p": round(tp, 3),
+        "rival_p": round(rival_p, 3),
+        "rival": rival,
+        "declined": declined,
+        "right_route": right_route,
+        "direct_right": direct and right_route,
+        "direct_wrong": direct and not right_route,
+        "contested": not declined and tp >= THRESHOLD and rival_p >= CONTESTED,
+    }
+
+
 def request(message: str, roster: dict[str, Any], model: str) -> dict[str, Any]:
     servers = {NONE: NONE_TEXT}
     questions: dict[str, Any] = {}
@@ -172,14 +209,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--model", default="jev-latest")
     p.add_argument("--reps", type=int, default=2)
     p.add_argument("--par", type=int, default=8)
-    p.add_argument("--mode", choices=["server-pick", "no-server-pick"], default="server-pick")
+    p.add_argument(
+        "--mode", choices=["server-pick", "no-server-pick", "tiered"], default="server-pick"
+    )
+    p.add_argument("--general", nargs="*", default=[], help="general-tier servers (tiered)")
     a = p.parse_args(argv)
     roster = json.loads(Path(a.roster).read_text())
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    build, judge = (
-        (request, score) if a.mode == "server-pick" else (request_no_server, score_no_server)
-    )
+    general = set(a.general)
+    build, judge = {
+        "server-pick": (request, score),
+        "no-server-pick": (request_no_server, score_no_server),
+        "tiered": (request_no_server, lambda c, r: score_tiered(c, r, general)),
+    }[a.mode]
     for path in a.cases:
         split = Path(path).stem.removeprefix("cases-")
         cases = [{**c, "server": a.server} for c in yaml.safe_load(Path(path).read_text())["cases"]]
