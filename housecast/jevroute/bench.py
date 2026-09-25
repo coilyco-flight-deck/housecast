@@ -173,7 +173,7 @@ def run(a: argparse.Namespace) -> int:
         "n_tools": len(tools),
         "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
-    (out / "tools.json").write_text(json.dumps(tools, indent=1, sort_keys=True))
+    (out / "tools.json").write_text(json.dumps(tools, indent=1, sort_keys=True) + "\n")
     report: dict[str, Any] = {"meta": meta, "splits": {}}
     for cases_path in a.cases:
         split = Path(cases_path).stem.removeprefix("cases-")
@@ -192,7 +192,7 @@ def run(a: argparse.Namespace) -> int:
                 f"{split} run{rep}: pass {s['pass']}/{s['n']}  correct {s['correct']}/{s['n']}"
                 f"  confident_wrong {s['confident_wrong']}  errors {s['errors']}"
             )
-    (out / "report.json").write_text(json.dumps(report, indent=1))
+    (out / "report.json").write_text(json.dumps(report, indent=1) + "\n")
     print(f"tools_sha256 {meta['tools_sha256'][:12]}  n_tools {meta['n_tools']}  out {out}")
     return 0
 
