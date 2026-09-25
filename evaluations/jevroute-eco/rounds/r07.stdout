@@ -1,0 +1,15 @@
+callsite dev run1: pass 70/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite dev run2: pass 70/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite holdout run1: pass 35/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite holdout run2: pass 34/40  pass_any 34  correct 40/40  confident_wrong 0  errors 0
+callsite tools_sha256 e33723e173f2  n_tools 25  out evaluations/jevroute-eco/rounds/r07-3627bde-callsite
+callsite-v7a dev run1: pass 70/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite-v7a dev run2: pass 69/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite-v7a holdout run1: pass 35/40  pass_any 36  correct 40/40  confident_wrong 0  errors 0
+callsite-v7a holdout run2: pass 34/40  pass_any 34  correct 40/40  confident_wrong 0  errors 0
+callsite-v7a tools_sha256 e33723e173f2  n_tools 25  out evaluations/jevroute-eco/rounds/r07-3627bde-callsite-v7a
+callsite-v7b dev run1: pass 71/77  pass_any 74  correct 76/77  confident_wrong 0  errors 0
+callsite-v7b dev run2: pass 70/77  pass_any 72  correct 76/77  confident_wrong 0  errors 0
+callsite-v7b holdout run1: pass 35/40  pass_any 36  correct 39/40  confident_wrong 0  errors 0
+callsite-v7b holdout run2: pass 35/40  pass_any 37  correct 39/40  confident_wrong 0  errors 0
+callsite-v7b tools_sha256 e33723e173f2  n_tools 25  out evaluations/jevroute-eco/rounds/r07-3627bde-callsite-v7b

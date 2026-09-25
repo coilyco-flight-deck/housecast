@@ -1,0 +1,8 @@
+# Call-site v7b: no_tool narrowed to four refusal classes, stated briefly. Science seat.
+instructions: A player in the Sirens Eco community asked the message in state. Which single
+  Eco data tool best answers it? Pick no_tool when no tool's data can answer it.
+context: Questions come from the Sirens Eco server's Discord and in-game chat. An unqualified
+  question is about the game Eco on the Sirens server.
+extra_options:
+  no_tool: Only for how-to or game-mechanics questions, problems with a player's own game
+    client, wipe or patch schedules, and requests addressed to a specific person.

@@ -1,0 +1,2 @@
+Fri Sep 25 04:20:59 UTC 2026
+PREDICTION r07 (5a, eco-app 3627bde on :4053, before run, dev+holdout only): v1 control reproduces r06 v1 within +-3 pass_any; v7a lifts Spectres off no_tool and gains 1-3 pass_any on unseen; v7b gains 2-5 but risks 1-3 no_tool questions losing mass.

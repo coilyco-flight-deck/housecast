@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://localhost:4053/mcp",
+  "label": "r07 5a callsite-v7a, eco-app 3627bde",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "e33723e173f2d556d7851d290763c051b212969e472f899054fdbaac0241d6c5",
+  "n_tools": 25,
+  "callsite": "evaluations/jevroute-eco/callsite-v7a.yaml",
+  "callsite_sha256": "54e9d0ef693206fc88b1bf885685d7c13c9ced6bc013d0518f6dbc262f9bbdc6",
+  "started_utc": "2026-09-25T04:21:03Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 77,
+    "pass": 70,
+    "pass_any": 72,
+    "correct": 76,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 77,
+    "pass": 69,
+    "pass_any": 72,
+    "correct": 76,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 40,
+    "pass": 35,
+    "pass_any": 36,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 40,
+    "pass": 34,
+    "pass_any": 34,
+    "correct": 40,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}
