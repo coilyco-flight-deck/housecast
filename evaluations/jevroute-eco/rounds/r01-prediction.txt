@@ -1,0 +1,2 @@
+Fri Sep 25 03:42:26 UTC 2026
+PREDICTION round 1 (before run): dev pass 58-68/77, holdout pass 25-31/40, confident_wrong 0-2 per run. If template leak: dev gain exceeds holdout gain by >2x in proportion.
