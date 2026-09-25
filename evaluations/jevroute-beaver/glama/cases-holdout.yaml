@@ -1,0 +1,7 @@
+# Glama holdout split. Totals only to the prose author. Science seat labels.
+cases:
+  - {q: "any MCP server for spotify", ok: [search_server]}
+  - {q: "look up details on the slack MCP server", ok: [get_server]}
+  - {q: "what categories or tags do registry entries have", ok: [list_attributes]}
+  - {q: "which registry servers are official", ok: [search_server, list_attributes]}
+  - {q: "rate this server five stars", ok: [no_tool]}

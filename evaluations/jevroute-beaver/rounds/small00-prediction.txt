@@ -1,0 +1,2 @@
+Fri Sep 25 06:23:08 UTC 2026
+PREDICTION small00 (before run, live templated text): each server dev pass_any 50-80%, holdout 40-80%, sealed 40-80%; mcp_beaver_info questions under 0.9; cw 0-2 total.

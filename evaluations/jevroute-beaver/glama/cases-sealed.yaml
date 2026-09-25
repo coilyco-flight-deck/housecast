@@ -1,0 +1,7 @@
+# Glama sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "is there a server for google calendar", ok: [search_server]}
+  - {q: "show the listing for the filesystem MCP server", ok: [get_server]}
+  - {q: "list the attribute filters the registry supports", ok: [list_attributes]}
+  - {q: "is the glama bridge alive", ok: [mcp_beaver_info]}
+  - {q: "run the weather MCP server's forecast tool", ok: [no_tool]}

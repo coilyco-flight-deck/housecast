@@ -1,0 +1,8 @@
+# Skillsmp dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "is there a published skill for writing changelogs", ok: [search_skills]}
+  - {q: "find skills about terraform", ok: [search_skills]}
+  - {q: "search the skill directory for pdf tools", ok: [search_skills]}
+  - {q: "what version of the skillsmp bridge is this", ok: [mcp_beaver_info]}
+  - {q: "install the changelog skill for me", ok: [no_tool]}
+  - {q: "write a new skill for code review", ok: [no_tool]}

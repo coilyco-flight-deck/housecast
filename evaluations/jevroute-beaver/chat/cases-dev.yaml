@@ -1,0 +1,10 @@
+# Chat dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "get a second opinion from deepseek on this plan", ok: [create_chat_completion]}
+  - {q: "ask another model to review this paragraph", ok: [create_chat_completion]}
+  - {q: "have a different model family critique my design", ok: [create_chat_completion]}
+  - {q: "which models can I route to through agent proxy", ok: [list_models]}
+  - {q: "is there an evaluation route for ministral", ok: [list_models]}
+  - {q: "what version of the chat bridge is this", ok: [mcp_beaver_info]}
+  - {q: "should we ship, yes or no", ok: [no_tool]}
+  - {q: "generate an image of a frog", ok: [no_tool]}

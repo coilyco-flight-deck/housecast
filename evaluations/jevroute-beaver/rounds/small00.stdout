@@ -1,0 +1,28 @@
+glama dev run1: pass 4/9  pass_any 4  correct 6/9  confident_wrong 0  errors 0
+glama dev run2: pass 4/9  pass_any 4  correct 6/9  confident_wrong 0  errors 0
+glama holdout run1: pass 2/5  pass_any 2  correct 2/5  confident_wrong 0  errors 0
+glama holdout run2: pass 2/5  pass_any 2  correct 2/5  confident_wrong 0  errors 0
+glama sealed run1: pass 1/5  pass_any 1  correct 3/5  confident_wrong 0  errors 0
+glama sealed run2: pass 1/5  pass_any 1  correct 3/5  confident_wrong 0  errors 0
+glama tools_sha256 0bf37fef883b  n_tools 4  out evaluations/jevroute-beaver/rounds/glama-00-live
+jev dev run1: pass 0/9  pass_any 1  correct 4/9  confident_wrong 0  errors 0
+jev dev run2: pass 0/9  pass_any 0  correct 4/9  confident_wrong 0  errors 0
+jev holdout run1: pass 0/5  pass_any 0  correct 3/5  confident_wrong 0  errors 0
+jev holdout run2: pass 0/5  pass_any 0  correct 3/5  confident_wrong 0  errors 0
+jev sealed run1: pass 0/5  pass_any 1  correct 3/5  confident_wrong 0  errors 0
+jev sealed run2: pass 0/5  pass_any 1  correct 3/5  confident_wrong 0  errors 0
+jev tools_sha256 1e771252c393  n_tools 4  out evaluations/jevroute-beaver/rounds/jev-00-live
+chat dev run1: pass 1/8  pass_any 1  correct 4/8  confident_wrong 1  errors 0
+chat dev run2: pass 1/8  pass_any 2  correct 5/8  confident_wrong 0  errors 0
+chat holdout run1: pass 0/5  pass_any 1  correct 2/5  confident_wrong 0  errors 0
+chat holdout run2: pass 0/5  pass_any 1  correct 2/5  confident_wrong 0  errors 0
+chat sealed run1: pass 1/5  pass_any 1  correct 3/5  confident_wrong 0  errors 0
+chat sealed run2: pass 1/5  pass_any 1  correct 4/5  confident_wrong 0  errors 0
+chat tools_sha256 7d2634e8790d  n_tools 3  out evaluations/jevroute-beaver/rounds/chat-00-live
+skillsmp dev run1: pass 3/6  pass_any 3  correct 4/6  confident_wrong 0  errors 0
+skillsmp dev run2: pass 3/6  pass_any 3  correct 4/6  confident_wrong 0  errors 0
+skillsmp holdout run1: pass 2/3  pass_any 2  correct 3/3  confident_wrong 0  errors 0
+skillsmp holdout run2: pass 2/3  pass_any 2  correct 2/3  confident_wrong 0  errors 0
+skillsmp sealed run1: pass 1/3  pass_any 1  correct 2/3  confident_wrong 0  errors 0
+skillsmp sealed run2: pass 1/3  pass_any 1  correct 2/3  confident_wrong 0  errors 0
+skillsmp tools_sha256 7e808a31dec4  n_tools 2  out evaluations/jevroute-beaver/rounds/skillsmp-00-live

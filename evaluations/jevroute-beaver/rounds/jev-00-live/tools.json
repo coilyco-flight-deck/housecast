@@ -1,0 +1,6 @@
+{
+ "create_choice_decision": "Use this when the user wants to create choice_decision through the configured upstream service.",
+ "create_noul_decision": "Use this when the user wants to create noul_decision through the configured upstream service.",
+ "create_score_decision": "Use this when the user wants to create score_decision through the configured upstream service.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone."
+}

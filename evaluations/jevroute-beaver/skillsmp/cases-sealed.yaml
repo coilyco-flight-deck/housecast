@@ -1,0 +1,5 @@
+# Skillsmp sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "look for a skill that handles spreadsheets", ok: [search_skills]}
+  - {q: "which build of the skillsmp bridge is serving", ok: [mcp_beaver_info]}
+  - {q: "rate that skill", ok: [no_tool]}

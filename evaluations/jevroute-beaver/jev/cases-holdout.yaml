@@ -1,0 +1,7 @@
+# Jev holdout split. Totals only to the prose author. Science seat labels.
+cases:
+  - {q: "does this message need a reply", ok: [create_noul_decision]}
+  - {q: "choose the right label for this ticket", ok: [create_choice_decision]}
+  - {q: "score how risky this change is on a five point scale", ok: [create_score_decision]}
+  - {q: "is the jev bridge up", ok: [mcp_beaver_info]}
+  - {q: "draft a reply to this customer", ok: [no_tool]}
