@@ -1,0 +1,2 @@
+Fri Sep 25 06:35:17 UTC 2026
+PREDICTION postdeploy small: live tools_sha256 equals final (glama 6af0ce14def2, jev 59037fcfb9a7, chat 259639196a10); holdout within +-1 of final (glama 3,3; jev 3,3; chat 2,2).

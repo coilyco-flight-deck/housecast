@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30085/mcp",
+  "label": "post-deploy glama live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "6af0ce14def2ef9d0a18a0d6e8a404f3d72f818076820c8586857151c08b1c4a",
+  "n_tools": 4,
+  "callsite": "evaluations/jevroute-beaver/glama/callsite.yaml",
+  "callsite_sha256": "f70cc6e5f8e74f10d3ea6b6e09182c3d825e4fdd6548272fee43cb363778867f",
+  "started_utc": "2026-09-25T06:35:18Z"
+ },
+ "splits": {
+  "holdout": [
+   {
+    "n": 5,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 5,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 4,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

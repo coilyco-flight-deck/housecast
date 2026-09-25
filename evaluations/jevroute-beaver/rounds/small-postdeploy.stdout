@@ -1,0 +1,9 @@
+glama holdout run1: pass 3/5  pass_any 3  correct 4/5  confident_wrong 0  errors 0
+glama holdout run2: pass 3/5  pass_any 3  correct 4/5  confident_wrong 0  errors 0
+glama tools_sha256 6af0ce14def2  n_tools 4  out evaluations/jevroute-beaver/rounds/postdeploy-glama
+jev holdout run1: pass 2/5  pass_any 3  correct 4/5  confident_wrong 0  errors 0
+jev holdout run2: pass 3/5  pass_any 3  correct 4/5  confident_wrong 0  errors 0
+jev tools_sha256 59037fcfb9a7  n_tools 4  out evaluations/jevroute-beaver/rounds/postdeploy-jev
+chat holdout run1: pass 2/5  pass_any 2  correct 4/5  confident_wrong 0  errors 0
+chat holdout run2: pass 2/5  pass_any 2  correct 4/5  confident_wrong 0  errors 0
+chat tools_sha256 259639196a10  n_tools 3  out evaluations/jevroute-beaver/rounds/postdeploy-chat
