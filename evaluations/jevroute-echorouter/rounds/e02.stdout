@@ -1,0 +1,8 @@
+eco-only dev run1: right_route 76/77  direct_right 57  direct_wrong 0  declined 9  contested 0  errors 0
+eco-only dev run2: right_route 76/77  direct_right 58  direct_wrong 0  declined 9  contested 0  errors 0
+eco-only holdout run1: right_route 40/40  direct_right 25  direct_wrong 0  declined 5  contested 0  errors 0
+eco-only holdout run2: right_route 40/40  direct_right 24  direct_wrong 0  declined 5  contested 0  errors 0
+echo18 dev run1: right_route 70/77  direct_right 25  direct_wrong 0  declined 6  contested 35  errors 0
+echo18 dev run2: right_route 69/77  direct_right 27  direct_wrong 1  declined 7  contested 34  errors 0
+echo18 holdout run1: right_route 36/40  direct_right 11  direct_wrong 0  declined 5  contested 15  errors 0
+echo18 holdout run2: right_route 36/40  direct_right 9  direct_wrong 0  declined 5  contested 16  errors 0

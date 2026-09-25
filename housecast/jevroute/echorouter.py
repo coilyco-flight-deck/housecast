@@ -45,6 +45,64 @@ def tool_prompt(server: str) -> str:
     )
 
 
+CONTESTED = 0.5  # sirens-echo 9e03ab1 jevToolContested
+
+
+def request_no_server(message: str, roster: dict[str, Any], model: str) -> dict[str, Any]:
+    """sirens-echo 9e03ab1: no server pick, one tool pick per server with its guidance."""
+    questions: dict[str, Any] = {}
+    for name in sorted(roster):
+        entry = roster[name]
+        tools = {k: v for k, v in entry["tools"].items() if k and k != NO_TOOL}
+        if not tools or len(tools) + 1 > 240:
+            continue
+        prompt = tool_prompt(name)
+        if entry.get("description"):
+            prompt += " The server describes itself: " + entry["description"]
+        questions[PICK_PREFIX + name] = {
+            "type": "choice",
+            "instructions": prompt,
+            "criteria": {**tools, NO_TOOL: NO_TOOL_TEXT},
+        }
+    return {"model": model, "state": {"message": message}, "questions": questions}
+
+
+def score_no_server(case: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    best: tuple[str | None, str | None, float] = (None, None, 0.0)
+    rival = 0.0
+    for key, answer in reply.get("answers", {}).items():
+        if not key.startswith(PICK_PREFIX):
+            continue
+        tool, p = top(answer)
+        if tool in (None, NO_TOOL):
+            continue
+        if p > best[2]:
+            rival = max(rival, best[2])
+            best = (key[len(PICK_PREFIX) :], tool, p)
+        else:
+            rival = max(rival, p)
+    server, tool, tp = best
+    declined = tool is None
+    want_decline = NO_TOOL in case["ok"]
+    right_route = (declined and want_decline) or (
+        not declined and server == case["server"] and tool in case["ok"]
+    )
+    direct = not declined and tp >= THRESHOLD and rival < CONTESTED
+    return {
+        "q": case["q"],
+        "ok": case["ok"],
+        "server": server,
+        "tool": tool,
+        "tool_p": round(tp, 3),
+        "rival_p": round(rival, 3),
+        "declined": declined,
+        "right_route": right_route,
+        "direct_right": direct and right_route,
+        "direct_wrong": direct and not right_route,
+        "contested": not declined and tp >= THRESHOLD and rival >= CONTESTED,
+    }
+
+
 def request(message: str, roster: dict[str, Any], model: str) -> dict[str, Any]:
     servers = {NONE: NONE_TEXT}
     questions: dict[str, Any] = {}
@@ -105,7 +163,8 @@ def score(case: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="jevroute-echorouter")
+    # allow_abbrev off: "--mode" once silently matched "--model" and sent a bad model id.
+    p = argparse.ArgumentParser(prog="jevroute-echorouter", allow_abbrev=False)
     p.add_argument("--roster", required=True)
     p.add_argument("--cases", nargs="+", required=True)
     p.add_argument("--server", required=True, help="roster name the cases' tools belong to")
@@ -113,17 +172,21 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--model", default="jev-latest")
     p.add_argument("--reps", type=int, default=2)
     p.add_argument("--par", type=int, default=8)
+    p.add_argument("--mode", choices=["server-pick", "no-server-pick"], default="server-pick")
     a = p.parse_args(argv)
     roster = json.loads(Path(a.roster).read_text())
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
+    build, judge = (
+        (request, score) if a.mode == "server-pick" else (request_no_server, score_no_server)
+    )
     for path in a.cases:
         split = Path(path).stem.removeprefix("cases-")
         cases = [{**c, "server": a.server} for c in yaml.safe_load(Path(path).read_text())["cases"]]
         for rep in range(1, a.reps + 1):
             with ThreadPoolExecutor(a.par) as ex:
-                replies = list(ex.map(lambda c: post_jev(request(c["q"], roster, a.model)), cases))
-            rows = [score(c, r) for c, r in zip(cases, replies, strict=True)]
+                replies = list(ex.map(lambda c: post_jev(build(c["q"], roster, a.model)), cases))
+            rows = [judge(c, r) for c, r in zip(cases, replies, strict=True)]
             with (out / f"{split}.run{rep}.jsonl").open("w") as fh:
                 fh.writelines(
                     json.dumps({**r, "raw": x}) + "\n" for r, x in zip(rows, replies, strict=True)
@@ -134,6 +197,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"  direct_right {sum(r['direct_right'] for r in rows)}"
                 f"  direct_wrong {sum(r['direct_wrong'] for r in rows)}"
                 f"  declined {sum(r['declined'] for r in rows)}"
+                f"  contested {sum(r.get('contested', False) for r in rows)}"
                 f"  errors {sum('error' in x for x in replies)}"
             )
     return 0
