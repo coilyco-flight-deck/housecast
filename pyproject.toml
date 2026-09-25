@@ -106,6 +106,7 @@ testpaths = [
     "housecast/grade/tests",
     "housecast/mcp/tests",
     "housecast/mcpeval/tests",
+    "housecast/jevroute/tests",
 ]
 
 [tool.agentic-os.repo-pointer-skills]

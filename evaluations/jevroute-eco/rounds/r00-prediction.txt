@@ -1,0 +1,2 @@
+Fri Sep 25 03:36:53 UTC 2026
+PREDICTION round 0 (before run): dev pass@0.9 30-55 of 77, holdout pass@0.9 12-25 of 40, confident_wrong 2-8 per dev run.

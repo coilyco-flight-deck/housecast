@@ -1,0 +1,5 @@
+dev run1: pass 52/77  correct 73/77  confident_wrong 0  errors 0
+dev run2: pass 51/77  correct 73/77  confident_wrong 0  errors 0
+holdout run1: pass 22/40  correct 37/40  confident_wrong 0  errors 0
+holdout run2: pass 21/40  correct 38/40  confident_wrong 0  errors 0
+tools_sha256 2bc8b529b45d  n_tools 25  out evaluations/jevroute-eco/rounds/r00-live

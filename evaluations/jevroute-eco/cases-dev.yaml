@@ -1,0 +1,80 @@
+# Dev split, readable by the prose author. Labels are the science seat's, written
+# before any baseline run. `ok` lists every tool that is a correct answer.
+cases:
+  - {q: "where can I buy limestone", ok: [find_trade]}
+  - {q: "wth are the prices of hewn logs?", ok: [get_market, find_trade]}
+  - {q: "who is selling iron bars cheapest right now", ok: [find_trade]}
+  - {q: "how has the price of copper plates changed this week", ok: [get_market]}
+  - {q: "is anyone buying wheat", ok: [find_trade]}
+  - {q: "what should I stock in my store to make money", ok: [find_trade]}
+  - {q: "is 3 coins each a good price for lumber", ok: [fair_price, get_market]}
+  - {q: "is it worth crafting boards to sell or should I just sell the logs", ok: [price_recipe]}
+  - {q: "how much does it cost me to make a steel axe at current prices", ok: [price_recipe]}
+  - {q: "what's the most traded item on the server", ok: [get_market, get_trades]}
+  - {q: "show me every charcoal trade from yesterday", ok: [get_trades]}
+  - {q: "ping me when iron ore drops below 1", ok: [trade_watchers]}
+  - {q: "can you alert me if someone lists a crane", ok: [trade_watchers]}
+  - {q: "can I buy bricks in one store and resell them in another for profit", ok: [find_trade]}
+  - {q: "which store does the most business", ok: [get_stores]}
+  - {q: "who owns the store called Shiny Rocks", ok: [get_stores]}
+  - {q: "what does Snorf's store usually trade", ok: [get_stores]}
+  - {q: "who are the biggest traders this cycle", ok: [get_stores, get_trades]}
+  - {q: "how do I craft a steel axe", ok: [get_recipes]}
+  - {q: "what do I need to make mortared stone", ok: [get_recipes]}
+  - {q: "what can I make at a kiln", ok: [get_recipes]}
+  - {q: "which recipes need the Smelting skill", ok: [get_recipes]}
+  - {q: "how long does it take to craft a hewn log", ok: [get_recipes]}
+  - {q: "what uses crushed limestone as an ingredient", ok: [get_recipes]}
+  - {q: "what is limestone in real life", ok: [explain_item]}
+  - {q: "what's a bison", ok: [get_species, explain_item]}
+  - {q: "which specialty unlocks the most recipes", ok: [get_skills]}
+  - {q: "is Tailoring worth picking as a specialty", ok: [get_skills]}
+  - {q: "what skills are people leveling most on the server", ok: [get_progression]}
+  - {q: "how fast is the server moving through the tech tree", ok: [get_progression]}
+  - {q: "how much stuff has been crafted and mined this week", ok: [get_crafting_atlas]}
+  - {q: "who has been mining the most", ok: [get_crafting_atlas]}
+  - {q: "how polluted is the air", ok: [get_climate]}
+  - {q: "is the sea level rising", ok: [get_climate]}
+  - {q: "how many deer are left", ok: [get_species]}
+  - {q: "are the wolves dying out", ok: [get_species, get_region]}
+  - {q: "what biomes does the world have", ok: [get_region, get_map]}
+  - {q: "which animal populations are shifting the most", ok: [get_region]}
+  - {q: "who is dumping the most garbage", ok: [get_world]}
+  - {q: "how much terraforming has happened", ok: [get_world]}
+  - {q: "how many roads have been built", ok: [get_world]}
+  - {q: "do smelters with queued jobs keep polluting", ok: [no_tool, get_climate]}
+  - {q: "is the server up", ok: [get_server_status]}
+  - {q: "how many people are online", ok: [get_server_status]}
+  - {q: "when does the meteor hit", ok: [get_server_status]}
+  - {q: "what version is the server running", ok: [get_server_status]}
+  - {q: "what other public eco servers are there", ok: [list_public_servers]}
+  - {q: "when do you next wipe?", ok: [no_tool]}
+  - {q: "who won the last election", ok: [get_civics, get_government]}
+  - {q: "who is the mayor", ok: [get_government]}
+  - {q: "what laws are active right now", ok: [get_government]}
+  - {q: "if I set up a huckleberry farm would the town laws stop me from harvesting?", ok: [get_government]}
+  - {q: "is there an election running", ok: [get_government]}
+  - {q: "how many homesteads are there", ok: [get_civics]}
+  - {q: "what was the voter turnout", ok: [get_civics]}
+  - {q: "who owns the deed by the lake", ok: [get_map]}
+  - {q: "how big is the biggest property", ok: [get_map]}
+  - {q: "show me the world map", ok: [get_map]}
+  - {q: "how many contracts and loans are active", ok: [get_economy]}
+  - {q: "what's the tax flow looking like", ok: [get_economy]}
+  - {q: "is the economy healthy", ok: [get_economy]}
+  - {q: "is there a place to convert reihtnog dollars?", ok: [get_currency, find_trade]}
+  - {q: "how much money is in circulation", ok: [get_currency]}
+  - {q: "who holds the most Spectres", ok: [get_currency]}
+  - {q: "what currencies exist", ok: [get_currency]}
+  - {q: "how many new players joined this week", ok: [get_social]}
+  - {q: "who has the most reputation", ok: [get_social]}
+  - {q: "how active has the server been lately", ok: [get_social, get_server_status]}
+  - {q: "do we have a shipwright?", ok: [get_progression]}
+  - {q: "how close are we to the next culture achievement", ok: [get_milestones]}
+  - {q: "how many blocks need to be between trees?", ok: [no_tool]}
+  - {q: "how does room tier work", ok: [no_tool]}
+  - {q: "game crashes on launch under proton", ok: [no_tool]}
+  - {q: "is beekeeping broken?", ok: [no_tool]}
+  - {q: "can you auth me on this cart", ok: [no_tool]}
+  - {q: "what's the capital of France", ok: [no_tool]}
+  - {q: "how do I claim land with a stake", ok: [no_tool]}
