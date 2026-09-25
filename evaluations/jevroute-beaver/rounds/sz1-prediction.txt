@@ -1,0 +1,2 @@
+Fri Sep 25 06:05:18 UTC 2026
+PREDICTION sz1 (before run): control (live instructions, port tools) signoz dev 2-4/11, holdout 1-3/9; candidates dev 6-10, holdout 5-8; node_stats-labelled questions in these sets not stolen by signoz (server cw 0-1).
