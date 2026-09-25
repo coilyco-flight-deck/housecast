@@ -1,0 +1,4 @@
+dev run1: right_route 45/77  direct_right 13  direct_wrong 0  declined 32  errors 0
+dev run2: right_route 45/77  direct_right 14  direct_wrong 0  declined 31  errors 0
+holdout run1: right_route 24/40  direct_right 1  direct_wrong 0  declined 15  errors 0
+holdout run2: right_route 26/40  direct_right 1  direct_wrong 0  declined 13  errors 0

@@ -1,0 +1,2 @@
+Fri Sep 25 05:16:05 UTC 2026
+PRE-REGISTERED: forgejo final tool text = 2c (deploy 43eb9223). Sealed runs once on 2c. PREDICTION f2c: holdout 15-17/20, sealed 13-17/20 (live b00 sealed 10,11), cw 0. PREDICTION t1 (trello, before run): control dev 19,19 -> candidates 26-34/40, holdout 13 -> 14-18/20; style C (thin) lowest.
