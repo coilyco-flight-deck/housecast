@@ -1,0 +1,3 @@
+probe run1: right_route 3/3  direct_right 2  direct_wrong 0  declined 0  contested 1  errors 0
+probe run2: right_route 3/3  direct_right 2  direct_wrong 0  declined 0  contested 1  errors 0
+probe run3: right_route 3/3  direct_right 3  direct_wrong 0  declined 0  contested 0  errors 0

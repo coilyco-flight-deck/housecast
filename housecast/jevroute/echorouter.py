@@ -213,8 +213,16 @@ def main(argv: list[str] | None = None) -> int:
         "--mode", choices=["server-pick", "no-server-pick", "tiered"], default="server-pick"
     )
     p.add_argument("--general", nargs="*", default=[], help="general-tier servers (tiered)")
+    p.add_argument(
+        "--skip", nargs="*", default=[], help="tool or server__tool (sirens-echo 3682f81)"
+    )
     a = p.parse_args(argv)
     roster = json.loads(Path(a.roster).read_text())
+    skip = set(a.skip)
+    for name, entry in roster.items():
+        entry["tools"] = {
+            t: d for t, d in entry["tools"].items() if t not in skip and f"{name}__{t}" not in skip
+        }
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     general = set(a.general)

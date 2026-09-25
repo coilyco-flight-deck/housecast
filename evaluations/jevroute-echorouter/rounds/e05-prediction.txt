@@ -1,0 +1,2 @@
+Fri Sep 25 07:01:39 UTC 2026
+PREDICTION e05 (before run, sirens-echo 3682f81 skip mcp_beaver_info, tiers exa/wikipedia/jev): probe 3/3 direct-right every rep, 0 contested; dev direct_right 54-58/77, holdout 22-24/40, direct_wrong only the capital-of-France label.
