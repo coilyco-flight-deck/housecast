@@ -1,0 +1,8 @@
+f1-control-live dev.run1: pass 25 pass_any 27 cw 1
+f1-control-live dev.run2: pass 24 pass_any 28 cw 1
+f1a-d14aaa26 dev.run1: pass 27 pass_any 28 cw 0
+f1a-d14aaa26 dev.run2: pass 28 pass_any 30 cw 0
+f1b-a5081825 dev.run1: pass 29 pass_any 30 cw 0
+f1b-a5081825 dev.run2: pass 29 pass_any 29 cw 0
+f1c-992304a5 dev.run1: pass 30 pass_any 30 cw 0
+f1c-992304a5 dev.run2: pass 30 pass_any 30 cw 0
