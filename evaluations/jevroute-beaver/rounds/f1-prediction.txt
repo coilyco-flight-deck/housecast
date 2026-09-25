@@ -1,0 +1,2 @@
+Fri Sep 25 05:03:19 UTC 2026
+PREDICTION f1 (before run, relabelled forgejo cases): live control dev pass_any 27-31/41; each candidate dev 30-38/41, holdout 14-18/20; at least one style beats control by >3 on dev and >1 on holdout; cw 0-1.

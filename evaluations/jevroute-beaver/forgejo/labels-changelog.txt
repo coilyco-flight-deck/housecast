@@ -1,0 +1,10 @@
+# Forgejo label changes
+
+* 2026-09-25 05:03 UTC, before scoring round 1. Raised by the sysadmin-senior seat from
+  the endpoint grants, accepted by the science seat.
+  * dev "turn off the wiki on housecast": edit_repository -> no_tool. The grant takes
+    default_branch, description, has_issues, has_pull_requests, website, and no has_wiki.
+  * dev "which repos are tagged mcp": search_topic -> search_repository. /topics/search
+    returns topic names and counts, while search_repository with topic=true returns repos.
+  * holdout "find repos about agents": search_repository, search_topic -> search_repository,
+    by the same endpoint fact. The science seat applied this one unasked.

@@ -15,7 +15,7 @@ cases:
   - {q: "spin up a new repo for the tally mod under coilyco", ok: [create_organization-repository]}
   - {q: "repos I own personally", ok: [list_user-repository]}
   - {q: "which orgs does coilyco-ops belong to", ok: [list_user-organization]}
-  - {q: "find repos about agents", ok: [search_repository, search_topic]}
+  - {q: "find repos about agents", ok: [search_repository]}
   - {q: "who has access to the coilyco org", ok: [list_organization-member]}
   - {q: "draft a release on eco-mods for v3.1", ok: [create_release]}
   - {q: "open an issue about the broken badge", ok: [no_tool]}
