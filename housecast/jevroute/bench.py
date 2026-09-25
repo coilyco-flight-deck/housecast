@@ -171,9 +171,12 @@ def run(a: argparse.Namespace) -> int:
         "threshold": a.threshold,
         "tools_sha256": hashlib.sha256(blob).hexdigest(),
         "n_tools": len(tools),
+        "callsite": a.callsite,
+        "callsite_sha256": hashlib.sha256(Path(a.callsite).read_bytes()).hexdigest(),
         "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     (out / "tools.json").write_text(json.dumps(tools, indent=1, sort_keys=True) + "\n")
+    (out / "callsite.yaml").write_text(Path(a.callsite).read_text())
     report: dict[str, Any] = {"meta": meta, "splits": {}}
     for cases_path in a.cases:
         split = Path(cases_path).stem.removeprefix("cases-")

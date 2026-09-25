@@ -1,0 +1,2 @@
+Fri Sep 25 03:47:24 UTC 2026
+PREDICTION r02c (before run): v3a (context only) keeps Spectres gain and carries most of v2's loss; v3b (no_tool sentence only) moves within noise of r02.
