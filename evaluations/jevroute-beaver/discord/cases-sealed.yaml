@@ -1,0 +1,12 @@
+# Discord sealed split. Totals only, never by question. Science seat labels.
+cases:
+  - {q: "summarize what's been said in general this morning", ok: [list_channel-message]}
+  - {q: "grab the last 20 messages from bug-reports", ok: [list_channel-message]}
+  - {q: "who's been talking about proton crashes", ok: [search_guild-message]}
+  - {q: "find anything about the election results", ok: [search_guild-message]}
+  - {q: "fetch the message someone linked, id 24680", ok: [get_channel-message]}
+  - {q: "does the server have a voice channel list", ok: [list_guild-channel]}
+  - {q: "any live threads in the sirens guild", ok: [list_guild-active-thread]}
+  - {q: "which guilds is this bot a member of", ok: [list_current-user-guild]}
+  - {q: "delete my last message", ok: [no_tool]}
+  - {q: "kick the new account that joined", ok: [no_tool]}

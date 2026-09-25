@@ -1,0 +1,22 @@
+# Discord dev split. Labels are the science seat's, written before any candidate or run.
+cases:
+  - {q: "what did people say in eco-chat today", ok: [list_channel-message]}
+  - {q: "last 50 messages in the general channel", ok: [list_channel-message]}
+  - {q: "catch me up on the announcements channel", ok: [list_channel-message]}
+  - {q: "search the server for messages about the wipe", ok: [search_guild-message]}
+  - {q: "has anyone mentioned limestone lately", ok: [search_guild-message]}
+  - {q: "find messages from scuba about trucks", ok: [search_guild-message]}
+  - {q: "show me message 12345 in eco-chat", ok: [get_channel-message]}
+  - {q: "open that pinned message someone linked", ok: [get_channel-message]}
+  - {q: "what channels does the sirens server have", ok: [list_guild-channel]}
+  - {q: "is there a channel for eco cycle 14", ok: [list_guild-channel]}
+  - {q: "which threads are active right now", ok: [list_guild-active-thread]}
+  - {q: "any open threads about the new mod", ok: [list_guild-active-thread, search_guild-message]}
+  - {q: "which discord servers can the bot see", ok: [list_current-user-guild]}
+  - {q: "what's the bot's discord username", ok: [get_current-user]}
+  - {q: "what version of the discord MCP bridge is this", ok: [mcp_beaver_info]}
+  - {q: "post a message in eco-chat saying the server is back", ok: [no_tool]}
+  - {q: "DM kai that the build finished", ok: [no_tool]}
+  - {q: "react with a thumbs up to the last message", ok: [no_tool]}
+  - {q: "ban the spammer from the server", ok: [no_tool]}
+  - {q: "what's the weather in Seattle", ok: [no_tool]}

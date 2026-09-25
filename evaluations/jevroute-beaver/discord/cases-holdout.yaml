@@ -1,0 +1,12 @@
+# Discord holdout split. Reported to the prose author as totals only. Science seat labels.
+cases:
+  - {q: "what's been happening in the modding channel", ok: [list_channel-message]}
+  - {q: "pull the newest messages from eco-cycle-14", ok: [list_channel-message]}
+  - {q: "did anyone talk about the meteor", ok: [search_guild-message]}
+  - {q: "look for posts about beekeeping bugs", ok: [search_guild-message]}
+  - {q: "read the message with id 67890", ok: [get_channel-message]}
+  - {q: "list every channel in the guild", ok: [list_guild-channel]}
+  - {q: "what threads are going on", ok: [list_guild-active-thread]}
+  - {q: "who is the bot logged in as", ok: [get_current-user]}
+  - {q: "pin the rules message", ok: [no_tool]}
+  - {q: "create a new channel called trading", ok: [no_tool]}

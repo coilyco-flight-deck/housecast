@@ -1,0 +1,7 @@
+dev run1: pass 13/20  pass_any 14  correct 19/20  confident_wrong 0  errors 0
+dev run2: pass 13/20  pass_any 14  correct 19/20  confident_wrong 0  errors 0
+holdout run1: pass 7/10  pass_any 7  correct 10/10  confident_wrong 0  errors 0
+holdout run2: pass 8/10  pass_any 8  correct 10/10  confident_wrong 0  errors 0
+sealed run1: pass 6/10  pass_any 7  correct 9/10  confident_wrong 0  errors 0
+sealed run2: pass 6/10  pass_any 7  correct 9/10  confident_wrong 0  errors 0
+tools_sha256 21d6a8f8197e  n_tools 8  out evaluations/jevroute-beaver/rounds/d00-discord-live

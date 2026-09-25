@@ -1,0 +1,2 @@
+Fri Sep 25 05:43:30 UTC 2026
+PREDICTION d00 (before run, live templated discord): dev pass_any 8-14/20, holdout 4-7/10, sealed 4-7/10, cw 0-2.
