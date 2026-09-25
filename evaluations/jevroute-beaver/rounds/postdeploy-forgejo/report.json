@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "mcp_url": "http://kai-server:30082/mcp",
+  "label": "post-deploy forgejo live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "2976d5b3eedb9c13576dd202d1436482f8499860b986bce28a6273dc3f980e9b",
+  "n_tools": 41,
+  "callsite": "evaluations/jevroute-beaver/forgejo/callsite.yaml",
+  "callsite_sha256": "cfe616468007f65a22de710c9c2b4667a153076fc6835564a177bb4106e416cf",
+  "started_utc": "2026-09-25T05:42:49Z"
+ },
+ "splits": {
+  "holdout": [
+   {
+    "n": 20,
+    "pass": 16,
+    "pass_any": 17,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 20,
+    "pass": 14,
+    "pass_any": 17,
+    "correct": 19,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}
