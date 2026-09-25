@@ -1,0 +1,123 @@
+{
+ "meta": {
+  "inventory": "evaluations/jevroute-beaver/nodestats/inventory-sz1c-ns1a.json",
+  "server_prose": "live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "n_servers": 22
+ },
+ "splits": {
+  "cases-signoz-dev": [
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 10,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 8,
+    "e2e_strict": 5,
+    "median_sec": 0.76,
+    "errors": 0
+   },
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 10,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 9,
+    "e2e_strict": 5,
+    "median_sec": 0.77,
+    "errors": 0
+   }
+  ],
+  "cases-signoz-holdout": [
+   {
+    "n": 9,
+    "front_any": 8,
+    "front_cw": 0,
+    "server_any": 7,
+    "server_strict": 6,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 4,
+    "e2e_strict": 3,
+    "median_sec": 0.72,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "front_any": 8,
+    "front_cw": 0,
+    "server_any": 6,
+    "server_strict": 6,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 3,
+    "e2e_strict": 3,
+    "median_sec": 0.82,
+    "errors": 0
+   }
+  ],
+  "cases-nodestats-dev": [
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 11,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 9,
+    "e2e_strict": 5,
+    "median_sec": 0.53,
+    "errors": 0
+   },
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 11,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 9,
+    "e2e_strict": 5,
+    "median_sec": 0.49,
+    "errors": 0
+   }
+  ],
+  "cases-nodestats-holdout": [
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 7,
+    "server_strict": 7,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 6,
+    "e2e_strict": 4,
+    "median_sec": 0.44,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 7,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 7,
+    "e2e_strict": 4,
+    "median_sec": 0.46,
+    "errors": 0
+   }
+  ]
+ }
+}

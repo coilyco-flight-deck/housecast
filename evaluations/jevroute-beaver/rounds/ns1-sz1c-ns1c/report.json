@@ -1,0 +1,123 @@
+{
+ "meta": {
+  "inventory": "evaluations/jevroute-beaver/nodestats/inventory-sz1c-ns1c.json",
+  "server_prose": "live",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "n_servers": 22
+ },
+ "splits": {
+  "cases-signoz-dev": [
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 10,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 9,
+    "e2e_strict": 5,
+    "median_sec": 0.85,
+    "errors": 0
+   },
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 10,
+    "server_strict": 10,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 8,
+    "e2e_strict": 5,
+    "median_sec": 0.65,
+    "errors": 0
+   }
+  ],
+  "cases-signoz-holdout": [
+   {
+    "n": 9,
+    "front_any": 8,
+    "front_cw": 0,
+    "server_any": 6,
+    "server_strict": 6,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 3,
+    "e2e_strict": 3,
+    "median_sec": 0.56,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "front_any": 8,
+    "front_cw": 0,
+    "server_any": 6,
+    "server_strict": 6,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 3,
+    "e2e_strict": 3,
+    "median_sec": 0.73,
+    "errors": 0
+   }
+  ],
+  "cases-nodestats-dev": [
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 8,
+    "server_strict": 8,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 6,
+    "e2e_strict": 3,
+    "median_sec": 0.51,
+    "errors": 0
+   },
+   {
+    "n": 11,
+    "front_any": 11,
+    "front_cw": 0,
+    "server_any": 9,
+    "server_strict": 9,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 7,
+    "e2e_strict": 4,
+    "median_sec": 0.5,
+    "errors": 0
+   }
+  ],
+  "cases-nodestats-holdout": [
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 7,
+    "server_strict": 7,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 6,
+    "e2e_strict": 5,
+    "median_sec": 0.52,
+    "errors": 0
+   },
+   {
+    "n": 9,
+    "front_any": 9,
+    "front_cw": 0,
+    "server_any": 7,
+    "server_strict": 7,
+    "server_cw": 0,
+    "tool_cw": 0,
+    "e2e_any": 6,
+    "e2e_strict": 5,
+    "median_sec": 0.45,
+    "errors": 0
+   }
+  ]
+ }
+}

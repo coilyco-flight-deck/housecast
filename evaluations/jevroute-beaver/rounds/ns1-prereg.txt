@@ -1,0 +1,3 @@
+Fri Sep 25 06:18:26 UTC 2026
+PRE-REGISTERED (sysadmin-senior): final = combination with best combined holdout (signoz + node_stats questions) and 0 server confident-wrong; ties to combined dev. Science reading: holdout summed over both runs; cw zero across dev and holdout, both runs. PREDICTION: node_stats candidates lift node_stats holdout to 5-8/9 and remove the signoz steal; best combined holdout 11-15 per run.
+RULE APPLIED 06:19 UTC: best combined holdout = sz1b-ns1c (29, cw 0). Next: sz1b-ns1b, sz1c-ns1a, sz1c-ns1b at 28. Final = signoz 1b + node_stats 1c.
