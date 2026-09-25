@@ -1,0 +1,10 @@
+{
+ "get_channel-message": "Returns one specific message by channel id and message id. Ask 'what does this message link say' or 'what message has this id'.",
+ "get_current-user": "Returns the bot's own Discord username, id, and avatar. Ask 'what is my bot username' or 'what is my bot id'.",
+ "list_channel-message": "Returns recent messages in one channel, newest first, up to 100, or before, after, or around a message. Ask 'what are the latest messages in general' or 'what messages came before that link'.",
+ "list_current-user-guild": "Returns the Discord servers the bot is a member of, optionally with member counts. Ask 'what guilds is the bot in' or 'how many members does each server have'.",
+ "list_guild-active-thread": "Returns currently active threads across one server with their names and parent channels. Ask 'which threads are not archived' or 'what active threads are in Sirens'.",
+ "list_guild-channel": "Returns every channel in one server with its name, type, topic, and category. Ask 'what channels does Sirens have' or 'where is the music channel'.",
+ "mcp_beaver_info": "Report this MCP server's identity, mode, and served tool inventory. Read-only, reaches no upstream, and doubles as a liveness probe now that the protocol ping is gone.",
+ "search_guild-message": "Returns up to 25 matching messages per page from a whole server, searchable by words, author, mentions, channel, pinned state, or attachment type. Ask 'who said what about the tour' or 'what messages are pinned'."
+}

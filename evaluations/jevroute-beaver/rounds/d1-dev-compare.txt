@@ -1,0 +1,24 @@
+- what did people say in eco-chat today | ok=['list_channel-message']
+    ctl 0.67/0.62 ru=search_guild-message 0.24 | 1a 0.94/0.93 | 1b 0.50/0.47 ru=search_guild-message 0.47 | 1c 0.27/0.26 win=list_guild-channel ru=list_channel-message 0.27
+- last 50 messages in the general channel | ok=['list_channel-message']
+    ctl 0.97/0.97 | 1a 1.00/1.00 | 1b 1.00/1.00 | 1c 0.55/0.49 ru=no_tool 0.33
+- catch me up on the announcements channel | ok=['list_channel-message']
+    ctl 0.96/0.95 | 1a 1.00/1.00 | 1b 0.97/0.96 | 1c 0.33/0.37 ru=list_guild-channel 0.25
+- show me message 12345 in eco-chat | ok=['get_channel-message']
+    ctl 0.63/0.68 ru=no_tool 0.19 | 1a 0.85/0.88 ru=no_tool 0.14 | 1b 0.94/0.96 | 1c 0.34/0.40 win=no_tool ru=get_channel-message 0.34
+- open that pinned message someone linked | ok=['get_channel-message']
+    ctl 0.33/0.38 win=no_tool ru=get_channel-message 0.33 | 1a 0.79/0.81 ru=search_guild-message 0.15 | 1b 0.17/0.09 win=search_guild-message ru=get_channel-message 0.17 | 1c 0.45/0.45 ru=no_tool 0.43
+- what channels does the sirens server have | ok=['list_guild-channel']
+    ctl 0.96/0.97 | 1a 0.99/1.00 | 1b 1.00/1.00 | 1c 0.77/0.76 ru=no_tool 0.20
+- is there a channel for eco cycle 14 | ok=['list_guild-channel']
+    ctl 0.94/0.94 | 1a 0.99/0.98 | 1b 0.96/0.97 | 1c 0.85/0.85 ru=no_tool 0.13
+- which threads are active right now | ok=['list_guild-active-thread']
+    ctl 0.98/0.98 | 1a 0.99/0.99 | 1b 0.99/0.99 | 1c 0.82/0.82 ru=no_tool 0.18
+- any open threads about the new mod | ok=['list_guild-active-thread', 'search_guild-message']
+    ctl 0.97/0.98 | 1a 0.98/0.97 | 1b 0.99/0.99 | 1c 0.87/0.87 ru=no_tool 0.13
+- which discord servers can the bot see | ok=['list_current-user-guild']
+    ctl 0.63/0.62 ru=no_tool 0.33 | 1a 1.00/1.00 | 1b 0.99/0.99 | 1c 0.45/0.43 win=get_current-user ru=list_current-user-guild 0.45
+- what's the bot's discord username | ok=['get_current-user']
+    ctl 0.56/0.62 ru=no_tool 0.41 | 1a 0.99/0.99 | 1b 0.96/0.94 | 1c 0.54/0.46 ru=no_tool 0.45
+- what version of the discord MCP bridge is this | ok=['mcp_beaver_info']
+    ctl 0.84/0.76 ru=no_tool 0.16 | 1a 0.87/0.88 ru=no_tool 0.13 | 1b 0.80/0.81 ru=no_tool 0.20 | 1c 0.86/0.82 ru=no_tool 0.14

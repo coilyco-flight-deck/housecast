@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "mcp_url": "http://127.0.0.1:18303/mcp",
+  "label": "d1 discord 1c-2c50e776",
+  "model": "jev-latest",
+  "threshold": 0.9,
+  "tools_sha256": "5e34ab9f50989b882452329b4640811c87e535717785e49e7ccf9fa832139359",
+  "n_tools": 8,
+  "callsite": "evaluations/jevroute-beaver/discord/callsite.yaml",
+  "callsite_sha256": "f053dcebf8f467805e0b54694fee6375fe129bbfe352f1e44bbc2a09e5758265",
+  "started_utc": "2026-09-25T05:48:03Z"
+ },
+ "splits": {
+  "dev": [
+   {
+    "n": 20,
+    "pass": 8,
+    "pass_any": 8,
+    "correct": 17,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 20,
+    "pass": 8,
+    "pass_any": 8,
+    "correct": 16,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ],
+  "holdout": [
+   {
+    "n": 10,
+    "pass": 3,
+    "pass_any": 4,
+    "correct": 8,
+    "confident_wrong": 0,
+    "errors": 0
+   },
+   {
+    "n": 10,
+    "pass": 3,
+    "pass_any": 3,
+    "correct": 9,
+    "confident_wrong": 0,
+    "errors": 0
+   }
+  ]
+ }
+}

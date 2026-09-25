@@ -1,0 +1,9 @@
+# Discord label notes
+
+* 2026-09-25, before round 1. The sysadmin-senior seat noted that list_channel-message
+  and search_guild-message take channel_id, so a question naming a channel resolves it
+  through list_guild-channel first. The science seat kept the labels unchanged: the
+  router picks the tool that answers, and resolving a name to an id is argument
+  extraction (teable:coilyco/sirens-echo#8249). That differs from the trello relabel,
+  where a name-only get_board or get_card question accepted the list or search step.
+  The asymmetry is deliberate and recorded here, not reconciled.
