@@ -12,7 +12,7 @@ cases:
   - {q: "what subscriptions am I paying for every month", server: [tailnet_coilyco_lunch_money], tool: [list_recurring_items]}
   - {q: "net worth across my accounts", server: [tailnet_coilyco_lunch_money], tool: [list_assets, list_plaid_accounts]}
   - {q: "cpu load on ser8 right now", server: [tailnet_coilyco_node_stats_ser8], tool: [get_cpu_info, get_system_snapshot, get_top_processes]}
-  - {q: "any k3s warning events on kai-server", server: [tailnet_coilyco_node_stats_kai_server], tool: [get_k3s_events]}
+  - {q: "any k3s warning events on kai-server", server: [tailnet_coilyco_node_stats_kai_server, tailnet_coilyco_signoz], tool: [get_k3s_events, signoz_search_logs, signoz_aggregate_logs]}
   - {q: "trace the slow request id from this morning", server: [tailnet_coilyco_signoz], tool: [signoz_get_trace_details, signoz_search_traces]}
   - {q: "which dashboards do we have for the proxy", server: [tailnet_coilyco_signoz], tool: [signoz_list_dashboards]}
   - {q: "what threads are active in the sirens discord", server: [tailnet_coilyco_discord], tool: [list_guild-active-thread]}
