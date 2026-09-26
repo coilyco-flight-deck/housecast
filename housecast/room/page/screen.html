@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<!-- Shared into Meet and onto the recording, so the tab names nothing. -->
+<title>the room</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="room.css">
+</head>
+<body class="screen">
+<p class="demo-chip" id="demo-chip" hidden>demo data</p>
+<p class="banner" id="banner" role="status" hidden></p>
+
+<main class="wrap" id="main">
+  <p class="eyebrow" id="eyebrow">the room</p>
+  <h1 id="title">Waiting on the presenter</h1>
+  <p class="dim" id="lead"></p>
+  <p class="mono" id="join" style="font-size:1.8rem;color:var(--pass)"></p>
+  <ul class="cast" id="cast" aria-label="The four agents"></ul>
+  <ol class="board" id="board" hidden></ol>
+  <div class="answers" id="answers" hidden></div>
+  <div class="split" id="split" hidden></div>
+  <ul class="failures" id="failures" hidden></ul>
+  <p class="dim" id="foot"></p>
+</main>
+
+<script src="room.js"></script>
+<script src="views.js"></script>
+<script>
+"use strict";
+const { promptById, seconds, leaderboard } = window.Room;
+const V = window.RoomViews;
+const $ = (id) => document.getElementById(id);
+const host = location.host;
+
+let room = null;
+let link = { live: true };
+
+function only(...ids) {
+  for (const id of ["join", "cast", "board", "answers", "split", "failures"]) $(id).hidden = !ids.includes(id);
+}
+
+function render() {
+  if (!room) return;
+  const now = Date.now();
+  const eyebrow = $("eyebrow");
+  eyebrow.className = "eyebrow";
+  if (room.phase === "holding") {
+    eyebrow.textContent = "the room";
+    $("title").textContent = "Waiting on the presenter";
+    $("lead").textContent = "Join on your phone or laptop. You'll send a prompt, then grade four answers to it.";
+    $("join").textContent = host;
+    V.setHtml($("cast"), V.cast(room));
+    $("foot").textContent = "";
+    only("join", "cast");
+  } else if (room.phase === "submissions") {
+    eyebrow.textContent = `round ${room.round.n + 1} // open`;
+    eyebrow.classList.add("eyebrow--open");
+    $("title").textContent = "Find the question that splits them";
+    const scored = leaderboard(room).length;
+    const flying = room.prompts.length - scored;
+    $("lead").textContent = `${room.prompts.length} ${room.prompts.length === 1 ? "prompt" : "prompts"} in, ${flying} still being answered. The texts are on your screen, not this one.`;
+    $("join").textContent = host;
+    // Prompt text never reaches the recorded screen until Kai picks it.
+    V.setHtml($("board"), V.board(room, { withText: false, limit: 6 }));
+    $("foot").textContent = V.lexicalNote(room);
+    only("join", "board");
+  } else if (room.phase === "grading") {
+    const prompt = promptById(room, room.round.prompt_id);
+    eyebrow.textContent = `round ${room.round.n} // grade all four`;
+    $("title").textContent = prompt?.text ?? "";
+    $("lead").textContent = "";
+    V.setHtml($("answers"), room.subjects.map((s) => V.answerCard(room, room.round.prompt_id, s, now)).join(""));
+    const n = room.round.graded ?? 0;
+    $("foot").textContent = `${n} ${n === 1 ? "person has" : "people have"} graded. Grade on your own screen.`;
+    only("answers");
+  } else if (room.phase === "split") {
+    const last = room.rounds[room.rounds.length - 1];
+    eyebrow.textContent = `round ${last?.n ?? room.round.n} // the split`;
+    $("title").textContent = promptById(room, last?.prompt_id)?.text ?? "The split";
+    $("lead").textContent = "Each agent's PASS share of the room.";
+    V.setHtml($("split"), (last && V.split(room, last.n, { tall: 22 })) ?? "");
+    $("foot").textContent = "";
+    only("split");
+  } else if (room.phase === "closing") {
+    eyebrow.textContent = "failing grades, this session";
+    eyebrow.classList.add("eyebrow--closing");
+    $("title").textContent = "Now change the compositions";
+    $("lead").textContent = "";
+    // Reasons are attendee-typed, so the recorded screen shows counts and the presenter reads them.
+    V.setHtml($("failures"), V.failures(room, { withReasons: false }));
+    $("foot").textContent = "The reasons are on the presenter's screen.";
+    only("failures");
+  }
+}
+
+function renderLink() {
+  $("banner").hidden = link.live;
+  if (!link.live) $("banner").textContent = `Reconnecting to the room. This is from ${seconds(new Date(link.since).toISOString(), Date.now())}s ago.`;
+}
+
+const demo = window.Room.connect(
+  (next) => { room = next; render(); },
+  (next) => { link = next; renderLink(); },
+  { snapshotUrl: "api/room?view=screen", eventsUrl: "api/room/events?view=screen" },
+);
+$("demo-chip").hidden = !demo;
+setInterval(() => { render(); renderLink(); }, 1000);
+</script>
+</body>
+</html>
