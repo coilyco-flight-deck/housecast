@@ -135,7 +135,11 @@ class Room:
             ],
         }
         if view == "presenter" or self.phase == "closing":
-            snap["failures"] = self.failures()
+            failures = self.failures()
+            # The recorded screen gets who failed, not the words, until Kai rules.
+            if view == "screen":
+                failures = [{k: v for k, v in f.items() if k != "reason"} for f in failures]
+            snap["failures"] = failures
         return snap
 
     def failures(self) -> list[dict[str, Any]]:

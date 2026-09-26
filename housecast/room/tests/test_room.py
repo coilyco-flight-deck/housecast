@@ -194,6 +194,7 @@ def test_a_round_withholds_direction_until_the_split() -> None:
     assert "failures" not in room.snapshot()
     engine.set_phase("closing")
     assert room.snapshot()["failures"] == [{"n": 1, "subject_id": "s2", "reason": "too vague"}]
+    assert room.snapshot("screen")["failures"] == [{"n": 1, "subject_id": "s2"}]
 
 
 def test_grades_refuse_outside_grading_and_for_a_past_round() -> None:
