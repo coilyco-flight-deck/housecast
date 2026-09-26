@@ -30,6 +30,7 @@ DEFAULT_PORT = 8767
 PAGE = Path(__file__).parent / "page"
 KIT = Path(__file__).parent.parent / "grade" / "present_page" / "kit.css"
 HEARTBEAT = 15.0
+GRACEFUL_SHUTDOWN = 5
 
 
 class Intake(BaseModel):
@@ -265,4 +266,7 @@ def serve(
         port=port,
         log_level="warning",
         proxy_headers=False,
+        # An SSE stream never ends on its own, so without a bound uvicorn waits on it
+        # through the pod's whole grace period while refusing new requests.
+        timeout_graceful_shutdown=GRACEFUL_SHUTDOWN,
     )
