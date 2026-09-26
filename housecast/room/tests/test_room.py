@@ -27,10 +27,12 @@ def proxy(replies: dict[str, Any], jev: Any = 2.0) -> httpx.MockTransport:
 
     def handle(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
+        assert request.headers["x-agent-session-id"] == "housecast-room"
         if request.url.path == "/v1/systemone":
             if isinstance(jev, int) and not isinstance(jev, bool) and jev >= 400:
                 return httpx.Response(jev)
             return httpx.Response(200, json={"answers": {"divergence": {"score": jev}}})
+        assert body["user"] == "housecast-room"
         reply = replies[body["messages"][0]["content"]]
         if isinstance(reply, int):
             return httpx.Response(reply)

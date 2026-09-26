@@ -44,6 +44,14 @@ def room() -> None:
 )
 @click.option("--jev-model", envvar="ROOM_JEV_MODEL", default="jev-1.13.0", show_default=True)
 @click.option(
+    "--user",
+    "user_tag",
+    envvar="ROOM_USER",
+    default="housecast-room",
+    show_default=True,
+    help="the `user` field on every chat completion, for tracing",
+)
+@click.option(
     "--rate-seconds", default=20.0, show_default=True, help="one prompt per client per window"
 )
 @click.option(
@@ -66,6 +74,7 @@ def serve_cmd(
     proxy: str,
     model: str,
     jev_model: str,
+    user_tag: str,
     rate_seconds: float,
     address_burst: int,
     devices_per_address: int,
@@ -82,6 +91,7 @@ def serve_cmd(
         model=model,
         jev_model=jev_model,
         key=os.environ.get("ROOM_PROXY_KEY"),
+        user=user_tag,
     )
     click.echo(f"room: {len(subjects)} subjects, rev {state.rev}, http://{host}:{port}", err=True)
     serve(state, cfg, token, host, port, rate_seconds, address_burst, devices_per_address)

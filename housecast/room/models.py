@@ -43,6 +43,8 @@ class Settings:
     model: str
     jev_model: str
     key: str | None = None
+    # Sent as `user` and as x-agent-session-id, which the proxy stamps on its spans.
+    user: str = "housecast-room"
     max_tokens: int = 4000
     temperature: float = 0.7
     frame: str = "Answer in under 150 words."
@@ -50,7 +52,10 @@ class Settings:
     jev_timeout: float = 60.0
 
     def headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {self.key}"} if self.key else {}
+        headers = {"x-agent-session-id": self.user}
+        if self.key:
+            headers["Authorization"] = f"Bearer {self.key}"
+        return headers
 
 
 async def answer(client: httpx.AsyncClient, cfg: Settings, system: str, prompt: str) -> str:
@@ -59,6 +64,7 @@ async def answer(client: httpx.AsyncClient, cfg: Settings, system: str, prompt: 
         f"{cfg.proxy}/v1/chat/completions",
         json={
             "model": cfg.model,
+            "user": cfg.user,
             "temperature": cfg.temperature,
             "max_tokens": cfg.max_tokens,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
