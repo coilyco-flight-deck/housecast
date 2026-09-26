@@ -46,6 +46,18 @@ def room() -> None:
 @click.option(
     "--rate-seconds", default=20.0, show_default=True, help="one prompt per client per window"
 )
+@click.option(
+    "--address-burst",
+    default=30,
+    show_default=True,
+    help="prompts per address per window; the ceiling on minted device tokens",
+)
+@click.option(
+    "--devices-per-address",
+    default=100,
+    show_default=True,
+    help="distinct grading devices per address per round",
+)
 def serve_cmd(
     subjects_path: Path,
     log_path: Path,
@@ -55,6 +67,8 @@ def serve_cmd(
     model: str,
     jev_model: str,
     rate_seconds: float,
+    address_burst: int,
+    devices_per_address: int,
 ) -> None:
     """Serve the room. ROOM_CONTROL_TOKEN gates the presenter controls."""
     subjects = load_subjects(subjects_path)
@@ -70,4 +84,4 @@ def serve_cmd(
         key=os.environ.get("ROOM_PROXY_KEY"),
     )
     click.echo(f"room: {len(subjects)} subjects, rev {state.rev}, http://{host}:{port}", err=True)
-    serve(state, cfg, token, host, port, rate_seconds)
+    serve(state, cfg, token, host, port, rate_seconds, address_burst, devices_per_address)
