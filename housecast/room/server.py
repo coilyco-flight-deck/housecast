@@ -53,25 +53,52 @@ class Pick(BaseModel):
 
 
 class RateLimit:
-    """One prompt per client per window. A room, not a fortress: two devices count twice."""
+    """One prompt per device per window, and at most `burst` per address per window.
 
-    def __init__(self, seconds: float) -> None:
+    The device token is the browser's own claim, so the address ceiling is what a
+    script rotating tokens runs into. A room, not a fortress.
+    """
+
+    def __init__(self, seconds: float, burst: int) -> None:
         self.seconds = seconds
+        self.burst = burst
         self._last: dict[str, float] = {}
+        self._recent: dict[str, list[float]] = {}
 
-    def allow(self, client: str) -> bool:
+    def allow(self, device: str, address: str) -> bool:
         stamp = time.monotonic()
-        if stamp - self._last.get(client, -self.seconds) < self.seconds:
+        recent = [t for t in self._recent.get(address, []) if stamp - t < self.seconds]
+        self._recent[address] = recent
+        if len(recent) >= self.burst:
             return False
-        self._last[client] = stamp
+        key = device or address
+        if stamp - self._last.get(key, -self.seconds) < self.seconds:
+            return False
+        self._last[key] = stamp
+        recent.append(stamp)
         return True
 
 
+class DeviceCap:
+    """At most `cap` distinct grading devices per address per round, so minted tokens run out."""
+
+    def __init__(self, cap: int) -> None:
+        self.cap = cap
+        self._seen: dict[tuple[int, str], set[str]] = {}
+
+    def allow(self, n: int, address: str, device: str) -> bool:
+        seen = self._seen.setdefault((n, address), set())
+        if device in seen or len(seen) < self.cap:
+            seen.add(device)
+            return True
+        return False
+
+
 def client_of(request: Request) -> str:
-    # Behind the ingress the peer is the proxy, so the first forwarded hop is the client.
+    # The ingress appends the peer it saw: the rightmost hop is the one no client writes.
     forwarded = request.headers.get("x-forwarded-for", "")
     if forwarded:
-        return forwarded.split(",")[0].strip()
+        return forwarded.split(",")[-1].strip()
     return request.client.host if request.client else "unknown"
 
 
@@ -80,10 +107,13 @@ def create_app(
     cfg: Settings,
     control_token: str,
     rate_seconds: float = 20.0,
+    address_burst: int = 30,
+    devices_per_address: int = 100,
     client: httpx.AsyncClient | None = None,
     page: Path | None = PAGE,
 ) -> FastAPI:
-    limit = RateLimit(rate_seconds)
+    limit = RateLimit(rate_seconds, address_burst)
+    ballots = DeviceCap(devices_per_address)
     state: dict[str, Engine] = {}
 
     @asynccontextmanager
@@ -153,7 +183,7 @@ def create_app(
     async def submit(intake: Intake, request: Request) -> dict[str, Any] | JSONResponse:
         try:
             state["engine"].validate(intake.text)
-            if not limit.allow(intake.device or client_of(request)):
+            if not limit.allow(intake.device, client_of(request)):
                 return JSONResponse({"reason": "one prompt at a time: wait a moment"}, 429)
             prompt = state["engine"].submit(intake.text)
         except PromptRefusedError as refused:
@@ -161,7 +191,9 @@ def create_app(
         return {"id": prompt["id"]}
 
     @app.post("/api/grades", response_model=None)
-    def grade(sheet: GradeSheet) -> dict[str, Any] | JSONResponse:
+    def grade(sheet: GradeSheet, request: Request) -> dict[str, Any] | JSONResponse:
+        if sheet.device and not ballots.allow(sheet.round, client_of(request), sheet.device):
+            return JSONResponse({"reason": "too many graders from this network"}, 429)
         try:
             graded = state["engine"].grade(sheet.round, sheet.device, sheet.grades, sheet.reasons)
         except PromptRefusedError as refused:
@@ -216,15 +248,21 @@ def _file(path: Path) -> Any:
 
 
 def serve(
-    room: Room, cfg: Settings, control_token: str, host: str, port: int, rate_seconds: float
+    room: Room,
+    cfg: Settings,
+    control_token: str,
+    host: str,
+    port: int,
+    rate_seconds: float,
+    address_burst: int,
+    devices_per_address: int,
 ) -> None:
     import uvicorn
 
     uvicorn.run(
-        create_app(room, cfg, control_token, rate_seconds),
+        create_app(room, cfg, control_token, rate_seconds, address_burst, devices_per_address),
         host=host,
         port=port,
         log_level="warning",
-        proxy_headers=True,
-        forwarded_allow_ips="*",
+        proxy_headers=False,
     )

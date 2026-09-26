@@ -68,3 +68,45 @@ def test_kit_css_is_served_from_the_present_page() -> None:
     with tc:
         reply = tc.get("/kit.css")
     assert reply.status_code == 200 and reply.headers["content-type"].startswith("text/css")
+
+
+def capped(burst: int, devices: int) -> tuple[TestClient, Room]:
+    room = Room(subjects=SUBJECTS)
+    upstream = httpx.AsyncClient(transport=proxy({s["system"]: s["label"] for s in SUBJECTS}))
+    app = create_app(room, CFG, "tok", 20.0, burst, devices, client=upstream, page=None)
+    return TestClient(app), room
+
+
+def test_rotating_device_tokens_hit_the_address_ceiling() -> None:
+    tc, _ = capped(burst=3, devices=100)
+    with tc:
+        tc.post("/api/control/phase", json={"phase": "submissions"}, headers=TOKEN)
+        codes = [
+            tc.post("/api/prompts", json={"text": f"p{i}", "device": f"minted-{i}"}).status_code
+            for i in range(5)
+        ]
+        assert codes == [201, 201, 201, 429, 429]
+        # A spoofed leftmost hop buys no fresh address, since the rightmost hop counts.
+        spoofed = tc.post(
+            "/api/prompts",
+            json={"text": "p9", "device": "minted-9"},
+            headers={"X-Forwarded-For": "1.2.3.4, testclient"},
+        )
+        assert spoofed.status_code == 429
+
+
+def test_minted_grading_devices_run_out_per_address() -> None:
+    tc, room = capped(burst=30, devices=2)
+    with tc:
+        tc.post("/api/control/phase", json={"phase": "submissions"}, headers=TOKEN)
+        prompt_id = tc.post("/api/prompts", json={"text": "hi"}).json()["id"]
+        tc.post("/api/control/pick", json={"prompt_id": prompt_id}, headers=TOKEN)
+        codes = [
+            tc.post(
+                "/api/grades", json={"round": 1, "device": f"d{i}", "grades": {"s1": "fail"}}
+            ).status_code
+            for i in range(4)
+        ]
+        again = tc.post("/api/grades", json={"round": 1, "device": "d0", "grades": {"s1": "pass"}})
+    assert codes == [200, 200, 429, 429] and again.status_code == 200
+    assert room.graded(1) == 2
