@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="screen">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -13,7 +13,23 @@
 <p class="demo-chip" id="demo-chip" hidden>demo data</p>
 <p class="banner" id="banner" role="status" hidden></p>
 
-<main class="wrap" id="main">
+<!-- The opening shot, before anything is open. The words are Kai's own, from her deck's cover. -->
+<main class="wrap opening" id="opening">
+  <h1 class="opening__title">Behavioral Divergence Evals</h1>
+  <p class="opening__lead">The art of making agents more different, and giving your human brain a more effective way at managing the subagent swarms.</p>
+  <p class="dim">Ninety minutes. Four agents. The room writes the prompts, the room casts the grades, and the prompts get harder until the room splits.</p>
+  <ul class="cast cast--full" id="opening-cast" aria-label="The four agents"></ul>
+  <p class="opening__join"><span class="dim">Join on your phone or laptop</span> <span class="mono" id="opening-join"></span></p>
+</main>
+
+<!-- The closer: exactly the three items Kai approved, with no heading (teable:coilyco/inbox#8270). -->
+<main class="wrap closer" id="closer" hidden>
+  <p class="closer__line">As of September 2026, I'm looking for one team to trade weekly feedback and a written outcome for a free or near-free two-month pilot of my setup for persistent, role-based coding agents. If that's you, my contact is at coilysiren.me/setups.</p>
+  <p class="closer__link mono"><a href="https://coilysiren.me/setups">coilysiren.me/setups</a></p>
+  <p class="closer__link mono"><a href="https://github.com/coilyco/housecast">github.com/coilyco/housecast</a></p>
+</main>
+
+<main class="wrap" id="main" hidden>
   <p class="eyebrow" id="eyebrow">the room</p>
   <h1 id="title">Waiting on the presenter</h1>
   <p class="dim" id="lead"></p>
@@ -37,6 +53,22 @@ const host = location.host;
 
 let room = null;
 let link = { live: true };
+/** The closer is a view of the closing phase, raised from /present or by `#closer`. */
+let closer = location.hash === "#closer";
+try {
+  const channel = new BroadcastChannel("room-screen");
+  channel.onmessage = (event) => {
+    if (!("closer" in (event.data ?? {}))) return;
+    closer = Boolean(event.data.closer);
+    render();
+  };
+  // A reloaded shared tab asks the presenter tab what it should be showing.
+  channel.postMessage({ ask: true });
+} catch {}
+window.addEventListener("hashchange", () => {
+  closer = location.hash === "#closer";
+  render();
+});
 
 function only(...ids) {
   for (const id of ["join", "cast", "board", "answers", "split", "failures"]) $(id).hidden = !ids.includes(id);
@@ -45,17 +77,19 @@ function only(...ids) {
 function render() {
   if (!room) return;
   const now = Date.now();
+  const showCloser = closer && room.phase === "closing";
+  $("closer").hidden = !showCloser;
+  $("opening").hidden = showCloser || room.phase !== "holding";
+  $("main").hidden = showCloser || room.phase === "holding";
+  if (showCloser) return;
+  if (room.phase === "holding") {
+    V.setHtml($("opening-cast"), V.cast(room, { full: true }));
+    $("opening-join").textContent = host;
+    return;
+  }
   const eyebrow = $("eyebrow");
   eyebrow.className = "eyebrow";
-  if (room.phase === "holding") {
-    eyebrow.textContent = "the room";
-    $("title").textContent = "Waiting on the presenter";
-    $("lead").textContent = "Join on your phone or laptop. You'll send a prompt, then grade four answers to it.";
-    $("join").textContent = host;
-    V.setHtml($("cast"), V.cast(room));
-    $("foot").textContent = "";
-    only("join", "cast");
-  } else if (room.phase === "submissions") {
+  if (room.phase === "submissions") {
     eyebrow.textContent = `round ${room.round.n + 1} // open`;
     eyebrow.classList.add("eyebrow--open");
     $("title").textContent = "Find the question that splits them";

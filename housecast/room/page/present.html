@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="present">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,6 +49,7 @@
     <label class="dim">Jump to
       <select id="jump" aria-label="Jump the room to a phase"></select>
     </label>
+    <button class="next" id="closer-toggle" type="button" hidden></button>
     <p class="status" id="status" role="status"></p>
   </header>
   <main class="wrap" style="max-width:90rem">
@@ -95,15 +96,22 @@ let link = { live: true };
 let selected = null;
 let sort = "divergence";
 
-// A token in the address is taken once and removed, so it never sits in the URL bar.
+// A token in the address is taken once and dropped from the URL bar. It is kept
+// in localStorage, so a reload, a crashed tab, or a new tab keeps control.
+function keepToken(value) {
+  try { localStorage.setItem("room-token", value); } catch {}
+}
 (function takeToken() {
   const fromHash = new URLSearchParams(location.hash.slice(1)).get("token");
   if (fromHash) {
-    try { sessionStorage.setItem("room-token", fromHash); } catch {}
+    keepToken(fromHash);
     history.replaceState(null, "", location.pathname + location.search);
   }
-  try { token = fromHash ?? sessionStorage.getItem("room-token"); } catch { token = fromHash; }
+  try { token = fromHash ?? localStorage.getItem("room-token"); } catch { token = fromHash; }
 })();
+
+/** Past the measured p95 of 43s, with room to spare, a stuck subject stops holding the pick. */
+const PICK_ANYWAY_S = 75;
 
 const NEXT = {
   holding: { label: "Open submissions", to: "submissions" },
@@ -121,7 +129,7 @@ async function control(path, body) {
     return true;
   }
   $("status").textContent = "Sending.";
-  const result = await postJson(`api/control/${path}`, body, { "X-Control-Token": token });
+  const result = await postJson(`api/control/${path}`, body, { "X-Control-Token": token }, path === "pick" ? 1 : 2);
   $("status").textContent = result.ok ? "" : result.body.reason ?? result.body.detail ?? `Refused (${result.status}).`;
   return result.ok;
 }
@@ -165,10 +173,20 @@ function renderDetail(now) {
   V.setHtml($("detail-answers"), prompt ? room.subjects.map((s) => V.answerCard(room, prompt.id, s, now)).join("") : "");
   const canPick = prompt && room.phase === "submissions";
   // Grading on a missing answer would leave the room nothing to grade, so the pick waits for all four.
-  const waiting = prompt ? room.subjects.filter((s) => ["queued", "running"].includes(answerFor(room, prompt.id, s.id).state)).length : 0;
+  // Empty and failed are final, so only queued or running holds the pick. A subject
+  // stuck past PICK_ANYWAY_S can't stall the round: the pick opens, and says who is missing.
+  const stuck = prompt ? room.subjects.filter((s) => ["queued", "running"].includes(answerFor(room, prompt.id, s.id).state)) : [];
+  const oldest = prompt ? Math.max(0, ...stuck.map((s) => { const a = answerFor(room, prompt.id, s.id); return a.started_at ? seconds(a.started_at, now) : 0; })) : 0;
+  const anyway = stuck.length > 0 && oldest >= PICK_ANYWAY_S;
   $("pick").hidden = !canPick;
-  $("pick").disabled = waiting > 0;
-  if (canPick) $("pick").textContent = waiting ? `Waiting on ${waiting} ${waiting === 1 ? "answer" : "answers"} before this can be picked` : `Pick this for round ${room.round.n + 1}, and open grading`;
+  $("pick").disabled = stuck.length > 0 && !anyway;
+  if (canPick) {
+    $("pick").textContent = !stuck.length
+      ? `Pick this for round ${room.round.n + 1}, and open grading`
+      : anyway
+        ? `Pick anyway, without ${stuck.map((s) => s.label).join(" and ")}`
+        : `Waiting on ${stuck.length} ${stuck.length === 1 ? "answer" : "answers"} before this can be picked`;
+  }
 }
 
 function renderRound() {
@@ -191,9 +209,26 @@ function renderRound() {
   }
 }
 
+// The closer is a view of /screen on this same laptop, raised over a BroadcastChannel,
+// so the shared tab never navigates. `/screen#closer` is the fallback on another machine.
+let closerShown = false;
+let screenChannel = null;
+try {
+  screenChannel = new BroadcastChannel("room-screen");
+  screenChannel.onmessage = (event) => {
+    if (event.data?.ask) screenChannel.postMessage({ closer: closerShown });
+  };
+} catch {}
+
 function render() {
   if (!room) return;
   const now = Date.now();
+  if (room.phase !== "closing" && closerShown) {
+    closerShown = false;
+    screenChannel?.postMessage({ closer: false });
+  }
+  $("closer-toggle").hidden = room.phase !== "closing" || !screenChannel;
+  $("closer-toggle").textContent = closerShown ? "Back to the failing grades" : "Show the closer on the shared screen";
   $("phase-label").textContent = `phase // ${room.phase}${room.round.n ? ` // round ${room.round.n}` : ""}`;
   const next = NEXT[room.phase];
   $("next").textContent = next.label;
@@ -209,7 +244,7 @@ function renderLink() {
   $("banner").hidden = link.live;
   if (link.refused) {
     $("banner").textContent = "The room refused that token. Reload with the token it printed.";
-    try { sessionStorage.removeItem("room-token"); } catch {}
+    try { localStorage.removeItem("room-token"); } catch {}
   } else if (!link.live) {
     $("banner").textContent = `Reconnecting. This is from ${seconds(new Date(link.since).toISOString(), Date.now())}s ago.`;
   }
@@ -253,13 +288,18 @@ $("next").addEventListener("click", () => {
 $("jump").addEventListener("change", (event) => {
   if (event.target.value !== room.phase) void control("phase", { phase: event.target.value });
 });
+$("closer-toggle").addEventListener("click", () => {
+  closerShown = !closerShown;
+  screenChannel?.postMessage({ closer: closerShown });
+  render();
+});
 $("pick").addEventListener("click", () => {
   if (selected) void control("pick", { prompt_id: selected });
 });
 $("gate").addEventListener("submit", (event) => {
   event.preventDefault();
   token = $("gate-token").value.trim();
-  try { sessionStorage.setItem("room-token", token); } catch {}
+  keepToken(token);
   start();
 });
 

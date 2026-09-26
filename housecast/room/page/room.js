@@ -11,13 +11,13 @@ const SLOW_S = 43;
 const PROMPT_MAX = 280;
 const REASON_MAX = 140;
 
-// The four are named and fixed by Kai's session flow deck. Colour and emblem are
-// the display's, keyed by label. A subject outside the four falls back to a glyph.
+// The four are named and fixed by Kai's session flow deck, which also wrote each
+// one's role and line. A subject outside the four falls back to a glyph.
 const LOOKS = {
-  Evie: { color: "#2ed1aa", emblem: "\u{1F9EA}\u{1FAA8}" },
-  Delphi: { color: "#e882e1", emblem: "\u{1F3A8}\u{1F308}" },
-  Sprite: { color: "#3ba0ff", emblem: "\u{1F93F}\u{1F308}" },
-  Gem: { color: "#f09372", emblem: "\u{1F56F}️\u{1F52D}" },
+  Evie: { color: "#2ed1aa", emblem: "\u{1F9EA}\u{1FAA8}", role: "Applied Scientist", line: "Empirical and grounded. Reports the measurement before the meaning." },
+  Delphi: { color: "#e882e1", emblem: "\u{1F3A8}\u{1F308}", role: "Frontend Engineer", line: "Playful and imaginative. Shapes the surface a person navigates." },
+  Sprite: { color: "#3ba0ff", emblem: "\u{1F93F}\u{1F308}", role: "Game Developer", line: "Immersed and imaginative. Ships the thing people actually play." },
+  Gem: { color: "#f09372", emblem: "\u{1F56F}️\u{1F52D}", role: "Developer Advocate", line: "Warm and outward. Turns real work into accurate content." },
 };
 const FALLBACK = [
   { color: "#c5c3fd", emblem: "◆" },
@@ -29,7 +29,7 @@ const FALLBACK = [
 /** The server's colour and emblem when subjects.json carries them, else the deck's. */
 function lookOf(room, subject) {
   const base = LOOKS[subject.label] ?? FALLBACK[Math.max(0, room.subjects.indexOf(subject)) % FALLBACK.length];
-  return { color: subject.color ?? base.color, emblem: subject.emblem ?? base.emblem };
+  return { color: subject.color ?? base.color, emblem: subject.emblem ?? base.emblem, role: base.role ?? "", line: base.line ?? "" };
 }
 
 function answerKey(promptId, subjectId) {
@@ -106,27 +106,45 @@ function escapeHtml(text) {
   return String(text ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
 
+// randomUUID needs a secure context and a 2022 browser. An old phone still
+// gets a token, from getRandomValues or, failing that, Math.random.
+function mint() {
+  if (globalThis.crypto?.randomUUID) {
+    try { return crypto.randomUUID(); } catch {}
+  }
+  const bytes = new Uint8Array(16);
+  if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(bytes);
+  else for (let i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 /** A token this browser mints once, so a re-grade replaces its last one. */
 function device() {
   try {
     let token = localStorage.getItem("room-device");
     if (!token) {
-      token = crypto.randomUUID();
+      token = mint();
       localStorage.setItem("room-device", token);
     }
     return token;
   } catch {
-    device.fallback ??= crypto.randomUUID();
+    device.fallback ??= mint();
     return device.fallback;
   }
 }
 
-async function postJson(url, body, headers = {}) {
+// A network failure retries once after a second, since phone wifi drops single
+// requests. A refusal from the room is never retried.
+async function postJson(url, body, headers = {}, tries = 2) {
   try {
     const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
     const payload = await response.json().catch(() => ({}));
     return { ok: response.ok, status: response.status, body: payload };
   } catch {
+    if (tries > 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return postJson(url, body, headers, tries - 1);
+    }
     return { ok: false, status: 0, body: { reason: "The room didn't answer. Check your connection and try again." } };
   }
 }
@@ -135,7 +153,10 @@ async function postJson(url, body, headers = {}) {
 // dropped stream re-reads the snapshot.
 function connectLive(onRoom, onLink, { snapshotUrl = "api/room", eventsUrl = "api/room/events", headers = {}, alwaysResnapshot = false } = {}) {
   let room = null;
+  let source = null;
+  let live = false;
   let retry = 1000;
+  let retryTimer = null;
   let pending = null;
 
   async function snapshot() {
@@ -146,6 +167,12 @@ function connectLive(onRoom, onLink, { snapshotUrl = "api/room", eventsUrl = "ap
     onRoom(room);
   }
 
+  function setLive(next, extra = {}) {
+    if (next === live && !extra.refused) return;
+    live = next;
+    onLink(next ? { live: true } : { live: false, since: Date.now(), ...extra });
+  }
+
   function resnapshotSoon() {
     pending ??= setTimeout(() => {
       pending = null;
@@ -153,39 +180,63 @@ function connectLive(onRoom, onLink, { snapshotUrl = "api/room", eventsUrl = "ap
     }, 250);
   }
 
-  async function open() {
-    try {
-      await snapshot();
-      onLink({ live: true });
-      retry = 1000;
-      const source = new EventSource(eventsUrl);
-      const handle = (message) => {
-        const event = JSON.parse(message.data);
-        if (!room || (event.rev !== undefined && event.rev > room.rev + 1)) return resnapshotSoon();
-        if (event.rev !== undefined && event.rev <= room.rev) return;
-        if (alwaysResnapshot || !apply(room, event)) return resnapshotSoon();
-        onRoom(room);
-      };
-      // Each event is named by its kind, and a named event never reaches onmessage.
-      for (const kind of EVENT_KINDS) source.addEventListener(kind, handle);
-      source.onmessage = handle;
-      source.addEventListener("hello", (message) => {
-        if (room && JSON.parse(message.data).rev > room.rev) resnapshotSoon();
-      });
-      source.onerror = () => {
-        source.close();
-        onLink({ live: false, since: Date.now() });
-        setTimeout(open, retry);
-      };
-    } catch (failure) {
-      onLink({ live: false, since: Date.now(), refused: Boolean(failure.refused) });
-      if (failure.refused) return;
-      retry = Math.min(retry * 2, 8000);
-      setTimeout(open, retry);
-    }
+  function stream() {
+    source?.close();
+    source = new EventSource(eventsUrl);
+    const handle = (message) => {
+      const event = JSON.parse(message.data);
+      if (!room || (event.rev !== undefined && event.rev > room.rev + 1)) return resnapshotSoon();
+      if (event.rev !== undefined && event.rev <= room.rev) return;
+      if (alwaysResnapshot || !apply(room, event)) return resnapshotSoon();
+      onRoom(room);
+    };
+    // Each event is named by its kind, and a named event never reaches onmessage.
+    for (const kind of EVENT_KINDS) source.addEventListener(kind, handle);
+    source.onmessage = handle;
+    source.addEventListener("hello", (message) => {
+      if (room && JSON.parse(message.data).rev > room.rev) resnapshotSoon();
+    });
+    source.onerror = () => {
+      source.close();
+      source = null;
+      setLive(false);
+      later();
+    };
   }
 
-  void open();
+  function later() {
+    clearTimeout(retryTimer);
+    retryTimer = setTimeout(check, retry);
+    retry = Math.min(retry * 2, 8000);
+  }
+
+  // A stream a sleeping laptop or phone dropped can stay open and silent, so
+  // the snapshot is re-read on wake, on network return, and every 30 seconds.
+  async function check() {
+    const before = room?.rev;
+    try {
+      await snapshot();
+    } catch (failure) {
+      setLive(false, { refused: Boolean(failure.refused) });
+      if (!failure.refused) later();
+      return;
+    }
+    retry = 1000;
+    setLive(true);
+    if (!source || source.readyState === EventSource.CLOSED || (before !== undefined && room.rev > before)) stream();
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void check();
+  });
+  window.addEventListener("online", () => void check());
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) void check();
+  });
+  setInterval(() => {
+    if (document.visibilityState === "visible") void check();
+  }, 30_000);
+  void check();
 }
 
 // ---------------------------------------------------------------- demo

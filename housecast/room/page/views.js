@@ -13,8 +13,15 @@ function subjectById(room, id) {
   return room.subjects.find((s) => s.id === id) ?? { id, label: id };
 }
 
-function cast(room) {
-  return room.subjects.map((s) => `<li style="--c:${lookOf(room, s).color}">${who(room, s)}</li>`).join("");
+/** The four, with each one's role and line from the deck when `full`. */
+function cast(room, { full = false } = {}) {
+  return room.subjects
+    .map((s) => {
+      const look = lookOf(room, s);
+      const more = full && look.role ? `<span class="cast__role">${escapeHtml(look.role)}</span><span class="cast__line">${escapeHtml(look.line)}</span>` : "";
+      return `<li style="--c:${look.color}">${who(room, s)}${more}</li>`;
+    })
+    .join("");
 }
 
 /** What a subject is doing on a prompt, in words, with progress while it runs. */
@@ -50,7 +57,7 @@ function answerCard(room, promptId, subject, now, extra = "") {
   else if (answer.state === "empty" || answer.state === "failed") body = `<p class="answer__reason">${escapeHtml(answer.reason ?? "No reason given.")}</p>`;
   else if (answer.state === "running" || answer.state === "queued")
     body = `<div class="track" aria-hidden="true"><span style="width:${Math.round((state.progress ?? 0) * 100)}%"></span></div>${answer.state === "running" ? `<p class="answer__reason">Usually about ${TYPICAL_S}s.</p>` : ""}`;
-  return `<article class="answer" style="--c:${lookOf(room, subject).color}" aria-label="${escapeHtml(subject.label)}">
+  return `<article class="answer" data-state="${escapeHtml(answer.state)}" style="--c:${lookOf(room, subject).color}" aria-label="${escapeHtml(subject.label)}">
     <header class="answer__head">${who(room, subject)}<span class="answer__state"${state.tone ? ` data-tone="${state.tone}"` : ""}>${escapeHtml(state.text)}</span></header>
     ${body}${extra}
   </article>`;

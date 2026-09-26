@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="attendee">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -181,7 +181,7 @@ $("submit-form").addEventListener("submit", async (event) => {
   if (!text || text.length > PROMPT_MAX) return;
   $("submit-send").disabled = true;
   note("Sending.", "");
-  const result = demo ? { ok: true, body: { id: `demo-${Date.now()}` } } : await postJson("api/prompts", { text, device: device() });
+  const result = demo ? { ok: true, body: { id: `demo-${Date.now()}` } } : await postJson("api/prompts", { text, device: device() }, {}, 1);
   if (result.ok) {
     mine.add(result.body.id);
     try { sessionStorage.setItem("room-mine", JSON.stringify([...mine])); } catch {}
