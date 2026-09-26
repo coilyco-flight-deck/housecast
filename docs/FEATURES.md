@@ -20,6 +20,8 @@ Coarse inventory of the major capabilities housecast ships.
 * **The Jev routing bench.** `just jevroute`: one Jev choice per question over an MCP subject's live
   `tools/list`, pass at confidence 0.9, confident-wrong kept apart, dev and holdout splits. Cases and
   rounds: `evaluations/jevroute-eco/`, `teable:coilyco/sirens-echo#8221`.
+* **The live room.** `housecast room serve` under the `room` extra: prompt intake, fan-out to every
+  subject, a divergence score, and a restart log. [`room.md`](room.md).
 * **The PyPI release train.** A pushed `housecast-v*` tag gates, builds and uploads. [`publishing.md`](publishing.md).
 
 ## Not shipped

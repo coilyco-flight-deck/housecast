@@ -317,6 +317,13 @@ mcp = [
     { name = "httpx" },
     { name = "mcp" },
 ]
+room = [
+    { name = "click" },
+    { name = "fastapi" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "uvicorn" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -330,15 +337,20 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "click", marker = "extra == 'eval'", specifier = ">=8.1" },
+    { name = "click", marker = "extra == 'room'", specifier = ">=8.1" },
     { name = "fastapi", marker = "extra == 'eval'", specifier = ">=0.115" },
+    { name = "fastapi", marker = "extra == 'room'", specifier = ">=0.115" },
     { name = "httpx", marker = "extra == 'mcp'", specifier = ">=0.27" },
+    { name = "httpx", marker = "extra == 'room'", specifier = ">=0.27" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.2" },
     { name = "pydantic", marker = "extra == 'eval'", specifier = ">=2.9" },
+    { name = "pydantic", marker = "extra == 'room'", specifier = ">=2.9" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", marker = "extra == 'eval'", specifier = ">=13" },
     { name = "uvicorn", marker = "extra == 'eval'", specifier = ">=0.30" },
+    { name = "uvicorn", marker = "extra == 'room'", specifier = ">=0.30" },
 ]
-provides-extras = ["eval", "mcp"]
+provides-extras = ["eval", "mcp", "room"]
 
 [package.metadata.requires-dev]
 dev = [
