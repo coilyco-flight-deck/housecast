@@ -48,7 +48,9 @@ class Settings:
     max_tokens: int = 4000
     temperature: float = 0.7
     frame: str = "Answer in under 150 words."
-    answer_timeout: float = 180.0
+    # One deadline across both attempts, so a stuck subject turns `failed` and the
+    # round can be picked. The measured p95 was 43s.
+    answer_deadline: float = 120.0
     jev_timeout: float = 60.0
 
     def headers(self) -> dict[str, str]:
@@ -70,7 +72,7 @@ async def answer(client: httpx.AsyncClient, cfg: Settings, system: str, prompt: 
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         },
         headers=cfg.headers(),
-        timeout=cfg.answer_timeout,
+        timeout=cfg.answer_deadline,
     )
     reply.raise_for_status()
     content = reply.json()["choices"][0]["message"].get("content") or ""

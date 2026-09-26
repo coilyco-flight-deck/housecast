@@ -17,6 +17,7 @@ from housecast.room import models
 from housecast.room.store import PHASES, TERMINAL, Room, now
 
 MAX_PROMPT = 280
+RETRY_PAUSE = 2.0
 MAX_REASON = 140
 VERDICTS = frozenset({"pass", "fail"})
 
@@ -79,7 +80,7 @@ class Engine:
             started = now()
             self.room.emit("answer", {**base, "state": "running", "started_at": started})
             try:
-                text = await models.answer(self.client, self.cfg, subject["system"], prompt["text"])
+                text = await self._call(subject["system"], prompt["text"])
             except Exception as failed:  # the room shows it, and the other subjects carry on
                 self.room.emit(
                     "answer",
@@ -99,6 +100,24 @@ class Engine:
                     done.update(state="empty", reason="the subject returned no text")
                 self.room.emit("answer", done)
         await self._maybe_score(prompt)
+
+    async def _call(self, system: str, text: str) -> str:
+        """One answer under the deadline, retried once on a transient proxy error."""
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + self.cfg.answer_deadline
+        for attempt in (1, 2):
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                raise TimeoutError
+            try:
+                return await asyncio.wait_for(
+                    models.answer(self.client, self.cfg, system, text), timeout=remaining
+                )
+            except (httpx.TransportError, httpx.HTTPStatusError) as err:
+                if attempt == 2 or not _transient(err):
+                    raise
+                await asyncio.sleep(min(RETRY_PAUSE, max(0.0, deadline - loop.time())))
+        raise TimeoutError  # unreachable: the second attempt returns or raises
 
     async def _maybe_score(self, prompt: dict[str, Any]) -> None:
         answers = self.room.answers_for(prompt["id"])
@@ -191,8 +210,14 @@ class Engine:
             await asyncio.gather(*list(self._tasks), return_exceptions=True)
 
 
+def _transient(err: Exception) -> bool:
+    if isinstance(err, httpx.HTTPStatusError):
+        return err.response.status_code == 429 or err.response.status_code >= 500
+    return isinstance(err, httpx.TransportError)
+
+
 def _reason(failed: Exception) -> str:
-    if isinstance(failed, httpx.TimeoutException):
+    if isinstance(failed, (httpx.TimeoutException, TimeoutError)):
         return "the subject timed out"
     if isinstance(failed, httpx.HTTPStatusError):
         return f"the model route answered {failed.response.status_code}"

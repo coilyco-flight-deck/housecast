@@ -210,3 +210,67 @@ def test_grades_refuse_outside_grading_and_for_a_past_round() -> None:
         engine.grade(1, "d", {"s1": "pass"}, {})
     with pytest.raises(PromptRefusedError, match="pass or fail"):
         engine.grade(2, "d", {"s1": "maybe"}, {})
+
+
+def flaky(statuses: list[int], delay: float = 0.0) -> tuple[httpx.MockTransport, list[int]]:
+    """Answers each chat call with the next status, 200 once the list runs out."""
+    calls: list[int] = []
+
+    async def handle(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/v1/systemone":
+            return httpx.Response(200, json={"answers": {"divergence": {"score": 1.0}}})
+        calls.append(1)
+        if delay:
+            await asyncio.sleep(delay)
+        status = statuses[len(calls) - 1] if len(calls) <= len(statuses) else 200
+        if status != 200:
+            return httpx.Response(status)
+        return httpx.Response(200, json={"choices": [{"message": {"content": "ok"}}]})
+
+    return httpx.MockTransport(handle), calls
+
+
+def one_subject_room() -> Room:
+    return Room(subjects=SUBJECTS[:2])
+
+
+async def run_with(room: Room, transport: httpx.MockTransport, cfg: models.Settings) -> None:
+    async with httpx.AsyncClient(transport=transport) as client:
+        engine = Engine(room, cfg, client)
+        engine.set_phase("submissions")
+        engine.submit("hi")
+        await engine.drain()
+
+
+def test_a_transient_error_is_retried_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("housecast.room.engine.RETRY_PAUSE", 0.0)
+    room = one_subject_room()
+    transport, calls = flaky([503])
+    asyncio.run(run_with(room, transport, CFG))
+    states = sorted(a["state"] for a in room.snapshot()["answers"])
+    assert states == ["done", "done"] and len(calls) == 3  # one subject retried once
+
+
+def test_a_client_error_is_not_retried_and_two_transient_errors_fail(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("housecast.room.engine.RETRY_PAUSE", 0.0)
+    room = Room(subjects=SUBJECTS[:1])
+    transport, calls = flaky([400])
+    asyncio.run(run_with(room, transport, CFG))
+    assert room.snapshot()["answers"][0]["state"] == "failed" and len(calls) == 1
+    room = Room(subjects=SUBJECTS[:1])
+    transport, calls = flaky([502, 502])
+    asyncio.run(run_with(room, transport, CFG))
+    assert room.snapshot()["answers"][0]["state"] == "failed" and len(calls) == 2
+
+
+def test_a_stuck_subject_fails_at_the_deadline_so_the_round_can_be_picked() -> None:
+    room = Room(subjects=SUBJECTS[:2])
+    transport, _ = flaky([], delay=5.0)
+    cfg = models.Settings(proxy="http://proxy", model="route", jev_model="jev", answer_deadline=0.2)
+    asyncio.run(run_with(room, transport, cfg))
+    answers = room.snapshot()["answers"]
+    assert {a["state"] for a in answers} == {"failed"}
+    assert {a["reason"] for a in answers} == {"the subject timed out"}
+    assert room.snapshot()["divergence"][0]["state"] == "failed"
