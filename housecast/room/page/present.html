@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>presenter</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="room.css">
+<style>
+  .bar { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; padding: 0.8rem 1.25rem; background: #241a1d; border-bottom: 2px solid var(--presenter); }
+  .bar .next { min-height: 2.8rem; padding: 0 1.2rem; border: 0; border-radius: 10px; background: var(--presenter); color: #241a1d; font-weight: 700; letter-spacing: 0.04em; }
+  .bar .next:disabled { opacity: 0.55; cursor: not-allowed; }
+  .bar select { min-height: 2.4rem; border-radius: 8px; border: 1px solid var(--line); background: var(--deep); padding: 0 0.5rem; }
+  .bar .status { margin-left: auto; font-size: 0.9rem; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 900px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+  .incoming { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .incoming button { width: 100%; text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.3rem 0.8rem; padding: 0.6rem 0.8rem; border-radius: 10px; border: 1px solid var(--line); background: var(--card); }
+  .incoming button[aria-current="true"] { border-color: var(--presenter); box-shadow: inset 4px 0 0 var(--presenter); }
+  .incoming .score { font-family: var(--mono); font-weight: 700; }
+  .chips { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; font-size: 0.85rem; color: var(--dim); }
+  .chip { display: inline-flex; gap: 0.3em; align-items: center; }
+  .chip b { color: var(--c); font-weight: 700; }
+  .sort { display: flex; gap: 0.4rem; }
+  .sort button { min-height: 2.2rem; padding: 0 0.8rem; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--dim); }
+  .sort button[aria-pressed="true"] { color: var(--text); border-color: var(--presenter); }
+  .pick { min-height: 3rem; border: 0; border-radius: 10px; background: var(--presenter); color: #241a1d; font-weight: 700; }
+  .pick:disabled { background: var(--line); color: var(--dim); cursor: not-allowed; }
+  .gate { max-width: 30rem; }
+  .gate input { min-height: 2.8rem; padding: 0 0.8rem; border-radius: 10px; border: 1px solid var(--line); background: var(--deep); }
+</style>
+</head>
+<body class="present">
+<p class="demo-chip" id="demo-chip" hidden>demo data</p>
+
+<form class="wrap gate" id="gate" hidden>
+  <p class="eyebrow eyebrow--live">presenter</p>
+  <h1>Presenter token</h1>
+  <p class="dim" id="gate-why">The room prints this token when it starts. It stays in this tab only.</p>
+  <label class="field">Token<input id="gate-token" type="password" autocomplete="off" required></label>
+  <button class="pick" type="submit">Open the presenter surface</button>
+</form>
+
+<div id="surface" hidden>
+  <header class="bar">
+    <p class="eyebrow eyebrow--live" id="phase-label"></p>
+    <button class="next" id="next" type="button"></button>
+    <label class="dim">Jump to
+      <select id="jump" aria-label="Jump the room to a phase"></select>
+    </label>
+    <p class="status" id="status" role="status"></p>
+  </header>
+  <main class="wrap" style="max-width:90rem">
+    <p class="banner" id="banner" role="status" hidden></p>
+    <div class="cols">
+      <section class="panel" aria-labelledby="incoming-title">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+          <h2 id="incoming-title">Incoming prompts</h2>
+          <div class="sort" role="group" aria-label="Sort prompts">
+            <button type="button" data-sort="divergence" aria-pressed="true">Most split</button>
+            <button type="button" data-sort="newest" aria-pressed="false">Newest</button>
+          </div>
+        </div>
+        <ul class="incoming" id="incoming"></ul>
+      </section>
+      <section class="panel" aria-labelledby="detail-title" id="detail">
+        <h2 id="detail-title">Pick a prompt to read its four answers</h2>
+        <p class="dim" id="detail-meta"></p>
+        <div class="answers" id="detail-answers"></div>
+        <button class="pick" id="pick" type="button" hidden></button>
+      </section>
+    </div>
+    <section class="panel" id="round-panel" aria-labelledby="round-title" hidden>
+      <h2 id="round-title"></h2>
+      <p class="dim" id="round-meta"></p>
+      <div class="split" id="round-split"></div>
+      <ul class="failures" id="round-failures"></ul>
+    </section>
+  </main>
+</div>
+
+<script src="room.js"></script>
+<script src="views.js"></script>
+<script>
+"use strict";
+const { PHASES, promptById, answerFor, lookOf, seconds, escapeHtml, postJson } = window.Room;
+const V = window.RoomViews;
+const $ = (id) => document.getElementById(id);
+
+const demo = Boolean(new URLSearchParams(location.search).get("demo"));
+let token = null;
+let room = null;
+let link = { live: true };
+let selected = null;
+let sort = "divergence";
+
+// A token in the address is taken once and removed, so it never sits in the URL bar.
+(function takeToken() {
+  const fromHash = new URLSearchParams(location.hash.slice(1)).get("token");
+  if (fromHash) {
+    try { sessionStorage.setItem("room-token", fromHash); } catch {}
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  try { token = fromHash ?? sessionStorage.getItem("room-token"); } catch { token = fromHash; }
+})();
+
+const NEXT = {
+  holding: { label: "Open submissions", to: "submissions" },
+  submissions: { label: "Pick a prompt to start the round", to: null },
+  grading: { label: "Close grading, show the split", to: "split" },
+  split: { label: "Open submissions for the next round", to: "submissions" },
+  closing: { label: "Back to holding", to: "holding" },
+};
+
+async function control(path, body) {
+  if (demo) {
+    if (path === "phase") room.phase = body.phase;
+    if (path === "pick") { room.round = { n: room.round.n + 1, prompt_id: body.prompt_id, graded: 0 }; room.phase = "grading"; }
+    render();
+    return true;
+  }
+  $("status").textContent = "Sending.";
+  const result = await postJson(`api/control/${path}`, body, { "X-Control-Token": token });
+  $("status").textContent = result.ok ? "" : result.body.reason ?? result.body.detail ?? `Refused (${result.status}).`;
+  return result.ok;
+}
+
+function sortedPrompts() {
+  const list = [...room.prompts];
+  if (sort === "newest") return list.reverse();
+  const score = (p) => (room.divergence[p.id]?.state === "done" ? room.divergence[p.id].score : -1);
+  return list.sort((a, b) => score(b) - score(a) || b.seq - a.seq);
+}
+
+function chips(prompt) {
+  return room.subjects
+    .map((s) => {
+      const answer = answerFor(room, prompt.id, s.id);
+      const word = { queued: "waiting", running: "thinking", done: "done", empty: "no answer", failed: "failed" }[answer.state] ?? answer.state;
+      return `<span class="chip" style="--c:${lookOf(room, s).color}"><b>${escapeHtml(s.label)}</b> ${word}</span>`;
+    })
+    .join("");
+}
+
+function renderIncoming() {
+  const rows = sortedPrompts();
+  V.setHtml($("incoming"), rows.length
+    ? rows.map((p) => {
+        const d = room.divergence[p.id];
+        const score = d?.state === "done" ? `${d.score.toFixed(2)}${d.method === "lexical" ? "*" : ""}` : d?.state === "failed" ? "unscored" : "…";
+        const used = room.rounds.some((r) => r.prompt_id === p.id) || room.round.prompt_id === p.id;
+        return `<li><button type="button" data-prompt="${escapeHtml(p.id)}"${p.id === selected ? ' aria-current="true"' : ""}>
+          <span>${escapeHtml(p.text)}${used ? ' <span class="dim">(used)</span>' : ""}</span><span class="score">${score}</span>
+          <span class="chips">${chips(p)}</span></button></li>`;
+      }).join("")
+    : `<li class="dim">No prompts yet. They arrive once submissions open.</li>`);
+}
+
+function renderDetail(now) {
+  const prompt = selected ? promptById(room, selected) : null;
+  $("detail-title").textContent = prompt ? prompt.text : "Pick a prompt to read its four answers";
+  const d = prompt && room.divergence[prompt.id];
+  $("detail-meta").textContent = prompt ? `Prompt ${prompt.seq}${d?.state === "done" ? `, split ${d.score.toFixed(2)} ${d.method === "lexical" ? "by word overlap" : "by stance"}` : ""}` : "";
+  V.setHtml($("detail-answers"), prompt ? room.subjects.map((s) => V.answerCard(room, prompt.id, s, now)).join("") : "");
+  const canPick = prompt && room.phase === "submissions";
+  // Grading on a missing answer would leave the room nothing to grade, so the pick waits for all four.
+  const waiting = prompt ? room.subjects.filter((s) => ["queued", "running"].includes(answerFor(room, prompt.id, s.id).state)).length : 0;
+  $("pick").hidden = !canPick;
+  $("pick").disabled = waiting > 0;
+  if (canPick) $("pick").textContent = waiting ? `Waiting on ${waiting} ${waiting === 1 ? "answer" : "answers"} before this can be picked` : `Pick this for round ${room.round.n + 1}, and open grading`;
+}
+
+function renderRound() {
+  const panel = $("round-panel");
+  panel.hidden = !["grading", "split", "closing"].includes(room.phase);
+  V.setHtml($("round-split"), "");
+  V.setHtml($("round-failures"), "");
+  if (room.phase === "grading") {
+    $("round-title").textContent = `Round ${room.round.n}: grading`;
+    $("round-meta").textContent = `${room.round.graded ?? 0} graded so far. The room sees a count, never a direction.`;
+  } else if (room.phase === "split") {
+    const last = room.rounds[room.rounds.length - 1];
+    $("round-title").textContent = `Round ${last?.n ?? room.round.n}: the split`;
+    $("round-meta").textContent = promptById(room, last?.prompt_id)?.text ?? "";
+    V.setHtml($("round-split"), (last && V.split(room, last.n, { tall: 10 })) ?? "");
+  } else if (room.phase === "closing") {
+    $("round-title").textContent = "Failing grades, with reasons";
+    $("round-meta").textContent = "The shared screen shows counts only. The reasons are attendee-typed, so they're here to read aloud.";
+    V.setHtml($("round-failures"), V.failures(room));
+  }
+}
+
+function render() {
+  if (!room) return;
+  const now = Date.now();
+  $("phase-label").textContent = `phase // ${room.phase}${room.round.n ? ` // round ${room.round.n}` : ""}`;
+  const next = NEXT[room.phase];
+  $("next").textContent = next.label;
+  $("next").disabled = !next.to;
+  V.setHtml($("jump"), PHASES.map((p) => `<option value="${p}"${p === room.phase ? " selected" : ""}>${p}</option>`).join(""));
+  if (!selected && room.round.prompt_id) selected = room.round.prompt_id;
+  renderIncoming();
+  renderDetail(now);
+  renderRound();
+}
+
+function renderLink() {
+  $("banner").hidden = link.live;
+  if (link.refused) {
+    $("banner").textContent = "The room refused that token. Reload with the token it printed.";
+    try { sessionStorage.removeItem("room-token"); } catch {}
+  } else if (!link.live) {
+    $("banner").textContent = `Reconnecting. This is from ${seconds(new Date(link.since).toISOString(), Date.now())}s ago.`;
+  }
+}
+
+function start() {
+  $("gate").hidden = true;
+  $("surface").hidden = false;
+  window.Room.connect(
+    (next) => { room = next; render(); },
+    (next) => { link = next; renderLink(); },
+    {
+      snapshotUrl: "api/control/room",
+      eventsUrl: `api/room/events?view=presenter&token=${encodeURIComponent(token ?? "")}`,
+      headers: { "X-Control-Token": token ?? "" },
+      // Presenter events can carry answers with text the attendee shapes lack, so re-read the whole room.
+      alwaysResnapshot: true,
+    },
+  );
+  $("demo-chip").hidden = !demo;
+  setInterval(() => { render(); renderLink(); }, 1000);
+}
+
+$("incoming").addEventListener("click", (event) => {
+  const row = event.target.closest("button[data-prompt]");
+  if (!row) return;
+  selected = row.dataset.prompt;
+  render();
+});
+document.querySelector(".sort").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-sort]");
+  if (!button) return;
+  sort = button.dataset.sort;
+  document.querySelectorAll(".sort button").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+  render();
+});
+$("next").addEventListener("click", () => {
+  const next = NEXT[room.phase];
+  if (next.to) void control("phase", { phase: next.to });
+});
+$("jump").addEventListener("change", (event) => {
+  if (event.target.value !== room.phase) void control("phase", { phase: event.target.value });
+});
+$("pick").addEventListener("click", () => {
+  if (selected) void control("pick", { prompt_id: selected });
+});
+$("gate").addEventListener("submit", (event) => {
+  event.preventDefault();
+  token = $("gate-token").value.trim();
+  try { sessionStorage.setItem("room-token", token); } catch {}
+  start();
+});
+
+if (token || demo) start();
+else $("gate").hidden = false;
+</script>
+</body>
+</html>
